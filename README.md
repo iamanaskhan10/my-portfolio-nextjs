@@ -1,40 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# 🧑‍💻 Anas Khan - Developer Portfolio
 
-## Getting Started
+Welcome to my personal developer portfolio built using **Next.js 14**, **Tailwind CSS**, and modern design principles. This site showcases my featured and full-stack projects, development skills, and a direct way to connect with me.
 
-First, run the development server:
+> ⚡ **Built in just 3 days** with focus, passion, and precision.
+
+![Portfolio Screenshot](public/portfolio.png)
+
+---
+
+## 🚀 Tech Stack
+
+- ⚡ **Next.js 14** – React framework for server-side rendering and routing
+- 🎨 **Tailwind CSS** – Utility-first CSS for custom design
+- 🎥 **Hero Section Video** – Animated glitch effects with radial masking
+- 🎮 **Lucide Icons** – Lightweight, beautiful SVG icons
+- ✨ **Responsive Design** – Fully responsive for all screen sizes
+- 📂 **File Structure**
+  - `/components` – Reusable components like `Hero`, `Projects`, `PrimaryButton`, etc.
+  - `/app` – Routing and page components
+  - `/public` – Assets such as images and videos
+
+---
+
+## 📁 Project Sections
+
+- **Hero Section** – Interactive intro with glitch text and animated titles
+- **Featured Projects** – A preview of top projects with hover animations
+- **All Projects Page** – Category filters and back navigation
+- **Contact Form** – Send messages directly via form submission
+
+---
+
+## 🛠 How to Run Locally
 
 ```bash
+# 1. Clone the repo
+git clone https://github.com/iamanaskhan10/portfolio.git
+cd portfolio
+
+# 2. Install dependencies
+npm install
+
+# 3. Run the dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# Open in browser
+http://localhost:3000
+Live Preview
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+🔗 https://my-portfolio-nextjs-sepia-zeta.vercel.app/
+📬 Contact
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+    Email: anas23khan2002@gmail.com
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+    LinkedIn: Anas Khan
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    GitHub: @iamanaskhan10
+⭐ Features
 
-## Learn More
+    Glitch-text hero animation
 
-To learn more about Next.js, take a look at the following resources:
+    "Contact Me" and "Download Resume" buttons with custom styles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+    Category-based project filtering
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    Back button with arrow navigation
 
-## Deploy on Vercel
+    Clean and modern code structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    Fully mobile responsive
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+⏱️ Built With Speed & Focus
+
+This project was built in just 3 days as a personal challenge to test my skills and creativity.
