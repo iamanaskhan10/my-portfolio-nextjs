@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+import FadeInSection from "./FadeInSection";
 const achievements = [
 "Secured 9th position out of all candidates in Lahore in the BISE F.Sc. Part-I exams.",
 "Awarded a 2-year merit scholarship by Unique High School.",
@@ -12,6 +12,7 @@ const Achievements = () => {
   return (
     <section id="achievements" className="bg-[#0a192f] text-gray-300 py-20 px-4">
       <div className="max-w-5xl mx-auto">
+        <FadeInSection>
         <h2 className="text-3xl font-bold border-b-4 border-pink-600 inline-block mb-12">
           Achievements
         </h2>
@@ -23,6 +24,7 @@ const Achievements = () => {
             </li>
           ))}
         </ul>
+        </FadeInSection>
       </div>
     </section>
   );

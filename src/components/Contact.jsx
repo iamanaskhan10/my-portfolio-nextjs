@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import PrimaryButton from "./PrimaryButton";
+import FadeInSection from "./FadeInSection";
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
@@ -48,6 +49,7 @@ const Contact = () => {
 
         {/* Right Side: Contact Form */}
         <form onSubmit={handleSubmit} className="w-full md:w-1/2 space-y-6">
+        <FadeInSection>
           <h2 className="text-3xl font-bold border-b-4 border-pink-600 inline-block mb-2">
             Get in Touch
           </h2>
@@ -87,6 +89,7 @@ const Contact = () => {
           ></textarea>
 
          <PrimaryButton type="submit">Send Message</PrimaryButton>
+         </FadeInSection>
 
         </form>
       </div>

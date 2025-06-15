@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+import FadeInSection from "./FadeInSection";
 const experiences = [
   {
     company: "FAST Literary Society",
@@ -26,6 +26,7 @@ const Experience = () => {
   return (
     <section id="experience" className="bg-[#0a192f] text-gray-300 py-20 px-4">
       <div className="max-w-5xl mx-auto">
+        <FadeInSection>
         <h2 className="text-3xl font-bold border-b-4 border-pink-600 inline-block mb-12">
           Experience
         </h2>
@@ -44,7 +45,10 @@ const Experience = () => {
               <p className="text-sm mt-2 text-gray-400">{exp.description}</p>
             </div>
           ))}
+          
         </div>
+      </FadeInSection>
+
       </div>
     </section>
   );
