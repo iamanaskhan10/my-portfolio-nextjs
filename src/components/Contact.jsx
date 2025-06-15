@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-
+import PrimaryButton from "./PrimaryButton";
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
@@ -39,10 +39,11 @@ const Contact = () => {
         <div className="relative w-60 h-60 sm:w-72 sm:h-72 rounded-full shrink-0">
           <div className="absolute inset-0 rounded-full bg-pink-600 blur-2xl opacity-30 animate-pulse z-0" />
           <img
-            src="/me.png"
-            alt="Anas Khan"
-            className="relative z-10 w-full h-full object-cover rounded-full border-4 border-[#0a192f]"
-          />
+  src="/laptop.jpg"
+  alt="Anas Khan"
+  className="w-full h-full object-cover rounded-full border-[#0a192f] glitch-hero mask-radial-fade"
+/>
+
         </div>
 
         {/* Right Side: Contact Form */}
@@ -85,12 +86,8 @@ const Contact = () => {
             className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-md outline-none focus:border-pink-600"
           ></textarea>
 
-          <button
-            type="submit"
-            className="relative inline-block px-6 py-3 text-sm sm:text-base tracking-widest font-semibold text-white uppercase bg-pink-600 border border-pink-600 rounded-full overflow-hidden group transition-all duration-300 hover:bg-transparent hover:text-pink-600"
-          >
-            Send Message
-          </button>
+         <PrimaryButton type="submit">Send Message</PrimaryButton>
+
         </form>
       </div>
     </section>

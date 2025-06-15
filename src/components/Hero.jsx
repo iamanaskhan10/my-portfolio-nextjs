@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+import PrimaryButton from "./PrimaryButton";
 const Hero = () => {
     return (
         <section
@@ -55,12 +55,7 @@ const Hero = () => {
   </a>
 
   {/* Contact Me */}
-  <a
-    href="#contact"
-    className="relative inline-block px-6 py-3 text-sm sm:text-base tracking-widest font-semibold text-white uppercase bg-pink-600 border border-pink-600 rounded-full overflow-hidden group transition-all duration-300 hover:bg-transparent hover:text-pink-600"
-  >
-    Contact Me
-  </a>
+  <PrimaryButton href="#contact">Contact Me</PrimaryButton>
 </div>
 
 
@@ -73,7 +68,7 @@ const Hero = () => {
   <div className="absolute inset-0 rounded-full bg-pink-600 blur-2xl opacity-30 animate-pulse z-0"></div>
 
   {/* Video with radial fade */}
-  <div className="relative w-full h-full overflow-hidden">
+  <div className="relative w-full h-full overflow-hidden glitch-hero">
     <video
       src="/robot.mp4"
       autoPlay

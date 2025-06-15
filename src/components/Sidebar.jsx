@@ -67,7 +67,7 @@ const Sidebar = () => {
       {/* Bottom Icons */}
       <div className="flex flex-col items-start gap-4">
         <a
-          href="https://github.com/your-github"
+          href="https://github.com/iamanaskhan10"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-400 hover:text-pink-600 transition"
@@ -75,7 +75,7 @@ const Sidebar = () => {
           <FaGithub size={20} />
         </a>
         <a
-          href="https://linkedin.com/in/your-linkedin"
+          href="https://linkedin.com/in/anas-khan-k/"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-400 hover:text-pink-600 transition"
