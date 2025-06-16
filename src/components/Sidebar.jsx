@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
-import { motion } from "framer-motion"; // ✅ motion import
+import { motion } from "framer-motion";
 
 const navItems = [
   { label: "About", href: "#about" },
@@ -36,7 +36,7 @@ const Sidebar = () => {
 
   return (
     <aside className="hidden md:flex fixed top-0 left-0 h-screen w-[150px] z-50 flex-col justify-between px-6 py-12 border-r border-gray-800 bg-[#0a192f]">
-      {/* Top */}
+      {/* Top: Name + Nav */}
       <div className="flex flex-col items-start gap-8">
         <motion.h1
           className="text-pink-600 text-lg font-bold tracking-widest"
@@ -47,34 +47,36 @@ const Sidebar = () => {
           Anas Khan
         </motion.h1>
 
-        <nav className="flex flex-col gap-6">
-          {navItems.map((item, idx) => (
-            <motion.a
-              key={idx}
-              href={item.href}
-              initial={{ x: -30, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: idx * 0.15, duration: 0.5 }}
-              className={`group inline-block text-xs sm:text-sm tracking-widest font-semibold uppercase relative ${
-                activeSection === item.href.replace("#", "")
-                  ? "text-pink-600"
-                  : "text-gray-300"
-              }`}
-            >
-              {item.label}
-              <span
-                className={`block h-[2px] transition-all duration-300 mt-1 ${
-                  activeSection === item.href.replace("#", "")
-                    ? "w-full bg-pink-600"
-                    : "w-0 group-hover:w-full bg-pink-600"
+        <nav className="flex flex-col gap-6" aria-label="Main navigation">
+          {navItems.map((item, idx) => {
+            const sectionId = item.href.slice(1);
+            const isActive = activeSection === sectionId;
+            return (
+              <motion.a
+                key={item.href}
+                href={item.href}
+                initial={{ x: -30, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: idx * 0.15, duration: 0.5 }}
+                className={`group inline-block text-xs sm:text-sm tracking-widest font-semibold uppercase relative ${
+                  isActive ? "text-pink-600" : "text-gray-300"
                 }`}
-              ></span>
-            </motion.a>
-          ))}
+              >
+                {item.label}
+                <span
+                  className={`block h-[2px] transition-all duration-300 mt-1 ${
+                    isActive
+                      ? "w-full bg-pink-600"
+                      : "w-0 group-hover:w-full bg-pink-600"
+                  }`}
+                ></span>
+              </motion.a>
+            );
+          })}
         </nav>
       </div>
 
-      {/* Bottom Icons */}
+      {/* Bottom: Social Icons */}
       <motion.div
         className="flex flex-col items-start gap-4"
         initial="hidden"
@@ -91,25 +93,29 @@ const Sidebar = () => {
           },
         }}
       >
-        {[ // Icons mapped for better animation
+        {[
           {
             icon: <FaGithub size={20} />,
             href: "https://github.com/iamanaskhan10",
+            label: "GitHub",
           },
           {
             icon: <FaLinkedin size={20} />,
             href: "https://linkedin.com/in/anas-khan-k/",
+            label: "LinkedIn",
           },
           {
             icon: <FaEnvelope size={20} />,
             href: "mailto:anas23khan2002@gmail.com",
+            label: "Email",
           },
-        ].map((item, idx) => (
+        ].map((item) => (
           <motion.a
-            key={idx}
+            key={item.href}
             href={item.href}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={item.label}
             className="text-gray-400 hover:text-pink-600 transition"
             whileHover={{ scale: 1.2 }}
             whileTap={{ scale: 0.95 }}

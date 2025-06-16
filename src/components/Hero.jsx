@@ -7,21 +7,21 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="h-screen flex flex-col md:flex-row items-center justify-between bg-[#0a192f] text-gray-300 px-6 sm:px-16 relative overflow-hidden"
+      className="min-h-screen flex flex-col-reverse md:flex-row items-center justify-between bg-[#0a192f] text-gray-300 px-6 sm:px-12 md:px-16 py-12 md:py-0 overflow-hidden"
     >
       {/* Left side: Text */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8 }}
-        className="max-w-2xl space-y-5 text-left"
+        className="w-full max-w-2xl space-y-5 text-left"
       >
-        <p className="text-white-400 text-sm sm:text-base uppercase tracking-wider">
+        <p className="text-sm sm:text-base text-gray-400 uppercase tracking-wider">
           Clean code. Creative mind. Reliable results.
         </p>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-white text-3xl sm:text-5xl font-plain">Hey there, I’m</span>
+          <span className="text-white text-3xl sm:text-5xl font-light">Hey there, I’m</span>
           <h1 className="glitch-hero text-3xl sm:text-5xl font-bold text-pink-500 relative leading-none">
             <span aria-hidden="true">Anas Khan</span>
             Anas Khan
@@ -29,7 +29,7 @@ const Hero = () => {
           </h1>
         </div>
 
-        <div className="mt-4 h-[2.5rem] overflow-hidden text-pink-500 text-xl sm:text-3xl font-semibold relative w-[300px]">
+        <div className="mt-4 h-[2.5rem] sm:h-[3rem] overflow-hidden text-pink-500 text-xl sm:text-3xl font-semibold relative w-full sm:w-[300px]">
           <div className="role-stepper">
             <div className="role-line">Full Stack Developer</div>
             <div className="role-line">Software Engineer</div>
@@ -38,7 +38,7 @@ const Hero = () => {
           </div>
         </div>
 
-        <p className="text-white-400 text-base sm:text-lg font-medium">
+        <p className="text-base sm:text-lg text-gray-300 font-medium">
           Let’s connect and create something impactful.
         </p>
 
@@ -46,7 +46,7 @@ const Hero = () => {
           <a
             href="/Anas_Khan_Senior@FAST.pdf"
             download
-            className="group inline-block px-6 py-3 text-sm sm:text-base tracking-widest font-semibold text-gray-300 uppercase border border-gray-300 rounded-full overflow-hidden relative transition-all duration-300 hover:text-white"
+            className="group inline-block px-6 py-3 text-sm sm:text-base tracking-widest font-semibold text-gray-300 uppercase border border-gray-300 rounded-full relative transition-all duration-300 hover:text-white"
           >
             <span className="relative z-10 group-hover:text-white transition duration-300">
               Download Resume
@@ -63,9 +63,9 @@ const Hero = () => {
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1 }}
-        className="relative mt-10 md:mt-0 w-[350px] h-[400px]"
+        className="w-full max-w-sm h-[400px] mb-12 md:mb-0 relative"
       >
-        <div className="absolute inset-0 rounded-full bg-pink-600 blur-2xl opacity-30 animate-pulse z-0"></div>
+        <div className="absolute inset-0 rounded-full bg-pink-600 blur-2xl opacity-30 animate-pulse z-0" />
         <div className="relative w-full h-full overflow-hidden glitch-hero">
           <video
             src="/robot.mp4"

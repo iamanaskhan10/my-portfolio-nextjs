@@ -1,9 +1,10 @@
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
-
+import MobileDrawer from "../components/MobileDrawer";
 export default function Layout({ children }) {
   return (
     <div className="flex min-h-screen">
+      <MobileDrawer />
       {/* Fixed Sidebar */}
       <Sidebar />
 
