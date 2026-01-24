@@ -4,8 +4,8 @@ import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0a192f] text-gray-400 py-6">
-      <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+    <footer className="text-gray-400 py-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 lg:px-24 flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Left: Branding & Contact */}
         <div className="text-sm text-center md:text-left">
           <p>© {new Date().getFullYear()} Anas Khan. All rights reserved.</p>
@@ -15,7 +15,7 @@ const Footer = () => {
         {/* Right: Social Icons */}
         <div className="flex items-center gap-5 text-xl">
           <a
-            href="https://github.com/your-github"
+            href="https://github.com/iamanaskhan10"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white transition-colors duration-300"
@@ -23,7 +23,7 @@ const Footer = () => {
             <FaGithub />
           </a>
           <a
-            href="https://linkedin.com/in/your-linkedin"
+            href="https://www.linkedin.com/in/anas-khan-k"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white transition-colors duration-300"

@@ -7,8 +7,14 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="min-h-screen flex flex-col-reverse md:flex-row items-center justify-between bg-[#0a192f] text-gray-300 px-6 sm:px-12 md:px-16 py-12 md:py-0 overflow-hidden"
+      className="min-h-screen flex flex-col-reverse md:flex-row items-center justify-between text-gray-300 px-4 sm:px-6 md:px-14 lg:px-24 py-12 md:py-0 relative"
     >
+      {/* Gradient Blobs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="blob blob-1" />
+        <div className="blob blob-2" />
+        <div className="blob blob-3" />
+      </div>
       {/* Left side: Text */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}
@@ -43,16 +49,13 @@ const Hero = () => {
         </p>
 
         <div className="flex flex-wrap gap-4 sm:gap-6 mt-8 items-center">
-          <a
-            href="/Anas_Khan_Senior@FAST.pdf"
+          <PrimaryButton
+            href="/Resume_AnasKhan_FAST.pdf"
             download
-            className="group inline-block px-6 py-3 text-sm sm:text-base tracking-widest font-semibold text-gray-300 uppercase border border-gray-300 rounded-full relative transition-all duration-300 hover:text-white"
+            variant="outline"
           >
-            <span className="relative z-10 group-hover:text-white transition duration-300">
-              Download Resume
-            </span>
-            <span className="absolute inset-0 w-0 bg-pink-600 group-hover:w-full transition-all duration-300 ease-in-out rounded-full"></span>
-          </a>
+            Download Resume
+          </PrimaryButton>
 
           <PrimaryButton href="#contact">Contact Me</PrimaryButton>
         </div>

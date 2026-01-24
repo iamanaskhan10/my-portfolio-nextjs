@@ -1,4 +1,8 @@
 @import "tailwindcss";
+
+body {
+  background-color: #0a192f;
+}
 .glitch-hero {
   position: relative;
   display: inline-block;
@@ -94,6 +98,86 @@
   align-items: center;
   justify-content: flex-start;
 }
+
+/* Gradient Blobs */
+.blob {
+  position: absolute;
+  border-radius: 40px;
+  will-change: transform;
+}
+
+.blob-1 {
+  width: 450px;
+  height: 700px;
+  background: linear-gradient(220deg, rgba(236, 72, 153, 0.5) 0%, rgba(139, 92, 246, 0.4) 40%, rgba(99, 102, 241, 0.3) 70%, transparent 100%);
+  filter: blur(120px);
+  top: -15%;
+  left: -8%;
+  animation: blobFloat1 14s ease-in-out infinite;
+}
+
+.blob-2 {
+  width: 400px;
+  height: 600px;
+  background: linear-gradient(250deg, rgba(99, 102, 241, 0.4) 0%, rgba(6, 182, 212, 0.35) 50%, transparent 100%);
+  filter: blur(120px);
+  bottom: -10%;
+  right: -5%;
+  animation: blobFloat2 18s ease-in-out infinite;
+}
+
+.blob-3 {
+  width: 300px;
+  height: 450px;
+  background: linear-gradient(200deg, rgba(244, 63, 94, 0.3) 0%, rgba(236, 72, 153, 0.25) 60%, transparent 100%);
+  filter: blur(100px);
+  top: 35%;
+  left: 50%;
+  animation: blobFloat3 16s ease-in-out infinite;
+}
+
+@keyframes blobFloat1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(60px, 40px) scale(1.1);
+  }
+  50% {
+    transform: translate(30px, -30px) scale(0.95);
+  }
+  75% {
+    transform: translate(-40px, 20px) scale(1.05);
+  }
+}
+
+@keyframes blobFloat2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(-50px, -30px) scale(1.08);
+  }
+  50% {
+    transform: translate(-20px, 50px) scale(0.92);
+  }
+  75% {
+    transform: translate(40px, -20px) scale(1.12);
+  }
+}
+
+@keyframes blobFloat3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-70px, -40px) scale(1.15);
+  }
+  66% {
+    transform: translate(50px, 30px) scale(0.9);
+  }
+}
+
 .mask-radial-fade {
   -webkit-mask-image: radial-gradient(
     circle,

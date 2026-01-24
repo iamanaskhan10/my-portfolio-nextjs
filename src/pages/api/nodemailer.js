@@ -1,7 +1,6 @@
-import nodemailer from "nodemailer";
-import dotenv from "dotenv";
+import { Resend } from "resend";
 
-dotenv.config(); // Load .env (make sure .env or .env.local exists at root)
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -10,38 +9,18 @@ export default async function handler(req, res) {
 
   const { name, email, message } = req.body;
 
-  console.log("EMAIL_USER:", process.env.EMAIL_USER);
-  console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Loaded ✅" : "Missing ❌");
-
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  const mailOptions = {
-    from: `"${name}" <${process.env.EMAIL_USER}>`, // Gmail forces this
-    to: "anas23khan2002@gmail.com", // Your inbox
-    subject: `New message from ${name}`,
-    text: `
-You have received a new message from your portfolio contact form:
-
-Name: ${name}
-Email: ${email}
-Message:
-${message}
-    `,
-    replyTo: email, // So you can reply directly to sender
-  };
-
   try {
-    await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent successfully!");
+    await resend.emails.send({
+      from: "Portfolio Contact <onboarding@resend.dev>",
+      to: "anas23khan2002@gmail.com",
+      subject: `New message from ${name}`,
+      replyTo: email,
+      text: `You have received a new message from your portfolio contact form:\n\nName: ${name}\nEmail: ${email}\nMessage:\n${message}`,
+    });
+
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.error("❌ Email error:", error);
+    console.error("Email error:", error);
     return res.status(500).json({ success: false, error: error.message });
   }
 }
