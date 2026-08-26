@@ -1,46 +1,56 @@
 "use client";
-import React from "react";
-import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
+
+import { ArrowUpRight, Github, Linkedin, Mail } from "lucide-react";
 import { profile } from "../data/portfolio";
 
-const Footer = () => {
+const footerLinks = [
+  { label: "About", href: "#about" },
+  { label: "Work", href: "#projects" },
+  { label: "Experience", href: "#experience" },
+  { label: "Contact", href: "#contact" },
+];
+
+export default function Footer() {
   return (
-    <footer className="border-t border-[#f2f0e8]/12 text-[#f2f0e8]/60 py-6">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 lg:px-24 flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Left: Branding & Contact */}
-        <div className="text-sm text-center md:text-left">
-          <p>© {new Date().getFullYear()} {profile.name}. All rights reserved.</p>
-          <p className="text-[#f2f0e8]/45 text-xs mt-1">Contact: {profile.phone}</p>
+    <footer className="site-footer">
+      <div className="site-footer__main">
+        <div className="site-footer__identity">
+          <a className="site-footer__wordmark" href="#home" aria-label="Anas Khan home">
+            Anas <span>Khan</span>
+          </a>
+          <p>Software engineer building dependable full-stack and AI products.</p>
         </div>
 
-        {/* Right: Social Icons */}
-        <div className="flex items-center gap-5 text-xl">
-          <a
-            href={profile.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-[#b9f35a] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b9f35a]"
-          >
-            <FaGithub />
-          </a>
-          <a
-            href={profile.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-[#b9f35a] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b9f35a]"
-          >
-            <FaLinkedin />
-          </a>
-          <a
-            href={`mailto:${profile.email}`}
-            className="hover:text-[#b9f35a] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b9f35a]"
-          >
-            <FaEnvelope />
+        <nav className="site-footer__nav" aria-label="Footer navigation">
+          <span>Explore</span>
+          {footerLinks.map((link) => (
+            <a key={link.href} href={link.href}>{link.label}</a>
+          ))}
+        </nav>
+
+        <div className="site-footer__contact">
+          <span>Have a project in mind?</span>
+          <a href={`mailto:${profile.email}`}>
+            Start a conversation <ArrowUpRight size={16} aria-hidden="true" />
           </a>
         </div>
       </div>
+
+      <div className="site-footer__bottom">
+        <p>© {new Date().getFullYear()} {profile.name}</p>
+        <div className="site-footer__socials">
+          <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <Github size={16} aria-hidden="true" />
+          </a>
+          <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <Linkedin size={16} aria-hidden="true" />
+          </a>
+          <a href={`mailto:${profile.email}`} aria-label="Email Anas Khan">
+            <Mail size={16} aria-hidden="true" />
+          </a>
+        </div>
+        <a className="site-footer__phone" href={`tel:${profile.phone.replace(/\s/g, "")}`}>{profile.phone}</a>
+      </div>
     </footer>
   );
-};
-
-export default Footer;
+}
