@@ -1,0 +1,27 @@
+
+> anas-portfolio-next@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.3.3
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.1.27:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 37.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 7.4s (865 modules)
+ ✓ Compiled in 1551ms (865 modules)
+ GET / 200 in 18687ms
+ GET / 200 in 562ms
+ GET / 200 in 991ms
+ GET / 200 in 388ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 3.2s (911 modules)
+ GET /_next/static/chunks/main.js 500 in 15192ms
+ GET /_next/static/chunks/pages/_app.js 500 in 15005ms
+ GET /_next/static/chunks/react-refresh.js 500 in 15025ms
+ GET /_next/static/chunks/pages/index.js 500 in 15107ms
+ GET / 500 in 117ms
+ GET / 500 in 104ms
+[?25h

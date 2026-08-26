@@ -47,12 +47,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <aside
-      className={`hidden md:flex fixed top-0 left-0 h-screen z-50 flex-col overflow-hidden border-r border-gray-800/60 bg-[#0a192f]/95 backdrop-blur-sm ${
-        isOpen ? "shadow-[4px_0_24px_rgba(0,0,0,0.3)]" : ""
+      className={`hidden md:flex fixed top-0 left-0 h-screen z-50 flex-col overflow-hidden border-r border-[#f2f0e8]/12 bg-[#11120f] ${
+        isOpen ? "shadow-[8px_0_32px_rgba(0,0,0,0.18)]" : ""
       }`}
       style={{
         width: isOpen ? "220px" : `${COLLAPSED_W}px`,
-        transition: "width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease",
+        transition: "box-shadow 0.4s ease",
       }}
     >
       {/* Toggle - always at top */}
@@ -65,7 +65,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         }}
       >
         <h1
-          className="text-pink-500 text-lg font-bold tracking-[0.2em] whitespace-nowrap uppercase overflow-hidden"
+          className="text-[#b9f35a] text-lg font-bold tracking-[0.2em] whitespace-nowrap uppercase overflow-hidden"
           style={{
             opacity: isOpen ? 1 : 0,
             maxWidth: isOpen ? "160px" : "0px",
@@ -78,7 +78,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         </h1>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-center w-9 h-9 shrink-0 rounded-lg text-gray-400 hover:text-pink-500 hover:bg-pink-500/10 transition-all duration-200 cursor-pointer"
+          className="flex items-center justify-center w-9 h-9 shrink-0 rounded-lg text-[#f2f0e8]/65 hover:text-[#b9f35a] hover:bg-[#b9f35a]/10 transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b9f35a]"
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
           <span
@@ -94,8 +94,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       <div className="flex-1 flex flex-col">
         {/* Separator */}
         <div
-          className="h-px bg-gray-700/50 mx-auto mb-3"
-          style={{ width: isOpen ? "85%" : "24px", transition: "width 0.4s ease" }}
+          className="h-px bg-[#f2f0e8]/12 mx-auto mb-3"
+          style={{ width: isOpen ? "85%" : "24px" }}
         />
 
         {/* Nav - icons never move, labels fade in/out */}
@@ -108,15 +108,15 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 key={item.href}
                 href={item.href}
                 title={!isOpen ? item.label : undefined}
-                className={`group relative flex items-center h-10 rounded-lg transition-colors duration-200 ${
+                className={`group relative flex items-center h-10 rounded-lg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b9f35a] ${
                   isActive
-                    ? "text-pink-500 bg-pink-500/10"
-                    : "text-gray-500 hover:text-gray-200 hover:bg-white/5"
+                    ? "text-[#b9f35a] bg-[#b9f35a]/10"
+                    : "text-[#f2f0e8]/55 hover:text-[#f2f0e8] hover:bg-[#f2f0e8]/5"
                 }`}
                 style={{ marginLeft: `${ITEM_MX}px`, marginRight: `${ITEM_MX}px`, paddingLeft: `${ICON_PL}px`, paddingRight: "12px" }}
               >
                 {isActive && (
-                  <span className="absolute top-1/2 -translate-y-1/2 w-[3px] h-5 bg-pink-500 rounded-full" style={{ left: `-${ITEM_MX}px` }} />
+                  <span className="absolute top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#b9f35a] rounded-full" style={{ left: `-${ITEM_MX}px` }} />
                 )}
                 <span className={`shrink-0 transition-transform duration-200 ${isActive ? "" : "group-hover:scale-110"}`}>
                   {item.icon}
@@ -139,8 +139,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
         {/* Separator */}
         <div
-          className="h-px bg-gray-700/50 mx-auto mt-3"
-          style={{ width: isOpen ? "85%" : "24px", transition: "width 0.4s ease" }}
+          className="h-px bg-[#f2f0e8]/12 mx-auto mt-3"
+          style={{ width: isOpen ? "85%" : "24px" }}
         />
       </div>
 
@@ -150,7 +150,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         style={{
           width: `${COLLAPSED_W}px`,
           height: isOpen ? "40px" : "116px",
-          transition: "height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)",
         }}
       >
         {socialItems.map((item, index) => {
@@ -165,7 +164,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               rel="noopener noreferrer"
               aria-label={item.label}
               title={item.label}
-              className="absolute flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:text-pink-500 hover:bg-pink-500/10"
+              className="absolute flex items-center justify-center w-8 h-8 rounded-lg text-[#f2f0e8]/60 hover:text-[#b9f35a] hover:bg-[#b9f35a]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b9f35a]"
               style={{
                 transform: `translate(${x}px, ${y}px) scale(${isOpen ? 1.05 : 0.95})`,
                 transition: `transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) ${isOpen ? index * 60 : (2 - index) * 40}ms`,

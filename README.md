@@ -45,7 +45,7 @@ npm install
 npm run dev
 
 # Open in browser
-http://localhost:3000
+http://127.0.0.1:3007
 Live Preview
 
 🔗 https://my-portfolio-nextjs-sepia-zeta.vercel.app/
