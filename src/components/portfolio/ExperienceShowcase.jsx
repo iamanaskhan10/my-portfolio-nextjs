@@ -8,8 +8,8 @@ import useMotionPreference from "../../hooks/useMotionPreference";
 import styles from "./ExperienceShowcase.module.css";
 
 function ExperienceCard({ experience, index, progress, animate }) {
-  const y = useTransform(progress, [0, 1], [12 + index * 6, -8 - index * 4]);
-  const rotate = useTransform(progress, [0, 1], index % 2 ? [0.7, -0.3] : [-0.7, 0.3]);
+  const y = useTransform(progress, [0, 1], [32 + index * 12, -24 - index * 8]);
+  const rotate = useTransform(progress, [0, 1], index % 2 ? [1.8, -0.8] : [-1.8, 0.8]);
   return (
     <motion.li className={styles.card} style={animate ? { y, rotate, zIndex: index + 1 } : undefined}>
       <div><h3>{experience.role}</h3><p>{experience.company}</p></div>
@@ -23,7 +23,7 @@ export default function ExperienceShowcase() {
   const reducedMotion = useMotionPreference();
   const animate = reducedMotion === false;
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const x = useTransform(scrollYProgress, [0, 1], [120, -120]);
 
   return (
     <section id="experience" className={styles.section} aria-labelledby="experience-heading">
