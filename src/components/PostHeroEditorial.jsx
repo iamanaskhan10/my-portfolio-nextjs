@@ -17,9 +17,9 @@ export default function PostHeroEditorial() {
         <div className={styles.aboutInner}>
           <h2 id="manifesto-heading" className={styles.aboutTitle}>I learn.<br /><span>I build.</span><br />I ship.</h2>
           <div className={styles.aboutCopy}>
-            <h3>Full-stack. AI-native.</h3>
+            <h3>Engineering products that ship.</h3>
             <p>
-            I&apos;m a Software Engineering student at FAST-NUCES, Lahore (2022&ndash;2026), focused on full-stack and applied AI products. My work spans React and Next.js interfaces, FastAPI and Node.js services, PostgreSQL data workflows, and real-time RAG systems &mdash; built to be useful, reliable, and ready to ship.
+            I&apos;m a software engineer focused on full-stack and applied AI products. My work spans React and Next.js interfaces, FastAPI and Node.js services, PostgreSQL data systems, and real-time AI workflows.
             </p>
             <a className={styles.inlineLink} href="#capabilities">Explore my toolkit <ArrowDown size={16} aria-hidden="true" /></a>
           </div>

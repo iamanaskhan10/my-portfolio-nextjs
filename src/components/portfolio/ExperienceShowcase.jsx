@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { experiences, outcomes, profile } from "../../data/portfolio";
+import { experiences, profile } from "../../data/portfolio";
 import useMotionPreference from "../../hooks/useMotionPreference";
 import styles from "./ExperienceShowcase.module.css";
 
@@ -12,7 +12,11 @@ function ExperienceCard({ experience, index, progress, animate }) {
   const rotate = useTransform(progress, [0, 1], index % 2 ? [1.8, -0.8] : [-1.8, 0.8]);
   return (
     <motion.li className={styles.card} style={animate ? { y, rotate, zIndex: index + 1 } : undefined}>
-      <div><h3>{experience.role}</h3><p>{experience.company}</p></div>
+      <div>
+        <h3>{experience.role}</h3>
+        <p>{experience.company}</p>
+        <p className={styles.outcome}>{experience.outcome}</p>
+      </div>
       <span className={styles.duration}>{experience.duration}</span>
     </motion.li>
   );
@@ -37,10 +41,6 @@ export default function ExperienceShowcase() {
             <a className={styles.resume} href={profile.resume} target="_blank" rel="noopener noreferrer">View résumé <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
         </div>
-      </div>
-      <div className={styles.outcomes}>
-        <h3>Selected work outcomes</h3>
-        <ul>{outcomes.map((outcome) => <li key={outcome}>{outcome}</li>)}</ul>
       </div>
     </section>
   );

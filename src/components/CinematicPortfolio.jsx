@@ -17,7 +17,7 @@ export default function CinematicPortfolio() {
         <div className={styles.statement}>
           <h1 id="hero-heading" className={styles.title}>
             <span className={styles.titleLine}><span className={styles.titleWord}><strong>Full-stack</strong></span></span>
-            <span className={styles.titleLine}><span className={styles.titleWord}>development.</span></span>
+            <span className={styles.titleLine}><span className={styles.titleWord}>Engineer.</span></span>
             <span className={styles.titleLine}><span className={styles.titleWord}>Applied AI.</span></span>
           </h1>
           <div className={styles.exploreLinks}>
@@ -40,9 +40,8 @@ export default function CinematicPortfolio() {
 
         <p className={styles.name} aria-hidden="true"><span>Anas</span>{" "}<span>Khan</span></p>
 
-        <a className={styles.hire} href="#contact" aria-label="Hire Anas Khan">
-          <span>Hire</span>
-          <span>me!</span>
+        <a className={styles.hire} href="#contact" aria-label="Let's talk">
+          <span>Let&apos;s talk</span>
         </a>
       </section>
       <PostHeroEditorial />

@@ -13,16 +13,19 @@ export const experiences = [
     role: "Associate Software Engineer",
     company: "Tecaudex",
     duration: "Jan 2026 – Apr 2026",
+    outcome: "7.5× increased retrieved evidence context in VoiceForge AI, from 800 to 6,000 characters.",
   },
   {
     role: "Software Engineer Intern",
     company: "Tecaudex",
     duration: "Sep 2025 – Dec 2025",
+    outcome: "Production web and CMS delivery across frontend, backend, deployment, and media performance.",
   },
   {
     role: "Freelance Software Developer",
     company: "Fiverr",
     duration: "Nov 2024 – Present",
+    outcome: "AI-assisted analysis combining computer vision, technical indicators, financial news, and market sentiment.",
   },
 ];
 
@@ -106,12 +109,6 @@ export const skills = [
   "pgvector",
   "Docker",
   "AWS",
-];
-
-export const outcomes = [
-  "7.5× more retrieved evidence context in VoiceForge AI, from 800 to 6,000 characters.",
-  "Production web and CMS delivery across frontend, backend, deployment, and media performance.",
-  "AI-assisted analysis combining computer vision, technical indicators, financial news, and market sentiment.",
 ];
 
 export const chapterVisuals = {
