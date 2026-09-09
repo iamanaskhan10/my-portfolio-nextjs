@@ -1,11 +1,12 @@
 "use client";
 
-import { ArrowDown, ArrowUpRight, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import PortfolioContactForm from "./portfolio/PortfolioContactForm";
 import TechnologyStack from "./portfolio/TechnologyStack";
 import BrandWatermark from "./portfolio/BrandWatermark";
 import ProjectShowcase from "./portfolio/ProjectShowcase";
-import { experiences, outcomes, profile } from "../data/portfolio";
+import ExperienceShowcase from "./portfolio/ExperienceShowcase";
+import { profile } from "../data/portfolio";
 import styles from "./PostHeroEditorial.module.css";
 
 
@@ -16,7 +17,7 @@ export default function PostHeroEditorial() {
         <div className={styles.aboutInner}>
           <h2 id="manifesto-heading" className={styles.aboutTitle}>I learn.<br /><span>I build.</span><br />I ship.</h2>
           <div className={styles.aboutCopy}>
-            <h3>Full-stack. AI-aware.</h3>
+            <h3>Full-stack. AI-native.</h3>
             <p>
             I&apos;m a Software Engineering student at FAST-NUCES, Lahore (2022&ndash;2026), focused on full-stack and applied AI products. My work spans React and Next.js interfaces, FastAPI and Node.js services, PostgreSQL data workflows, and real-time RAG systems &mdash; built to be useful, reliable, and ready to ship.
             </p>
@@ -29,30 +30,7 @@ export default function PostHeroEditorial() {
 
       <ProjectShowcase />
 
-      <section className={styles.proof} id="experience" aria-labelledby="proof-heading">
-        <div className={styles.sectionIntro}>
-          <h2 id="proof-heading">Delivery is the through line.</h2>
-          <p>
-            I approach engineering as an end-to-end practice: understand the job, make the system clear, and stay close enough to the outcome to improve it.
-          </p>
-        </div>
-        <div className={styles.proofDetails}>
-          <ol className={styles.timeline}>
-            {experiences.map((experience) => (
-              <li key={`${experience.role}-${experience.company}`}>
-                <div>
-                  <h3>{experience.role}</h3>
-                  <p>{experience.company}</p>
-                </div>
-                <time>{experience.duration}</time>
-              </li>
-            ))}
-          </ol>
-          <ul className={styles.outcomes}>
-            {outcomes.map((outcome) => <li key={outcome}>{outcome}</li>)}
-          </ul>
-        </div>
-      </section>
+      <ExperienceShowcase />
 
       <section className={styles.contact} id="contact" aria-labelledby="contact-heading">
         <BrandWatermark />

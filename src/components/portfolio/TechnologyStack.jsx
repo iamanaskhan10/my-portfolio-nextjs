@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useAnimationControls, useInView, useMotionValue, useSpring } from "framer-motion";
+import { AnimatePresence, motion, useAnimationControls, useInView, useMotionValue, useSpring } from "framer-motion";
 import { Database, Layers3, Network, ScanEye } from "lucide-react";
 import { DiJava } from "react-icons/di";
 import {
   SiAmazonwebservices, SiCss3, SiDocker, SiExpress, SiFastapi, SiGithub,
   SiHtml5, SiHuggingface, SiJavascript, SiMongodb, SiMysql, SiNextdotjs,
   SiNodedotjs, SiPostgresql, SiPython, SiReact, SiRubyonrails,
-  SiSocketdotio, SiTailwindcss, SiUnity,
+  SiSocketdotio, SiTailwindcss, SiTypescript, SiUnity,
 } from "react-icons/si";
 import { technologies, technologyCategories } from "../../data/technologies";
 import useMotionPreference from "../../hooks/useMotionPreference";
@@ -16,6 +16,7 @@ import styles from "./TechnologyStack.module.css";
 import LaserFrame from "./LaserFrame";
 
 const icons = {
+  typescript: SiTypescript,
   javascript: SiJavascript, react: SiReact, next: SiNextdotjs, python: SiPython,
   node: SiNodedotjs, tailwind: SiTailwindcss, fastapi: SiFastapi, rails: SiRubyonrails,
   postgres: SiPostgresql, docker: SiDocker, java: DiJava, html: SiHtml5,
@@ -138,7 +139,7 @@ function TechnologyTile({ technology, index, controls, hasEntered, active, showD
         <span className={styles.cardGlint} aria-hidden="true" />
       </motion.button>
       <div id={detailId} role="tooltip" className={styles.tooltip} hidden={!open} data-below={active?.below}>
-        <p>{technology.detail}</p>
+        <p>{technology.name} — {technology.detail}</p>
       </div>
     </motion.li>
   );
@@ -155,7 +156,7 @@ export default function TechnologyStack() {
   const visible = useInView(stageRef, { amount: "some" });
   const reducedMotion = useMotionPreference(null);
   const controls = useAnimationControls();
-  const visibleTechnologies = technologies.filter((technology) => category === technologyCategories[0] || technology.category === category);
+  const visibleTechnologies = technologies.filter((technology) => category === "Core Stack" ? technology.core : technology.categories.includes(category));
 
   useEffect(() => {
     const updateVisibility = () => setPageVisible(!document.hidden);
@@ -212,8 +213,8 @@ export default function TechnologyStack() {
       <LaserFrame variant="stack" />
       <div className={styles.inner}>
         <div className={styles.heading}>
-          <h2 id="capabilities-heading">Technologies<br /><span>I work with.</span></h2>
-          <p>Languages, frameworks, databases, and platforms used across my projects.</p>
+          <h2 id="capabilities-heading">Technologies<br /><span>I build with.</span></h2>
+          <p>From interface to infrastructure — tools I use to ship full-stack and AI products.</p>
         </div>
 
         <div className={styles.toolbar}>
@@ -228,14 +229,21 @@ export default function TechnologyStack() {
         </div>
 
         <div ref={stageRef} className={styles.stage}>
-          <ul id="technology-grid" className={styles.grid} aria-label={`${category} toolkit`} inert={reducedMotion !== null && !hasEntered}>
+          <AnimatePresence mode="wait" initial={false}>
+          <motion.ul key={category} id="technology-grid" className={styles.grid} aria-label={`${category} toolkit`} inert={reducedMotion !== null && !hasEntered}
+            initial={hasEntered && !reducedMotion ? { opacity: 0, y: 12 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: reducedMotion ? 0 : -8 }}
+            transition={{ duration: reducedMotion ? 0 : 0.18, ease: [0.16, 1, 0.3, 1] }}>
             {visibleTechnologies.map((technology, index) => (
               <TechnologyTile key={technology.name} technology={technology} index={index} controls={controls} hasEntered={hasEntered}
                 active={active} showDetail={showDetail} dismissDetail={() => setActive(null)}
                 motionEnabled={visible && pageVisible && !reducedMotion} />
             ))}
-          </ul>
+          </motion.ul>
+          </AnimatePresence>
         </div>
+        <p className={styles.filterStatus} role="status">{category} · {visibleTechnologies.length} technologies</p>
       </div>
     </section>
   );

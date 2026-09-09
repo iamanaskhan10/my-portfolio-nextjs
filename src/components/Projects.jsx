@@ -73,8 +73,7 @@ export default function Projects({ showAll = false }) {
                 href={`/projects/${project.slug}`}
               >
                 {content}
-                <span className="case-studies__read">Read case study</span>
-                <ArrowUpRight className="case-studies__arrow" size={18} aria-hidden="true" />
+                <span className="case-studies__read">Read case study <ArrowUpRight size={18} aria-hidden="true" /></span>
               </Link>
             ) : (
               <article key={project.title} className="case-studies__card">

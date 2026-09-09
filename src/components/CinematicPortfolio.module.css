@@ -80,7 +80,7 @@
 
 .name > span:last-child { animation-delay: calc(var(--hero-reveal-at) + 380ms); }
 
-.exploreLinks, .resume, .hero > [data-laser-frame] {
+.exploreLinks, .hire, .hero > [data-laser-frame] {
   animation: hero-controls 450ms ease-out calc(var(--hero-reveal-at) + 400ms) both;
 }
 
@@ -114,7 +114,7 @@
   transition: color 180ms ease-out;
 }
 
-.exploreLinks a:last-child, .exploreLinks a:hover { color: var(--hero-accent); }
+.exploreLinks a:hover { color: var(--hero-accent); }
 .exploreLinks a:focus-visible { outline: 2px solid var(--hero-accent); outline-offset: 4px; }
 
 .portrait {
@@ -168,13 +168,13 @@
   pointer-events: none;
 }
 
-.resume {
+.hire {
   position: absolute;
   z-index: 5;
   bottom: 10%;
-  left: 38.6%;
+  left: 44%;
   display: flex;
-  width: 9.7%;
+  width: 11.5%;
   aspect-ratio: 1;
   align-items: center;
   justify-content: center;
@@ -182,23 +182,23 @@
   border-radius: 50%;
   color: var(--hero-ink);
   background: var(--hero-accent);
-  font-size: clamp(0.68rem, 0.78vw, 0.78rem);
-  font-weight: 800;
-  letter-spacing: 0.025em;
-  line-height: 1.2;
-  text-align: center;
+  font-family: "Anton", "Arial Narrow", sans-serif;
+  font-size: clamp(1.15rem, 1.65vw, 1.7rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1;
   text-decoration: none;
   text-transform: uppercase;
   transition: color 180ms ease-out, background-color 180ms ease-out, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.resume:hover {
+.hire:hover {
   color: var(--hero-ink);
   background: var(--hero-paper);
   transform: translateY(-0.35rem) rotate(-3deg);
 }
 
-.resume:focus-visible {
+.hire:focus-visible {
   outline: 3px solid var(--hero-paper);
   outline-offset: 5px;
 }
@@ -230,9 +230,8 @@
     transform: scaleX(1.75);
   }
 
-  .resume {
-    left: 38.6%;
-  }
+  .hire { left: 44%; }
+
 }
 
 @media (max-width: 767px) {
@@ -282,17 +281,17 @@
     transform-origin: left bottom;
   }
 
-  .resume {
+  .hire {
     bottom: 9%;
-    left: 50%;
-    width: 6.55rem;
-    font-size: 0.64rem;
-    transform: translateX(-50%);
+    left: 54%;
+    width: 7.5rem;
+    font-size: 1.4rem;
   }
 
-  .resume:hover {
-    transform: translateX(-50%) translateY(-0.25rem) rotate(-3deg);
+  .hire:hover {
+    transform: translateY(-0.25rem) rotate(-3deg);
   }
+
 }
 
 @media (max-width: 390px) {
@@ -306,13 +305,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .exploreLinks, .resume, .hero > [data-laser-frame] { animation: none; }
+  .exploreLinks, .hire, .hero > [data-laser-frame] { animation: none; }
   .titleWord, .name > span { animation: none; }
   .portraitImage {
     animation: none;
   }
 
-  .resume {
-    transition: none;
-  }
+  .hire { transition: none; }
+
 }

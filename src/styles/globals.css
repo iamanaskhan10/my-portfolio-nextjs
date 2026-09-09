@@ -23,6 +23,7 @@
   --signal-ink: #182008;
   --danger: #ffaaa0;
   --success: #b9f35a;
+  --body-size: clamp(1.0625rem, 1.2vw, 1.125rem);
 }
 
 html {
@@ -37,6 +38,7 @@ body {
   color: var(--paper);
   background: var(--ink);
   font-family: "Bahnschrift", "Aptos", "Segoe UI", sans-serif;
+  font-size: var(--body-size);
 }
 
 ::selection {
@@ -1294,10 +1296,12 @@ body {
   max-width: 51ch;
   margin: 1.35rem 0 0;
   color: var(--paper);
-  line-height: 1.6;
+  font-size: var(--body-size);
+  line-height: 1.75;
 }
 
-.case-studies__read { display: inline-block; margin-top: 1.5rem; color: var(--signal); font-size: 0.82rem; }
+.case-studies__read { display: inline-flex; align-items: center; align-self: flex-start; gap: 1rem; min-height: 48px; margin-top: 1.5rem; padding: 0.75rem 1.15rem; border-radius: 4px; background: var(--signal); color: var(--signal-ink); font-size: 0.95rem; font-weight: 600; }
+.case-studies__card:hover .case-studies__read { background: var(--paper); }
 .case-studies__cover { aspect-ratio: 16 / 9; overflow: hidden; margin-bottom: 1.5rem; border-radius: 12px; }
 .case-studies__cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .case-studies__cover[data-kind="brand"] { background: #fff; }
@@ -1309,8 +1313,8 @@ body {
   margin: 1.4rem 0 0;
   padding: 0;
   color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.5;
+  font-size: var(--body-size);
+  line-height: 1.75;
   list-style: none;
 }
 

@@ -19,16 +19,16 @@
 .story section { scroll-margin-top: 6.5rem; }
 .story section + section { margin-top: 3.5rem; }
 .story h2 { margin: 0 0 1.2rem; font-size: clamp(1.55rem, 2.5vw, 2.1rem); font-weight: 500; letter-spacing: -0.025em; }
-.story p, .decisions dd { max-width: 70ch; margin: 0; color: #bdc5b4; font-size: 0.97rem; line-height: 1.9; }
+.story p, .decisions dd { max-width: 70ch; margin: 0; color: #bdc5b4; font-size: var(--body-size); line-height: 1.85; }
 .workflow { margin: 2rem 0 0; padding: 1.5rem 0; border-block: 1px solid #36422b; }
 .workflow figcaption { margin-bottom: 1.4rem; color: var(--muted); font-size: 0.75rem; }
 .workflow ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
-.workflow li { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; color: var(--signal); font-size: 0.78rem; line-height: 1.65; }
+.workflow li { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; color: var(--signal); font-size: 0.9rem; line-height: 1.65; }
 .workflow li svg { flex-shrink: 0; }
 .decisions { margin: 0; }
 .decisions > div + div { margin-top: 1.75rem; }
 .decisions dt { margin-bottom: 0.55rem; color: var(--paper); font-size: 1.05rem; font-weight: 500; }
-.outcomes { display: grid; gap: 1rem; margin: 0 0 1.75rem; padding-left: 1.2rem; color: var(--paper); font-size: 1rem; line-height: 1.75; }
+.outcomes { display: grid; gap: 1rem; margin: 0 0 1.75rem; padding-left: 1.2rem; color: var(--paper); font-size: var(--body-size); line-height: 1.8; }
 .outcomes li::marker { color: var(--signal); }
 .next { display: flex; align-items: center; justify-content: space-between; gap: 2rem; border-top: 1px solid var(--line); padding-top: 2.5rem; color: var(--muted); font-size: 0.8rem; text-decoration: none; }
 .next strong { display: block; margin-top: 0.8rem; color: var(--paper); font-size: clamp(1.5rem, 3vw, 2.7rem); font-weight: 500; letter-spacing: -0.025em; }

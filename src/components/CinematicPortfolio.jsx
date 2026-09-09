@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDownToLine, ArrowUpRight } from "lucide-react";
 import PostHeroEditorial from "./PostHeroEditorial";
 import BrandWatermark from "./portfolio/BrandWatermark";
 import LaserFrame from "./portfolio/LaserFrame";
@@ -21,8 +21,8 @@ export default function CinematicPortfolio() {
             <span className={styles.titleLine}><span className={styles.titleWord}>Applied AI.</span></span>
           </h1>
           <div className={styles.exploreLinks}>
-            <a href="#projects">Selected work <ArrowUpRight size={16} aria-hidden="true" /></a>
-            <a href="#capabilities">Explore my stack <ArrowDown size={16} aria-hidden="true" /></a>
+            <a href={profile.resume} download>Download resume <ArrowDownToLine size={16} aria-hidden="true" /></a>
+            <a href={profile.resume} target="_blank" rel="noopener noreferrer">View resume <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
         </div>
 
@@ -40,14 +40,9 @@ export default function CinematicPortfolio() {
 
         <p className={styles.name} aria-hidden="true"><span>Anas</span>{" "}<span>Khan</span></p>
 
-        <a
-          className={styles.resume}
-          href={profile.resume}
-          download
-          aria-label="Download Anas Khan's resume"
-        >
-          <span>Download</span>
-          <span>resume</span>
+        <a className={styles.hire} href="#contact" aria-label="Hire Anas Khan">
+          <span>Hire</span>
+          <span>me!</span>
         </a>
       </section>
       <PostHeroEditorial />
