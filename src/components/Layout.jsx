@@ -9,9 +9,9 @@ import BrandMark from "./portfolio/BrandMark";
 import { useRouter } from "next/router";
 
 const navigation = [
-  { label: "Work", href: "#projects" },
   { label: "About", href: "#about" },
   { label: "Tech stack", href: "#capabilities" },
+  { label: "Work", href: "#projects" },
   { label: "Experience", href: "#experience" },
   { label: "Contact", href: "#contact" },
 ];
