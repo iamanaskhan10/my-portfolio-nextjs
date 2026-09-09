@@ -24,6 +24,12 @@
 .DS_Store
 *.pem
 
+# local browser and design review captures
+/.chrome*/
+/.edge*/
+/.impeccable/
+/.impeccable-*.png
+
 # debug
 npm-debug.log*
 yarn-debug.log*

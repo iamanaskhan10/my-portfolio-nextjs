@@ -1,0 +1,69 @@
+.frame {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+  user-select: none;
+}
+
+.mark {
+  position: absolute;
+  display: block;
+  height: auto;
+  color: var(--signal);
+}
+
+.mark path { vector-effect: non-scaling-stroke; }
+.mark [data-brand-core] { stroke-width: 2px; }
+.mark [data-brand-glow] { stroke-width: 14px; opacity: 0.2; filter: blur(7px); }
+
+.hero .mark {
+  --brand-rest-opacity: 0.48;
+  top: -6%;
+  left: 50%;
+  width: 100%;
+  transform: translateX(-50%);
+  opacity: var(--brand-rest-opacity);
+  transform-origin: center 44%;
+  animation: mark-settle 650ms cubic-bezier(0.16, 1, 0.3, 1) var(--hero-reveal-at) both;
+}
+
+.hero { z-index: 0; }
+
+.hero .mark path {
+  vector-effect: none;
+  stroke-dasharray: 1;
+  animation: engrave calc(var(--hero-engrave-duration) * var(--stroke-length)) cubic-bezier(0.45, 0, 0.25, 1) both;
+  animation-delay: calc(100ms + var(--hero-engrave-duration) * var(--stroke-start));
+}
+
+.hero .mark [data-brand-core] { stroke-width: 0.22px; stroke-linecap: round; }
+.hero .mark [data-brand-glow] { stroke-width: 1.25px; filter: blur(0.65px); }
+
+@keyframes engrave {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes mark-settle {
+  from { opacity: 0.95; transform: translateX(-50%) scale(0.5); }
+  to { opacity: var(--brand-rest-opacity); transform: translateX(-50%) scale(1); }
+}
+
+.closing .mark {
+  bottom: -18%;
+  left: -5%;
+  width: min(48vw, 37rem);
+  opacity: 0.1;
+}
+
+@media (max-width: 767px) {
+  .hero .mark { --brand-rest-opacity: 0.36; }
+  .closing .mark { bottom: -4%; left: -12%; width: 100%; opacity: 0.07; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero .mark, .hero .mark path { animation: none; }
+  .hero .mark path { stroke-dasharray: none; }
+}

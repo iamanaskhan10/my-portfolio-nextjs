@@ -1,0 +1,34 @@
+.frame {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: clip;
+  pointer-events: none;
+  color: var(--signal);
+}
+
+.frame svg {
+  position: absolute;
+  height: auto;
+  overflow: visible;
+}
+
+.frame path {
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  vector-effect: non-scaling-stroke;
+}
+
+.core { stroke-width: 2.5px; opacity: 0.75; }
+.glow { stroke-width: 10px; opacity: 0.12; filter: blur(5px); }
+.hero svg { width: clamp(3rem, 6vw, 7rem); left: -0.75rem; top: 12%; }
+.stack svg { width: clamp(3rem, 5vw, 6rem); left: -0.75rem; bottom: -1rem; }
+.work svg { width: clamp(3rem, 5vw, 6rem); right: -0.75rem; top: 32%; }
+
+@media (max-width: 767px) {
+  .core { stroke-width: 2px; opacity: 0.65; }
+  .hero svg { width: 2.75rem; left: -1.2rem; top: 34%; }
+  .stack svg { width: 2.75rem; left: -1.1rem; bottom: -0.75rem; }
+  .work svg { width: 2.75rem; right: -1.1rem; top: 46%; }
+}

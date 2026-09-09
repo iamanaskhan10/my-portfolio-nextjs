@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 127.0.0.1 -p 3007",
+    "dev": "next dev -H 127.0.0.1 -p 3007 ",
     "build": "next build",
     "start": "next start -H 127.0.0.1 -p 3007",
-    "lint": "next lint"
+    "lint": "eslint src"
   },
   "dependencies": {
     "dotenv": "^16.5.0",

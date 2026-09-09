@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
-import { projects } from "../data/portfolio";
+import { caseStudies as projects } from "../data/caseStudies";
+import Link from "next/link";
+import Image from "next/image";
 
 const categories = ["All", "AI", "Full-stack"];
 
@@ -23,8 +25,7 @@ export default function Projects({ showAll = false }) {
           <ArrowLeft size={16} aria-hidden="true" /> Back to portfolio
         </a>
         <div className="case-studies__heading">
-          <p>Selected work</p>
-          <h1>Systems designed for useful outcomes.</h1>
+          <h1>Project case studies.</h1>
           <span>
             A focused set of AI, full-stack, and product-engineering projects from my résumé.
           </span>
@@ -49,6 +50,9 @@ export default function Projects({ showAll = false }) {
           {visibleProjects.map((project) => {
             const content = (
               <>
+                <div className="case-studies__cover" data-kind={project.cover.kind}>
+                  <Image src={project.cover.src} alt={project.cover.alt} width={1440} height={810} sizes="(max-width: 767px) 90vw, 43vw" />
+                </div>
                 <header>
                   <p>{project.number} / {project.category}</p>
                   <span>{project.period}</span>
@@ -63,16 +67,15 @@ export default function Projects({ showAll = false }) {
             );
 
             return project.link ? (
-              <a
+              <Link
                 key={project.title}
                 className="case-studies__card"
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`/projects/${project.slug}`}
               >
                 {content}
+                <span className="case-studies__read">Read case study</span>
                 <ArrowUpRight className="case-studies__arrow" size={18} aria-hidden="true" />
-              </a>
+              </Link>
             ) : (
               <article key={project.title} className="case-studies__card">
                 {content}

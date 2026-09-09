@@ -41,6 +41,7 @@ export const projects = [
       "Expanded available evidence context from 800 to 6,000 characters.",
       "Added document-aware filtering to keep answers relevant to their sources.",
     ],
+    link: "https://github.com/iamanaskhan10/voice-agent",
   },
   {
     number: "02",
@@ -56,6 +57,7 @@ export const projects = [
       "Validated signals with EMA, RSI, and ADX technical indicators.",
       "Connected CryptoPanic, RSS, and CoinGecko data pipelines for market context.",
     ],
+    link: "https://github.com/SyedAbdullahh/TradeMate",
   },
   {
     number: "03",
@@ -71,6 +73,7 @@ export const projects = [
       "Built content workflows that let the team update pages without code changes.",
       "Implemented inquiry flows and improved media delivery through CDN integration.",
     ],
+    link: "https://github.com/iamanaskhan10/tecaudex-website",
   },
   {
     number: "04",

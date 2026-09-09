@@ -1,0 +1,62 @@
+.section { position: relative; isolation: isolate; overflow: clip; min-height: min(50rem, 90svh); display: flex; align-items: center; padding: clamp(5rem, 9vw, 9rem) max(1.15rem, 4vw); scroll-margin-top: 4rem; background: #070707; color: #f7f5f0; }
+.atmosphere { position: absolute; z-index: -1; inset: 0; pointer-events: none; }
+.atmosphere > div { position: absolute; inset: 0; transition: opacity 550ms ease-out; }
+.tone0 { --light-core: #ff3409; --light-warm: #a77924; --light-haze: #681801; }
+.tone1 { --light-core: #6a62ff; --light-warm: #4b8db0; --light-haze: #191f65; }
+.tone2 { --light-core: #eeaa35; --light-warm: #af6025; --light-haze: #633310; }
+.tone3 { --light-core: #34ad8c; --light-warm: #8aa044; --light-haze: #154b39; }
+.atmosphere > div { background: radial-gradient(ellipse at 96% 5%, color-mix(in srgb, var(--light-haze) 85%, transparent), transparent 66%); }
+.atmosphere > div::before {
+  content: ""; position: absolute; inset: -22% -8% -12% 28%;
+  background: linear-gradient(108deg, transparent 9%, color-mix(in srgb, var(--light-warm) 38%, transparent) 29%, color-mix(in srgb, var(--light-warm) 12%, transparent) 43%, color-mix(in srgb, var(--light-core) 68%, transparent) 64%, color-mix(in srgb, var(--light-core) 32%, transparent) 82%, transparent 98%);
+  filter: blur(32px);
+  mask-image: linear-gradient(to bottom, #000 8%, #000c 32%, #0004 64%, transparent 90%);
+}
+.atmosphere > div::after {
+  content: ""; position: absolute; inset: -16% -12% 4% 35%;
+  background: radial-gradient(ellipse 19% 76% at 78% 4%, color-mix(in srgb, var(--light-core) 58%, transparent), transparent 80%), radial-gradient(ellipse 14% 64% at 39% 0%, color-mix(in srgb, var(--light-warm) 32%, transparent), transparent 84%);
+  transform: skewX(-12deg); filter: blur(18px);
+  mask-image: linear-gradient(to bottom, #000 0%, #0008 40%, transparent 90%);
+}
+.layout { display: grid; grid-template-columns: minmax(12rem, 0.55fr) minmax(0, 2fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); width: 100%; max-width: 90rem; margin: 0 auto; }
+.intro { padding-bottom: 3rem; }
+.intro h2 { margin: 0 0 1rem; font-size: clamp(3rem, 5.4vw, 6rem); font-weight: 500; line-height: 1.05; letter-spacing: -0.04em; }
+.archive { display: inline-flex; align-items: center; gap: 0.65rem; min-height: 44px; color: #b8b5b1; text-decoration: none; font-size: 0.75rem; }
+.gallery { min-width: 0; }
+.trackWindow { position: relative; }
+.edgeBlur { position: absolute; inset: 0 auto 0 0; width: 2rem; pointer-events: none; opacity: 0; backdrop-filter: blur(5px); mask-image: linear-gradient(to right, #000, transparent); }
+.trackWindow[data-scrolled="true"] .edgeBlur { opacity: 1; }
+.trackWindow[data-scrolled="true"] .track { mask-image: linear-gradient(to right, transparent, #000 1.5rem); }
+.track { position: relative; display: flex; gap: clamp(3rem, 7vw, 7rem); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; padding: 0.5rem 0 1rem 1.5rem; scroll-padding-left: 1.5rem; }
+.track::-webkit-scrollbar { display: none; }
+.track[data-dragging="true"] { scroll-snap-type: none; user-select: none; }
+.project { flex: 0 0 69%; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; scroll-snap-align: start; padding: 0.7rem 0 1rem; }
+.meta { display: flex; flex-wrap: wrap; gap: 0.7rem 1.4rem; color: #bdb6af; font-size: 0.69rem; letter-spacing: 0.04em; }
+.project h3 { margin: 1.35rem 0 0.9rem; font-size: clamp(2rem, 3.3vw, 3.5rem); font-weight: 500; line-height: 1.08; letter-spacing: -0.035em; text-wrap: balance; }
+.project h3 a { color: inherit; text-decoration: none; }
+.description { margin: 1.45rem 0; max-width: 49ch; color: #c6c1bb; font-size: 0.91rem; line-height: 1.85; }
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: auto 0 0; padding: 0; list-style: none; }
+.tags li { padding: 0.3rem 0.5rem; border-radius: 3px; color: #d3cec8; background: #ffffff0d; font-size: 0.65rem; }
+.caseLink { display: inline-flex; align-items: center; gap: 0.8rem; min-height: 44px; padding: 0.45rem 0.85rem; border: 1px solid #ffffff30; color: #f7f5f0; font-size: 0.73rem; text-decoration: none; }
+.section a:hover { color: #fff; }
+.caseLink:hover { background: #ffffff12; }
+.controls { display: flex; align-items: center; gap: 1.25rem; margin-top: 3rem; }
+.progress { flex: 1; height: 1px; background: #ffffff30; }
+.progress > span { display: block; width: 100%; height: 100%; transform-origin: left; background: #f7f5f0; transition: transform 180ms ease-out; }
+.count { color: #f7f5f0; font-size: 0.75rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.count > span { color: #a59f99; }
+.arrows { display: flex; gap: 0.5rem; }
+.arrows button { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid #ffffff30; border-radius: 50%; color: #f7f5f0; background: transparent; cursor: pointer; }
+.arrows button:hover:enabled { color: #080808; background: #f7f5f0; }
+.arrows button:disabled { opacity: 0.3; cursor: default; }
+.section :is(a, button, [tabindex]):focus-visible { outline: 2px solid #f7f5f0; outline-offset: 4px; }
+.track:focus-visible { outline-offset: 6px; }
+.cursor { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .section[data-cursor="true"], .section[data-cursor="true"] :is(a, button) { cursor: none; }
+  .cursor { position: fixed; display: block; z-index: 50; top: 0; left: 0; width: 48px; height: 48px; border-radius: 50%; background: #fff; mix-blend-mode: difference; pointer-events: none; opacity: 0; transform: translate3d(calc(var(--cursor-x, -100px) - 50%), calc(var(--cursor-y, -100px) - 50%), 0); }
+  .section[data-cursor="true"] .cursor { opacity: 1; }
+}
+@media (max-width: 900px) { .section { min-height: auto; } .layout { grid-template-columns: 1fr; gap: 2rem; } .intro { padding-bottom: 0; } .intro h2 { margin-bottom: 0.2rem; } .project { flex-basis: 66%; } }
+@media (max-width: 540px) { .project { flex-basis: 88%; } .track { gap: 1.5rem; } .project h3 { font-size: 2.2rem; } .description { font-size: 0.88rem; } .controls { gap: 0.85rem; margin-top: 1.5rem; } }
+@media (prefers-reduced-motion: reduce) { .atmosphere > div, .progress > span { transition: none; } .track { scroll-behavior: auto; } }

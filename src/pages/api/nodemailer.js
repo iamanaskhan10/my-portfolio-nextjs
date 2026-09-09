@@ -13,8 +13,20 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, message: "Please complete every field." });
   }
 
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpPort = Number(process.env.SMTP_PORT || 587);
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  const emailFrom = process.env.EMAIL_FROM;
+  const emailTo = process.env.EMAIL_TO || emailFrom;
+
+  if (!smtpHost || !smtpUser || !smtpPass || !emailFrom || !emailTo) {
     console.error("Email service is not configured.");
+    return res.status(503).json({ success: false, message: "Email service is unavailable." });
+  }
+
+  if (!Number.isInteger(smtpPort) || smtpPort <= 0) {
+    console.error("Email service has an invalid SMTP port.");
     return res.status(503).json({ success: false, message: "Email service is unavailable." });
   }
 
@@ -22,10 +34,17 @@ export default async function handler(req, res) {
 
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpPort === 465,
+      requireTLS: smtpPort === 587,
+      tls: {
+        minVersion: "TLSv1.2",
+        rejectUnauthorized: true,
+      },
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: smtpUser,
+        pass: smtpPass,
       },
       connectionTimeout: 10000,
       greetingTimeout: 10000,
@@ -33,8 +52,8 @@ export default async function handler(req, res) {
     });
 
     const mail = transporter.sendMail({
-      from: `Portfolio Contact <${process.env.EMAIL_USER}>`,
-      to: "anas23khan2002@gmail.com",
+      from: `Portfolio Contact <${emailFrom}>`,
+      to: emailTo,
       subject: `New message from ${name}`,
       replyTo: { name, address: email },
       text: `You have received a new message from your portfolio contact form:\n\nName: ${name}\nEmail: ${email}\nMessage:\n${message}`,
