@@ -7,7 +7,7 @@ export default function CaseStudyPage({ project, nextProject }) {
   return (
     <Layout>
       <Head>
-        <title>{project.title} — Case study · Anas Khan</title>
+        <title>{project.title} — Project · Anas Khan</title>
         <meta name="description" content={project.description} />
       </Head>
       <CaseStudy project={project} nextProject={nextProject} />

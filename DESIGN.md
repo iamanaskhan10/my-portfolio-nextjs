@@ -60,7 +60,7 @@ Use the locally hosted Anton face for established display and identity treatment
 
 ## Layout
 
-Use fluid widths and responsive gutters. Case studies have a 90rem maximum, `max(1.15rem, 6vw)` side padding, and a sticky 12rem contents column beside the story. Below 768px this becomes one column with inline contents navigation. The showcase keeps horizontal project columns and a visible next-item preview; below 900px the title sits above the track, and below 540px columns occupy 88% of the track. The footer has a compact 78rem inner row and a two-column mobile arrangement.
+Use fluid widths and responsive gutters. Project detail pages use a 78rem reading width, fluid side padding, and a sticky 12rem contents column beside the story. Below 768px this becomes one column with inline contents navigation. The showcase keeps horizontal project columns and a visible next-item preview; below 900px the title sits above the track, and below 540px columns occupy 88% of the track. The footer has a compact 78rem inner row and a two-column mobile arrangement.
 
 ## Elevation & Depth
 
@@ -74,13 +74,16 @@ Preserve the existing mixture of open editorial sections, fine borders, rectangu
 
 ## Components
 
+- **Homepage hero:** the portrait, AK watermark, and oversized name form a scroll-linked depth composition as the hero leaves the viewport. The portrait lags behind the page, the watermark lags further, and the name moves slightly ahead. The headline group and name sit above the viewport edges to preserve breathing room without adding a blank runway. Travel is bounded, smaller below 768px, and removed for reduced motion.
 - **Showcase:** open text columns, one primary case-study action per project, technology tags, progress line, count, and 44px arrow controls. Support mouse drag, native touch swipe, horizontal scrolling, and Arrow/Home/End keys on the focused track. A 48px white difference-blend cursor appears only on fine mouse devices. Preserve visible focus and reduced-motion behavior. Detailed constraints live in `.impeccable/briefs/projects.md`.
-- **Case study:** title, factual headline, project/year metadata, source or discussion action, captioned visual, contents navigation, technology list, problem, implementation, workflow, decisions, outcomes, and next-project link. Use lime links and focus outlines within the established olive/cream system.
-- **Case-study gallery:** a large 16:10 preview and three labeled thumbnails cover identity/system overview, workflow, and an implementation detail. Lime outlines indicate selection. The full-screen native dialog provides previous/next buttons, wrapping arrow-key navigation, Escape, focus return, and body scroll locking. Keep captions and alternative text explicit about illustrative content; DarziXpress retains its original identity asset.
+- **Project detail:** title, factual headline, project/year metadata, source or discussion action, captioned visual, contents navigation, technology list, problem, implementation, workflow, decisions, outcomes, and next-project link. Use lime links and focus outlines within the established dark olive/cream system.
+- **Case-study gallery:** a full-width 16:9 opening image followed by two staggered detail images, with captions on a paper surface. Each image opens the native full-screen dialog with previous/next controls, arrow keys, Escape, focus return, and body scroll locking. Keep illustrations explicitly labeled; DarziXpress retains its original identity asset.
 - **Experience:** an oversized dark uppercase “WORK EXPERIENCE” title sits behind three overlapping paper pages showing the original roles, companies, dates, and a page count. Sequential arrivals build the stack one page on top of another within a sticky scene; scrolling backward reverses it. A resume action and original selected outcomes follow. Reduced motion or viewports at most 650px tall restore separate, untransformed cards. See `.impeccable/briefs/experience.md`.
 - **Archive:** maintain project images, category filters, and direct case-study links within the global visual system.
 - **Footer:** compact identity, contact/social navigation, and a round back-to-top control; no laser treatment.
-- **Technology section:** its arrival begins early and runs once per page load; retain hover tilt, delayed details, and reduced-motion support.
+- **Technology section:** open icons and labels beside the introduction, with plain text category filters. No enclosing panel, tile backgrounds, accent edges, glints, or laser ornament. Retain arrival, hover tilt, delayed details, keyboard access, and reduced-motion support.
+- **About:** a full-width paper section with dark text, generous vertical spacing, and a dark olive emphasis separates the hero from the toolkit.
+- **Project imagery:** homepage projects show the existing cover by default and crossfade to their workflow illustration on hover or focus. The archive uses open, staggered image columns on paper; individual studies share that paper surface and close with a preview of the next project.
 
 ## Do's and Don'ts
 

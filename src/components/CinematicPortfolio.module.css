@@ -12,8 +12,16 @@
   --hero-reveal-at: 750ms;
   --hero-content-left: 9%;
   --hero-visual-center: 66.5%;
+  --hero-portrait-travel: clamp(6rem, 18svh, 11rem);
+  --hero-mark-travel: clamp(4rem, 12svh, 7rem);
+  --hero-name-travel: clamp(2rem, 5svh, 3rem);
   position: relative;
-  min-height: max(45rem, 100svh);
+  background: var(--hero-ink);
+}
+
+.heroScene {
+  position: relative;
+  height: max(45rem, 100svh);
   overflow: clip;
   isolation: isolate;
   background: var(--hero-ink);
@@ -22,7 +30,7 @@
 .statement {
   position: absolute;
   z-index: 2;
-  top: 22.5%;
+  top: 19.5%;
   left: var(--hero-content-left);
   width: 44%;
 }
@@ -80,7 +88,7 @@
 
 .name > span:last-child { animation-delay: calc(var(--hero-reveal-at) + 380ms); }
 
-.exploreLinks, .hire, .hero > [data-laser-frame] {
+.exploreLinks, .hire, .heroScene > [data-laser-frame] {
   animation: hero-controls 450ms ease-out calc(var(--hero-reveal-at) + 400ms) both;
 }
 
@@ -137,6 +145,20 @@
   object-position: center bottom;
 }
 
+/* Independent translation preserves the opening animation and type scaling.
+   The mark lags behind the portrait; the foreground name leaves first. */
+.portrait {
+  translate: 0 calc(clamp(0, var(--hero-scroll, 0), 1) * var(--hero-portrait-travel));
+}
+
+.portrait > [data-brand-watermark] {
+  translate: 0 calc(clamp(0, var(--hero-scroll, 0), 1) * var(--hero-mark-travel));
+}
+
+.name {
+  translate: 0 calc(clamp(0, var(--hero-scroll, 0), 1) * var(--hero-name-travel) * -1);
+}
+
 @keyframes portrait-rise {
   from {
     opacity: 0;
@@ -152,7 +174,7 @@
 .name {
   position: absolute;
   z-index: 4;
-  bottom: 0.12em;
+  bottom: 0.32em;
   left: var(--hero-content-left);
   margin: 0;
   color: var(--hero-paper);
@@ -210,7 +232,7 @@
   }
 
   .statement {
-    top: 22%;
+    top: 19.5%;
     left: var(--hero-content-left);
     width: 44%;
   }
@@ -238,11 +260,17 @@
   .hero {
     --hero-content-left: 1.1rem;
     --hero-visual-center: 50%;
-    min-height: max(43rem, 100svh);
+    --hero-portrait-travel: 3.25rem;
+    --hero-mark-travel: 2rem;
+    --hero-name-travel: 0.875rem;
+  }
+
+  .heroScene {
+    height: max(43rem, 100svh);
   }
 
   .statement {
-    top: 6.7rem;
+    top: 5.5rem;
     right: 1.1rem;
     left: var(--hero-content-left);
     width: auto;
@@ -273,7 +301,7 @@
   }
 
   .name {
-    bottom: 0.24em;
+    bottom: 0.48em;
     left: 5%;
     font-size: 19vw;
     letter-spacing: -0.025em;
@@ -305,7 +333,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .exploreLinks, .hire, .hero > [data-laser-frame] { animation: none; }
+  .portrait, .portrait > [data-brand-watermark], .name { translate: none; }
+  .exploreLinks, .hire, .heroScene > [data-laser-frame] { animation: none; }
   .titleWord, .name > span { animation: none; }
   .portraitImage {
     animation: none;

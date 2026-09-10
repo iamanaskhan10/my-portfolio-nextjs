@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { caseStudies } from "../../data/caseStudies";
 import useMotionPreference from "../../hooks/useMotionPreference";
@@ -60,7 +61,7 @@ export default function ProjectShowcase() {
       <div className={styles.layout}>
         <div className={styles.intro}>
           <h2 id="work-heading">Projects</h2>
-          <Link className={styles.archive} href="/projects">All case studies <ArrowUpRight size={16} aria-hidden="true" /></Link>
+          <Link className={styles.archive} href="/projects">All projects <ArrowUpRight size={16} aria-hidden="true" /></Link>
         </div>
         <div className={styles.gallery}>
           <div className={styles.trackWindow}>
@@ -101,7 +102,13 @@ export default function ProjectShowcase() {
               <article key={project.slug} className={styles.project} aria-label={project.title}>
                 <div className={styles.meta}><span>{project.number} / {project.group}</span><span>{project.period}</span></div>
                 <h3><Link href={`/projects/${project.slug}`}>{project.title}</Link></h3>
-                <Link className={styles.caseLink} href={`/projects/${project.slug}`}>View case study <ArrowUpRight size={14} aria-hidden="true" /></Link>
+                <div className={styles.projectAction}>
+                  <Link className={styles.caseLink} href={`/projects/${project.slug}`}>View project <ArrowUpRight size={14} aria-hidden="true" /></Link>
+                  <span className={styles.projectPreview} data-kind={project.cover.kind} aria-hidden="true">
+                    <Image src={project.cover.src} alt="" width={project.gallery[0].width} height={project.gallery[0].height} sizes="20rem" />
+                    <small>{project.cover.kind === "brand" ? "Project identity" : "Project illustration"}</small>
+                  </span>
+                </div>
                 <p className={styles.description}>{project.description}</p>
                 <ul className={styles.tags} aria-label="Technologies">
                   {project.stack.split(" · ").map((tag) => <li key={tag}>{tag}</li>)}

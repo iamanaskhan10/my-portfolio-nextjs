@@ -13,7 +13,6 @@ import {
 import { technologies, technologyCategories } from "../../data/technologies";
 import useMotionPreference from "../../hooks/useMotionPreference";
 import styles from "./TechnologyStack.module.css";
-import LaserFrame from "./LaserFrame";
 
 const icons = {
   typescript: SiTypescript,
@@ -136,7 +135,6 @@ function TechnologyTile({ technology, index, controls, hasEntered, active, showD
         onClick={(event) => { cancelDetail(); showDetail(event.currentTarget, technology.name); }}>
         <span className={styles.iconWell}><Icon className={styles.icon} aria-hidden="true" /></span>
         <span className={styles.technologyName}>{technology.name}</span>
-        <span className={styles.cardGlint} aria-hidden="true" />
       </motion.button>
       <div id={detailId} role="tooltip" className={styles.tooltip} hidden={!open} data-below={active?.below}>
         <p>{technology.name} — {technology.detail}</p>
@@ -210,7 +208,6 @@ export default function TechnologyStack() {
   return (
     <section id="capabilities" className={styles.section} aria-labelledby="capabilities-heading">
       <noscript><style>{"#technology-grid > li { opacity: 1 !important; transform: none !important; }"}</style></noscript>
-      <LaserFrame variant="stack" />
       <div className={styles.inner}>
         <div className={styles.heading}>
           <h2 id="capabilities-heading">Technologies<br /><span>I build with.</span></h2>

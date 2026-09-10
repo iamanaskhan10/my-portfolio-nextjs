@@ -1,13 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { useRouter } from "next/router";
 import CaseStudyGallery from "./CaseStudyGallery";
 import styles from "./CaseStudy.module.css";
 
 export default function CaseStudy({ project, nextProject }) {
+  const router = useRouter();
+
   return (
     <article className={styles.caseStudy}>
       <header className={styles.hero}>
-        <Link className={styles.back} href="/projects"><ArrowLeft size={16} aria-hidden="true" /> All case studies</Link>
+        <button className={styles.back} type="button" onClick={() => router.back()}><ArrowLeft size={16} aria-hidden="true" /> Back</button>
         <h1>{project.title}</h1>
         <p className={styles.headline}>{project.headline}</p>
         <div className={styles.heroBottom}>
@@ -27,7 +33,7 @@ export default function CaseStudy({ project, nextProject }) {
 
       <div className={styles.body}>
         <aside className={styles.aside}>
-          <nav aria-label="Case study contents">
+          <nav aria-label="Project contents">
             <a href="#gallery">Image gallery</a>
             <a href="#problem">The problem</a>
             <a href="#implementation">Implementation</a>
@@ -62,7 +68,8 @@ export default function CaseStudy({ project, nextProject }) {
         </div>
       </div>
       <Link href={`/projects/${nextProject.slug}`} className={styles.next}>
-        <span>Next case study<strong>{nextProject.title}</strong></span><ArrowUpRight size={32} aria-hidden="true" />
+        <div className={styles.nextImage} data-kind={nextProject.cover.kind}><Image src={nextProject.cover.src} alt={nextProject.cover.alt} width={nextProject.gallery[0].width} height={nextProject.gallery[0].height} sizes="(max-width: 767px) 88vw, 30vw" /></div>
+        <span>Next project<strong>{nextProject.title}</strong></span><ArrowUpRight size={32} aria-hidden="true" />
       </Link>
     </article>
   );
