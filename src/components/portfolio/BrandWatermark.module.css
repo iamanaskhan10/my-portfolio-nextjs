@@ -59,7 +59,12 @@
 }
 
 @media (max-width: 767px) {
-  .hero .mark { --brand-rest-opacity: 0.36; }
+  .hero .mark {
+    --brand-rest-opacity: 0.36;
+    top: 0;
+    /* Size the AK to the screen, not the wider portrait cutout. */
+    width: min(100%, 112vw);
+  }
   .closing .mark { bottom: -4%; left: -12%; width: 100%; opacity: 0.07; }
 }
 

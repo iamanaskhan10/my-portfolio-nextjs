@@ -5,6 +5,7 @@ import { projects } from "./portfolio";
 const studies = [
   {
     slug: "voiceforge-ai",
+    metric: { value: "7.5×", label: "retrieved evidence capacity", detail: "800 → 6,000 characters of context" },
     sourceAvailable: false,
     cover: { src: "/case-studies/voiceforge-ai.svg", alt: "System illustration connecting a voice waveform to retrieved documents and source citations", caption: "System illustration: voice interaction, document retrieval, and cited responses." },
     headline: "Voice conversations, grounded in documents.",
@@ -20,6 +21,7 @@ const studies = [
   },
   {
     slug: "tradem8",
+    metric: { value: "3", label: "validation indicators", detail: "EMA, RSI and ADX" },
     sourceAvailable: false,
     cover: { src: "/case-studies/tradem8.svg", alt: "Illustration combining chart patterns, news and sentiment, and technical indicator validation", caption: "Analysis workflow illustration. The chart is illustrative, not market or performance data." },
     headline: "Chart patterns meet market context.",
@@ -35,6 +37,7 @@ const studies = [
   },
   {
     slug: "tecaudex-website-cms",
+    metric: { value: "CMS", label: "content-driven publishing", detail: "Page updates without code changes" },
     cover: { src: "/case-studies/tecaudex-website-cms.svg", alt: "System illustration showing CMS content passing through page generation into a public website", caption: "System illustration: content management, page generation, and delivery." },
     headline: "A company website its team can keep current.",
     problem: "Company pages and project portfolios need to change as the business changes. The Tecaudex platform puts content workflows behind the website so the team can update pages without changing application code.",
@@ -49,6 +52,7 @@ const studies = [
   },
   {
     slug: "darzixpress",
+    metric: { value: "3", label: "distinct user journeys", detail: "Customers, tailors and administrators" },
     cover: { src: "/darzi.png", alt: "DarziXpress tailoring service logo with a sewing machine", caption: "DarziXpress project identity, from the original portfolio assets.", kind: "brand" },
     headline: "From finding a tailor to following an order.",
     problem: "A tailoring service involves customers, tailors, and administrators, each with different tasks. DarziXpress connects those roles in one booking and order-management platform, with visibility into an order as it progresses.",

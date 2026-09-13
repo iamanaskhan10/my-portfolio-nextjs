@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Github } from "lucide-react";
 import { useRouter } from "next/router";
 import CaseStudyGallery from "./CaseStudyGallery";
+import ProjectMetric from "./ProjectMetric";
 import styles from "./CaseStudy.module.css";
 
 export default function CaseStudy({ project, nextProject }) {
@@ -24,7 +25,7 @@ export default function CaseStudy({ project, nextProject }) {
           {project.sourceAvailable === false ? (
             <Link className={styles.source} href="/#contact">Discuss this project <ArrowUpRight size={17} aria-hidden="true" /></Link>
           ) : (
-            <a className={styles.source} href={project.link} target="_blank" rel="noopener noreferrer">View source <ArrowUpRight size={17} aria-hidden="true" /></a>
+            <a className={styles.source} href={project.link} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> View on GitHub <ArrowUpRight size={17} aria-hidden="true" /></a>
           )}
         </div>
       </header>
@@ -62,6 +63,7 @@ export default function CaseStudy({ project, nextProject }) {
           </section>
           <section id="outcomes">
             <h2>Outcomes</h2>
+            <ProjectMetric metric={project.metric} />
             <ul className={styles.outcomes}>{project.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul>
             <p>{project.takeaway}</p>
           </section>

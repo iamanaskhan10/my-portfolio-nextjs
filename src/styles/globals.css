@@ -101,8 +101,9 @@ body {
 }
 
 .site-header__mark {
-  width: 2rem;
-  height: 2rem;
+  width: clamp(1.5rem, 7vw, 2rem);
+  height: auto;
+  aspect-ratio: 100 / 96;
   flex: none;
   color: var(--signal);
 }
@@ -657,6 +658,10 @@ body {
   cursor: wait;
   opacity: 0.58;
   transform: none;
+}
+
+.engineering-contact-form__footer button.engineering-button:not(:disabled) {
+  cursor: pointer;
 }
 
 .engineering-button:focus-visible,
