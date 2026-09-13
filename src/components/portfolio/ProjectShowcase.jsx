@@ -100,7 +100,7 @@ export default function ProjectShowcase() {
             }}>
             {caseStudies.map((project) => (
               <article key={project.slug} className={styles.project} aria-label={project.title}>
-                <div className={styles.meta}><span>{project.number} / {project.group}</span><span>{project.period}</span></div>
+                <div className={styles.meta}><span>{project.group}</span><span>{project.period}</span></div>
                 <h3><Link href={`/projects/${project.slug}`}>{project.title}</Link></h3>
                 <div className={styles.projectAction}>
                   <Link className={styles.caseLink} href={`/projects/${project.slug}`}>View project <ArrowUpRight size={14} aria-hidden="true" /></Link>
@@ -122,7 +122,6 @@ export default function ProjectShowcase() {
             <div className={styles.progress} role="progressbar" aria-label="Project position" aria-valuemin={1} aria-valuemax={caseStudies.length} aria-valuenow={current + 1}>
               <span style={{ transform: `scaleX(${(current + 1) / caseStudies.length})` }} />
             </div>
-            <span className={styles.count}>{String(current + 1).padStart(2, "0")} <span>/ {String(caseStudies.length).padStart(2, "0")}</span></span>
             <div className={styles.arrows}>
               <button type="button" onClick={() => goTo(current - 1)} disabled={current === 0} aria-label="Previous project" aria-controls="project-showcase"><ArrowLeft size={19} aria-hidden="true" /></button>
               <button type="button" onClick={() => goTo(current + 1)} disabled={current === caseStudies.length - 1} aria-label="Next project" aria-controls="project-showcase"><ArrowRight size={19} aria-hidden="true" /></button>
