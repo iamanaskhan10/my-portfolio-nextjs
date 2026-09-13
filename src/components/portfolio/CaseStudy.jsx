@@ -38,7 +38,7 @@ export default function CaseStudy({ project, nextProject }) {
             <a href="#gallery">Image gallery</a>
             <a href="#problem">The problem</a>
             <a href="#implementation">Implementation</a>
-            <a href="#decisions">Key decisions</a>
+            <a href="#features">Features</a>
             <a href="#outcomes">Outcomes</a>
           </nav>
           <h2>Built with</h2>
@@ -57,9 +57,9 @@ export default function CaseStudy({ project, nextProject }) {
               <ol>{project.flow.map((step, index) => <li key={step}><span>{step}</span>{index < project.flow.length - 1 && <ArrowRight size={17} aria-hidden="true" />}</li>)}</ol>
             </figure>
           </section>
-          <section id="decisions">
-            <h2>Key decisions</h2>
-            <dl className={styles.decisions}>{project.decisions.map((decision) => <div key={decision.title}><dt>{decision.title}</dt><dd>{decision.body}</dd></div>)}</dl>
+          <section id="features">
+            <h2>Features</h2>
+            <ul className={styles.features}>{project.features.map((feature) => <li key={feature.title}><h3>{feature.title}</h3><p>{feature.body}</p></li>)}</ul>
           </section>
           <section id="outcomes">
             <h2>Outcomes</h2>

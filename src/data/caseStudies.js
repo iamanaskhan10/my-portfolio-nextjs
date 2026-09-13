@@ -12,6 +12,12 @@ const studies = [
     problem: "A voice interface is only as useful as the information behind its answers. VoiceForge AI brings document retrieval into a real-time browser conversation, with source citations that let a user trace an answer back to its evidence.",
     approach: "The system combines a Next.js browser experience with Python and FastAPI services. PostgreSQL and pgvector support the document knowledge layer, while hybrid retrieval and document-aware filtering shape the evidence available to a response. Docker packages the services for deployment.",
     flow: ["Browser voice interaction", "Hybrid document retrieval", "Relevant evidence", "Response with citations"],
+    features: [
+      { title: "Real-time voice conversations", body: "Interact with the assistant through voice directly in the browser." },
+      { title: "Hybrid document retrieval", body: "Find supporting information using hybrid retrieval and document-aware filtering." },
+      { title: "Visible source citations", body: "Trace a response back to the documents that supplied its evidence." },
+      { title: "Expanded evidence window", body: "Use up to 6,000 characters of retrieved context to support a response, increased from 800." },
+    ],
     decisions: [
       { title: "Give the response more evidence", body: "The available retrieved context grew from 800 to 6,000 characters. This gives the response a larger evidence window while keeping document retrieval central to the conversation." },
       { title: "Keep retrieval tied to the document", body: "Document-aware filtering keeps answers relevant to their sources. Citations make that relationship visible in the browser experience." },
@@ -28,6 +34,12 @@ const studies = [
     problem: "A chart pattern describes only one part of a market. TradeM8 brings visual pattern detection, technical indicators, financial news, and social sentiment into a confidence-based analysis experience.",
     approach: "The platform uses Python and FastAPI with a React interface and PostgreSQL. YOLOv8 and Transformers form part of the AI stack. CryptoPanic, RSS, and CoinGecko pipelines supply market context alongside chart-pattern analysis.",
     flow: ["Charts and market feeds", "Patterns and sentiment", "Indicator validation", "Confidence-based analysis"],
+    features: [
+      { title: "Chart-pattern detection", body: "Analyze visual chart patterns with a computer-vision workflow built around YOLOv8." },
+      { title: "News and sentiment analysis", body: "Bring financial news and social sentiment into the same analysis as chart patterns." },
+      { title: "Technical validation", body: "Evaluate detected signals with EMA, RSI and ADX for additional technical context." },
+      { title: "Connected market feeds", body: "Combine CryptoPanic, RSS and CoinGecko pipelines for news and market context." },
+    ],
     decisions: [
       { title: "Combine different kinds of evidence", body: "Chart-pattern detection is considered alongside financial news and social sentiment. The project brings those inputs into one analysis workflow." },
       { title: "Validate signals with indicators", body: "EMA, RSI, and ADX provide additional technical context for the detected signals." },
@@ -43,6 +55,12 @@ const studies = [
     problem: "Company pages and project portfolios need to change as the business changes. The Tecaudex platform puts content workflows behind the website so the team can update pages without changing application code.",
     approach: "A Next.js website works with a Ruby on Rails and PostgreSQL stack. Dynamic routes and automated page generation turn managed content into public pages. Search-friendly metadata, inquiry flows, and CDN media delivery complete the publishing experience.",
     flow: ["Team updates content", "CMS content workflows", "Generated website pages", "Visitors and inquiries"],
+    features: [
+      { title: "Content management", body: "Update company pages and portfolio content through the CMS without changing application code." },
+      { title: "Automated page generation", body: "Turn managed content into public pages with dynamic routes and automated generation." },
+      { title: "Search-friendly metadata", body: "Give public pages the metadata needed to describe their content to search engines." },
+      { title: "Inquiries and media delivery", body: "Connect visitors with the team through inquiry flows and serve website media through a CDN." },
+    ],
     decisions: [
       { title: "Separate publishing from code changes", body: "CMS-driven content workflows let the team update the website and portfolio through managed content instead of editing the application." },
       { title: "Treat each page as a discoverable destination", body: "Dynamic routes, automated page generation, and search-friendly metadata support the public content structure." },
@@ -58,6 +76,12 @@ const studies = [
     problem: "A tailoring service involves customers, tailors, and administrators, each with different tasks. DarziXpress connects those roles in one booking and order-management platform, with visibility into an order as it progresses.",
     approach: "The MERN stack—MongoDB, Express, React, and Node.js—supports the web application. Separate role-based journeys organize the booking and management experience, with real-time order tracking and secure email notifications connecting the stages of an order.",
     flow: ["Customer booking", "Tailor workflow", "Order tracking", "Email notifications"],
+    features: [
+      { title: "Role-based journeys", body: "Give customers, tailors and administrators dedicated flows for their responsibilities." },
+      { title: "Booking and order management", body: "Connect customer bookings with the tailor's workflow and ongoing order management." },
+      { title: "Real-time order tracking", body: "Follow an order as it progresses through the tailoring service." },
+      { title: "Email notifications", body: "Keep customers informed with secure email notifications alongside order tracking." },
+    ],
     decisions: [
       { title: "Design around three distinct roles", body: "Customers, tailors, and administrators have separate flows, keeping their responsibilities clear within the shared platform." },
       { title: "Connect booking to fulfillment", body: "The experience continues beyond the initial booking into order management and real-time tracking." },
