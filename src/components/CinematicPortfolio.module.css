@@ -123,6 +123,9 @@
 }
 
 .exploreLinks a:hover { color: var(--hero-accent); }
+.exploreLinks svg { transition: transform 200ms ease-out; }
+.exploreLinks a:hover svg, .exploreLinks a:focus-visible svg { transform: translate(2px, -2px); }
+.exploreLinks a[download]:hover svg, .exploreLinks a[download]:focus-visible svg { transform: translateY(3px); }
 .exploreLinks a:focus-visible { outline: 2px solid var(--hero-accent); outline-offset: 4px; }
 
 .portrait {
@@ -352,5 +355,6 @@
   }
 
   .hire { transition: none; }
+  .exploreLinks svg { transition: none; transform: none !important; }
 
 }

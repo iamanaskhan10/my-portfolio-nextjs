@@ -11,8 +11,8 @@ import { useRouter } from "next/router";
 const navigation = [
   { label: "About", href: "#about" },
   { label: "Tech stack", href: "#capabilities" },
-  { label: "Work", href: "#projects" },
   { label: "Experience", href: "#experience" },
+  { label: "Projects", href: "#projects" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -32,17 +32,53 @@ export default function Layout({ children }) {
   const [activeSection, setActiveSection] = useState("home");
   const mobileMenuButtonRef = useRef(null);
   const mobileSidebarRef = useRef(null);
+  const pendingSectionRef = useRef(null);
+
+  const navigateFromMenu = (event, hash) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (router.pathname === "/") {
+      event.preventDefault();
+      pendingSectionRef.current = hash;
+    }
+    setMobileMenuOpen(false);
+  };
+
+  const finishMenuNavigation = () => {
+    const hash = pendingSectionRef.current;
+    pendingSectionRef.current = null;
+    if (!hash) return;
+    // Wait for the dialog to unmount and release its scroll lock before jumping.
+    requestAnimationFrame(() => {
+      document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+      window.history.pushState(null, "", hash);
+    });
+  };
 
   useEffect(() => {
-    const sections = [...document.querySelectorAll("main section[id]")];
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) setActiveSection(entry.target.id);
+    if (router.pathname !== "/") return;
+    const sections = ["home", ...navigation.map((item) => item.href.slice(1))]
+      .map((id) => document.getElementById(id)).filter(Boolean);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const readingLine = Math.max(100, window.innerHeight * 0.3);
+      let current = sections[0]?.id;
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= readingLine) current = section.id;
       }
-    }, { rootMargin: "-20% 0px -65% 0px", threshold: 0 });
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
+      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) current = sections.at(-1)?.id;
+      setActiveSection(current ?? "home");
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [router.pathname]);
 
   useEffect(() => {
     const handleChapterLink = (event) => {
@@ -149,7 +185,7 @@ export default function Layout({ children }) {
       </header>
       <main id="main-content">{children}</main>
       <Footer />
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={finishMenuNavigation}>
         {mobileMenuOpen && (
           <>
             <motion.button
@@ -182,12 +218,12 @@ export default function Layout({ children }) {
                 </button>
               </div>
               <nav className="mobile-sidebar__nav" aria-label="Mobile navigation">
-                <a href={sectionHref("#home")} onClick={() => setMobileMenuOpen(false)}>Home</a>
+                <a href={sectionHref("#home")} onClick={(event) => navigateFromMenu(event, "#home")}>Home</a>
                 {navigation.map((item) => (
-                  <a key={item.href} href={sectionHref(item.href)} aria-current={router.pathname === "/" && activeSection === item.href.slice(1) ? "location" : undefined} onClick={() => setMobileMenuOpen(false)}>{item.label}</a>
+                  <a key={item.href} href={sectionHref(item.href)} aria-current={router.pathname === "/" && activeSection === item.href.slice(1) ? "location" : undefined} onClick={(event) => navigateFromMenu(event, item.href)}>{item.label}</a>
                 ))}
               </nav>
-              <a className="mobile-sidebar__email" href={sectionHref("#contact")}>
+              <a className="mobile-sidebar__email" href={sectionHref("#contact")} onClick={(event) => navigateFromMenu(event, "#contact")}>
                 Let&apos;s build something useful
               </a>
             </motion.aside>

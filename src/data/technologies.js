@@ -1,31 +1,68 @@
-// Core Stack is the curated introduction; category filters expose the full set.
-export const technologyCategories = ["Core Stack", "Frontend", "Backend", "Data", "Applied AI", "Cloud/DevOps", "Languages"];
-
-export const technologies = [
-  {"name":"TypeScript","icon":"typescript","color":"#79b8f3","core":true,"categories":["Languages","Frontend"],"detail":"Typed interfaces & applications"},
-  {"name":"React","icon":"react","color":"#73dbf5","core":true,"categories":["Frontend"],"detail":"Component-based interfaces"},
-  {"name":"Next.js","icon":"next","color":"#f2f0e8","core":true,"categories":["Frontend"],"detail":"Full-stack web applications"},
-  {"name":"Node.js","icon":"node","color":"#8dc975","core":true,"categories":["Backend"],"detail":"Backend services & real-time APIs"},
-  {"name":"Python","icon":"python","color":"#82b8f0","core":true,"categories":["Languages","Backend","Applied AI"],"detail":"AI services & backend APIs"},
-  {"name":"FastAPI","icon":"fastapi","color":"#56d5bf","core":true,"categories":["Backend"],"detail":"Python APIs for AI products"},
-  {"name":"PostgreSQL","icon":"postgres","color":"#8ebce2","core":true,"categories":["Data"],"detail":"Relational data modeling"},
-  {"name":"Docker","icon":"docker","color":"#65b5f7","core":true,"categories":["Cloud/DevOps"],"detail":"Containerized deployment"},
-  {"name":"AWS","icon":"aws","color":"#f5b866","core":true,"categories":["Cloud/DevOps"],"detail":"Cloud infrastructure & delivery"},
-  {"name":"JavaScript","icon":"javascript","color":"#f3d855","core":true,"categories":["Languages","Frontend"],"detail":"Interactive web applications"},
-  {"name":"Tailwind CSS","icon":"tailwind","color":"#62d1df","categories":["Frontend"],"detail":"Responsive interface styling"},
-  {"name":"Ruby on Rails","icon":"rails","color":"#f07f86","categories":["Backend"],"detail":"Content management & APIs"},
-  {"name":"Java","icon":"java","color":"#efac70","categories":["Languages"],"detail":"Object-oriented software"},
-  {"name":"HTML","icon":"html","color":"#f28b63","categories":["Languages","Frontend"],"detail":"Accessible page structure"},
-  {"name":"CSS","icon":"css","color":"#88a8f8","categories":["Languages","Frontend"],"detail":"Layouts & interface animation"},
-  {"name":"SQL","icon":"sql","color":"#e7c780","categories":["Languages","Data"],"detail":"Queries & relational workflows"},
-  {"name":"Express","icon":"express","color":"#dedfd7","categories":["Backend"],"detail":"Node.js application APIs"},
-  {"name":"MongoDB","icon":"mongo","color":"#81cf85","categories":["Data"],"detail":"Document-based data storage"},
-  {"name":"MySQL","icon":"mysql","color":"#8ccada","categories":["Data"],"detail":"Relational database storage"},
-  {"name":"Socket.IO","icon":"socket","color":"#e0e4da","categories":["Backend"],"detail":"Real-time client communication"},
-  {"name":"pgvector","icon":"vector","color":"#a1b8f3","categories":["Data","Applied AI"],"detail":"Vector search in PostgreSQL"},
-  {"name":"RAG","icon":"rag","color":"#b9f35a","categories":["Applied AI"],"detail":"Document-grounded answers"},
-  {"name":"YOLOv8","icon":"yolo","color":"#e6a0d2","categories":["Applied AI"],"detail":"Visual pattern detection"},
-  {"name":"Transformers","icon":"transformers","color":"#f3d879","categories":["Applied AI"],"detail":"Language & sentiment analysis"},
-  {"name":"GitHub","icon":"github","color":"#e9e6f0","categories":["Cloud/DevOps"],"detail":"Source control & collaboration"},
-  {"name":"Unity","icon":"unity","color":"#d4dfd3","categories":["Frontend"],"detail":"Interactive game experiences"},
+export const technologyGroups = [
+  {
+    name: "Languages",
+    items: [
+      { name: "JavaScript", icon: "javascript", color: "#f3d855", detail: "Modern web application logic" },
+      { name: "Python", icon: "python", color: "#82b8f0", detail: "Backend and AI development" },
+      { name: "Java", icon: "java", color: "#efac70", detail: "Object-oriented software" },
+      { name: "SQL", icon: "sql", color: "#e7c780", detail: "Relational queries and data" },
+    ],
+  },
+  {
+    name: "Frontend",
+    items: [
+      { name: "React.js", icon: "react", color: "#73dbf5", detail: "Component-based interfaces" },
+      { name: "Next.js", icon: "next", color: "#f2f0e8", detail: "Full-stack React applications" },
+      { name: "Tailwind CSS", icon: "tailwind", color: "#62d1df", detail: "Responsive interface styling" },
+    ],
+  },
+  {
+    name: "Backend",
+    items: [
+      { name: "Ruby on Rails", icon: "rails", color: "#f07f86", detail: "Web applications and APIs" },
+      { name: "Node.js", icon: "node", color: "#8dc975", detail: "JavaScript backend services" },
+      { name: "Express.js", icon: "express", color: "#dedfd7", detail: "Node.js API development" },
+      { name: "FastAPI", icon: "fastapi", color: "#56d5bf", detail: "Python API services" },
+      { name: "REST APIs", icon: "rest", color: "#b9f35a", detail: "Resource-based integrations" },
+      { name: "JWT Authentication", icon: "jwt", color: "#e6a0d2", detail: "Token-based authentication" },
+      { name: "Socket.IO", icon: "socket", color: "#e0e4da", detail: "Real-time communication" },
+    ],
+  },
+  {
+    name: "Databases",
+    items: [
+      { name: "PostgreSQL", icon: "postgres", color: "#8ebce2", detail: "Relational data modeling" },
+      { name: "MongoDB", icon: "mongo", color: "#81cf85", detail: "Document data storage" },
+      { name: "MySQL", icon: "mysql", color: "#8ccada", detail: "Relational database systems" },
+      { name: "pgvector", icon: "vector", color: "#a1b8f3", detail: "Vector search in PostgreSQL" },
+    ],
+  },
+  {
+    name: "AI / ML",
+    items: [
+      { name: "Computer Vision", icon: "vision", color: "#e6a0d2", detail: "YOLOv8 visual detection" },
+      { name: "NLP", icon: "nlp", color: "#f3d879", detail: "Language understanding workflows" },
+      { name: "RAG", icon: "rag", color: "#b9f35a", detail: "Document-grounded generation" },
+      { name: "LLM Applications", icon: "llm", color: "#b7a4ff", detail: "Products built around LLMs" },
+      { name: "Agentic AI", icon: "agent", color: "#79cfae", detail: "Tool-using AI workflows" },
+      { name: "Speech Recognition", icon: "speech", color: "#f09b78", detail: "Voice-to-text interaction" },
+    ],
+  },
+  {
+    name: "Cloud & DevOps",
+    items: [
+      { name: "AWS", icon: "aws", color: "#f5b866", detail: "Cloud infrastructure and delivery" },
+      { name: "Docker", icon: "docker", color: "#65b5f7", detail: "Containerized deployment" },
+      { name: "CDN Integration", icon: "cdn", color: "#a8cf78", detail: "Distributed asset delivery" },
+    ],
+  },
+  {
+    name: "Tools",
+    items: [
+      { name: "Git", icon: "git", color: "#f47b57", detail: "Version control workflows" },
+      { name: "GitHub", icon: "github", color: "#e9e6f0", detail: "Source collaboration" },
+      { name: "Postman", icon: "postman", color: "#ff8a5b", detail: "API testing and debugging" },
+      { name: "JMeter", icon: "jmeter", color: "#d36b58", detail: "Load and performance testing" },
+    ],
+  },
 ];
