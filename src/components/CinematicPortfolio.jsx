@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useScroll } from "framer-motion";
 import { ArrowDownToLine, ArrowUpRight } from "lucide-react";
 import PostHeroEditorial from "./PostHeroEditorial";
@@ -13,11 +13,47 @@ import styles from "./CinematicPortfolio.module.css";
 
 export default function CinematicPortfolio() {
   const heroRef = useRef(null);
+  const sceneRef = useRef(null);
+  const portraitRef = useRef(null);
   const reducedMotion = useMotionPreference();
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    const mobile = window.matchMedia("(max-width: 767px), (hover: none) and (pointer: coarse)");
+    let measuredWidth;
+
+    const clearSize = () => {
+      hero.style.removeProperty("--hero-scene-height");
+      hero.style.removeProperty("--hero-portrait-height");
+    };
+    const measure = () => {
+      const width = document.documentElement.clientWidth;
+      // Browser bars and keyboards change height while scrolling. Only a
+      // width change (including rotation) should resize the mobile artwork.
+      if (width === measuredWidth) return;
+      measuredWidth = width;
+      clearSize();
+      if (!mobile.matches) return;
+      const sceneHeight = sceneRef.current.offsetHeight;
+      const portraitHeight = portraitRef.current.offsetHeight;
+      hero.style.setProperty("--hero-scene-height", `${sceneHeight}px`);
+      hero.style.setProperty("--hero-portrait-height", `${portraitHeight}px`);
+    };
+    const onDeviceChange = () => { measuredWidth = undefined; measure(); };
+
+    measure();
+    window.addEventListener("resize", measure);
+    mobile.addEventListener("change", onDeviceChange);
+    return () => {
+      window.removeEventListener("resize", measure);
+      mobile.removeEventListener("change", onDeviceChange);
+      clearSize();
+    };
+  }, []);
 
   return (
     <div className={styles.portfolio}>
@@ -28,7 +64,7 @@ export default function CinematicPortfolio() {
         aria-labelledby="hero-heading"
         style={{ "--hero-scroll": reducedMotion ? 0 : scrollYProgress }}
       >
-        <div className={styles.heroScene}>
+        <div ref={sceneRef} className={styles.heroScene}>
           <LaserFrame variant="hero" />
 
           <div className={styles.statement}>
@@ -43,7 +79,7 @@ export default function CinematicPortfolio() {
           </div>
           </div>
 
-          <figure className={styles.portrait}>
+          <figure ref={portraitRef} className={styles.portrait}>
           <BrandWatermark variant="hero" />
           <Image
             className={styles.portraitImage}

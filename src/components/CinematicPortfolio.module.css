@@ -21,7 +21,7 @@
 
 .heroScene {
   position: relative;
-  height: max(45rem, 100svh);
+  height: var(--hero-scene-height, max(45rem, 100svh));
   overflow: clip;
   isolation: isolate;
   background: var(--hero-ink);
@@ -130,7 +130,7 @@
   z-index: 3;
   left: var(--hero-visual-center);
   bottom: 0;
-  height: 95%;
+  height: var(--hero-portrait-height, 95%);
   margin: 0;
   aspect-ratio: 1375 / 1144;
   transform: translateX(-50%);
@@ -245,7 +245,7 @@
   }
 
   .portrait {
-    height: 90%;
+    height: var(--hero-portrait-height, 90%);
   }
 
   .name {
@@ -268,7 +268,7 @@
   }
 
   .heroScene {
-    height: max(43rem, 100svh);
+    height: var(--hero-scene-height, max(43rem, 100svh));
   }
 
   .statement {
@@ -299,7 +299,7 @@
 
   .portrait {
     bottom: 0;
-    height: min(64svh, 34rem);
+    height: var(--hero-portrait-height, min(64svh, 34rem));
   }
 
   .name {
