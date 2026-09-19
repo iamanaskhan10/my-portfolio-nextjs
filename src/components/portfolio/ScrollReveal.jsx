@@ -6,7 +6,7 @@ import styles from "./ScrollReveal.module.css";
 const useBrowserLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 // Only prepare offscreen content. Visible content and restored scroll positions
-// never flash or replay; the observer measures a stationary box of any height.
+// never replay; the entry threshold does not depend on the section's height.
 export default function ScrollReveal({ as: Element = "div", className = "", variant = "text", children, ...props }) {
   const ref = useRef(null);
 
