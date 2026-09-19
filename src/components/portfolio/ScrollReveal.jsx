@@ -1,20 +1,46 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useInView } from "framer-motion";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import styles from "./ScrollReveal.module.css";
 
-// Content stays readable before hydration and without JavaScript. Each element
-// gets one short entrance when it reaches the viewport, independent of scroll speed.
+const useBrowserLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
+
+// Only prepare offscreen content. Visible content and restored scroll positions
+// never flash or replay; the observer measures a stationary box of any height.
 export default function ScrollReveal({ as: Element = "div", className = "", variant = "text", children, ...props }) {
   const ref = useRef(null);
-  const [ready, setReady] = useState(false);
-  const entered = useInView(ref, { once: true, amount: 0.2, margin: "0px 0px -12% 0px" });
 
-  useEffect(() => setReady(true), []);
+  useBrowserLayoutEffect(() => {
+    const element = ref.current;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (motion.matches || !window.IntersectionObserver || element.getBoundingClientRect().top < window.innerHeight) {
+      element.dataset.state = "static";
+      return;
+    }
+
+    element.dataset.state = "pending";
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+      element.dataset.state = "visible";
+    }, { threshold: 0, rootMargin: "0px 0px -64px 0px" });
+    const showImmediately = () => {
+      observer.disconnect();
+      element.dataset.state = "static";
+    };
+
+    observer.observe(element);
+    element.addEventListener("focusin", showImmediately);
+    motion.addEventListener("change", showImmediately);
+    return () => {
+      observer.disconnect();
+      element.removeEventListener("focusin", showImmediately);
+      motion.removeEventListener("change", showImmediately);
+    };
+  }, []);
 
   return (
-    <Element ref={ref} className={`${styles.reveal} ${className}`} data-reveal={variant} data-ready={ready} data-entered={entered} {...props}>
+    <Element ref={ref} className={`${styles.reveal} ${className}`} data-reveal={variant} {...props}>
       {children}
     </Element>
   );

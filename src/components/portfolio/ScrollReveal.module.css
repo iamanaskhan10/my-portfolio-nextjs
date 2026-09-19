@@ -1,13 +1,18 @@
-.reveal[data-ready="true"][data-entered="false"] { opacity: 0; transform: translateY(10px); }
-.reveal[data-ready="true"][data-entered="false"][data-reveal="image"] { transform: translateY(12px) scale(0.99); }
-.reveal[data-ready="true"][data-entered="false"][data-reveal="phrases"] { transform: translateX(-1.25rem); }
-.reveal[data-entered="true"] { animation: reveal 280ms cubic-bezier(0.16, 1, 0.3, 1) both; }
-.reveal[data-entered="true"][data-reveal="image"] { animation-name: reveal-image; }
-.reveal[data-reveal="phrases"] { animation: none; }
-@keyframes reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-@keyframes reveal-image { from { opacity: 0; transform: translateY(12px) scale(0.99); } to { opacity: 1; transform: none; } }
-.reveal:focus-within { animation: none !important; }
+.reveal[data-state="pending"] { opacity: 0; }
+.reveal[data-state="visible"] { animation: arrive 260ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.reveal[data-state="visible"][data-reveal="image"] { animation-duration: 320ms; }
+
+/* The three phrases are the only staggered entrance. Keep their parent still. */
+.reveal[data-reveal="phrases"] { opacity: 1; animation: none; }
+.reveal[data-state="pending"][data-reveal="phrases"] > span { opacity: 0; }
+.reveal[data-state="visible"][data-reveal="phrases"] { animation: none; }
+.reveal[data-state="visible"][data-reveal="phrases"] > span { animation: phrase-arrive 260ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.reveal[data-state="visible"][data-reveal="phrases"] > span:nth-child(2) { animation-delay: 60ms; }
+.reveal[data-state="visible"][data-reveal="phrases"] > span:nth-child(3) { animation-delay: 120ms; }
+
+@keyframes arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes phrase-arrive { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
+
 @media (prefers-reduced-motion: reduce) {
-  .reveal[data-ready="true"][data-entered="false"] { opacity: 1; transform: none; }
-  .reveal[data-entered="true"] { animation: none !important; }
+  .reveal[data-state], .reveal[data-state][data-reveal="phrases"] > span { opacity: 1; transform: none; animation: none; }
 }
