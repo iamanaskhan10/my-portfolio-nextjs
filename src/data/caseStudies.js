@@ -8,6 +8,16 @@ const voiceForgeGallery = [
   { src: "/case-studies/voiceforge/containers.png", title: "Containerized services", alt: "Docker Desktop showing the VoiceForge web, API, worker, PostgreSQL, Ollama and Redis services", caption: "The VoiceForge services running in Docker Desktop.", kind: "screenshot", width: 1918, height: 972 },
 ];
 
+const tradeM8Gallery = [
+  { src: "/case-studies/tradem8/trading-workspace.png", title: "Trading workspace", alt: "TradeM8 trading workspace with a candlestick chart, chart controls and an asset watchlist", caption: "Multi-timeframe charting, indicators, pattern detection and the asset watchlist in one workspace.", kind: "screenshot", width: 1920, height: 966 },
+  { src: "/case-studies/tradem8/annotated-chart.png", title: "Detected chart pattern", alt: "ETHUSDT candlestick chart with a double-top region annotated by TradeM8", caption: "A captured ETHUSDT frame with the detected double-top region annotated by the vision workflow.", kind: "screenshot", width: 1475, height: 867 },
+  { src: "/case-studies/tradem8/eth-analysis.png", title: "ETH market analysis", alt: "TradeM8 ETHUSDT analysis with a buy recommendation, rationale, confidence, entry and risk-to-reward values", caption: "A generated analysis combining the recommendation, rationale and supporting values. Figures belong to this captured session.", kind: "screenshot", width: 1533, height: 965 },
+  { src: "/case-studies/tradem8/dashboard.png", title: "Market overview", alt: "TradeM8 admin dashboard showing market coverage, article sentiment, stored signals and account activity", caption: "The admin view for reviewing market coverage, article sentiment, signals and account activity.", kind: "screenshot", width: 1917, height: 2088 },
+  { src: "/case-studies/tradem8/sentiment-pipeline.png", title: "Sentiment pipeline", alt: "TradeM8 terminal output from scheduled article ingestion and sentiment analysis", caption: "Runtime output from the scheduled news-ingestion and sentiment-analysis pipeline.", kind: "screenshot", width: 1466, height: 692 },
+  { src: "/case-studies/tradem8/analysis-service.png", title: "Analysis service", alt: "TradeM8 FastAPI terminal output showing chart data, sentiment analysis, image annotation and model processing", caption: "The analysis service receiving chart data and passing the annotated frame through the model pipeline.", kind: "screenshot", width: 1918, height: 960 },
+  { src: "/case-studies/tradem8/near-analysis.png", title: "NEAR market analysis", alt: "TradeM8 NEARUSDT analysis with a hold recommendation, rationale and confidence value", caption: "A second generated analysis showing how the interface handles a HOLD recommendation. Figures belong to this captured session.", kind: "screenshot", width: 1570, height: 771 },
+];
+
 // Editorial expansion of the project facts already supplied in portfolio.js.
 // Outcomes stay tied to those facts; no invented users, benchmarks or roles.
 const studies = [
@@ -38,7 +48,8 @@ const studies = [
     slug: "tradem8",
     metric: { value: "3", label: "validation indicators", detail: "EMA, RSI and ADX" },
     sourceAvailable: false,
-    cover: { src: "/case-studies/tradem8.svg", alt: "Illustration combining chart patterns, news and sentiment, and technical indicator validation", caption: "Analysis workflow illustration. The chart is illustrative, not market or performance data." },
+    cover: tradeM8Gallery[0],
+    gallery: tradeM8Gallery,
     headline: "Chart patterns meet market context.",
     problem: "A chart pattern describes only one part of a market. TradeM8 brings visual pattern detection, technical indicators, financial news, and social sentiment into a confidence-based analysis experience.",
     approach: "The platform uses Python and FastAPI with a React interface and PostgreSQL. YOLOv8 and Transformers form part of the AI stack. CryptoPanic, RSS, and CoinGecko pipelines supply market context alongside chart-pattern analysis.",
