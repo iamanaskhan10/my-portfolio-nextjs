@@ -9,6 +9,8 @@
 .preview:hover > img { transform: scale(1.025); }
 .preview[data-kind="brand"] { background: #e5e2d8; }
 .preview[data-kind="brand"] > img { width: 38%; height: auto; mix-blend-mode: multiply; }
+.artwork .preview[data-kind="screenshot"] { aspect-ratio: var(--image-ratio); background: #090a12; }
+.preview[data-kind="screenshot"]:hover > img { transform: none; }
 .expand { position: absolute; bottom: 1.25rem; right: 1.25rem; display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem; background: var(--signal); color: var(--signal-ink); font-size: 0.75rem; }
 .expand > span { max-width: 0; white-space: nowrap; overflow: hidden; transition: max-width 200ms ease-out; }
 .preview:hover .expand > span, .preview:focus-visible .expand > span { max-width: 7rem; }
