@@ -1,5 +1,13 @@
 import { projects } from "./portfolio";
 
+const voiceForgeGallery = [
+  { src: "/case-studies/voiceforge/overview.png", title: "Workspace overview", alt: "VoiceForge AI workspace with voice-agent setup, knowledge shortcuts and dashboard panels", caption: "The VoiceForge workspace, bringing agents, knowledge and conversations together.", kind: "screenshot", width: 1912, height: 908 },
+  { src: "/case-studies/voiceforge/voice-session.png", title: "A live voice conversation", alt: "A browser voice session with Mike, showing a speech waveform and conversation transcript", caption: "Browser voice interaction with a speech waveform and conversation transcript.", kind: "screenshot", width: 1892, height: 890 },
+  { src: "/case-studies/voiceforge/agents.png", title: "AI agent workspace", alt: "VoiceForge AI agents page with Mike and Savant, their roles, status and configuration controls", caption: "Agent roles, status, configuration and available tools in one workspace.", kind: "screenshot", width: 1907, height: 897 },
+  { src: "/case-studies/voiceforge/knowledge.png", title: "Knowledge and retrieval", alt: "VoiceForge knowledge page with document upload, indexing progress and a retrieval playground", caption: "Document ingestion, indexing and a playground for testing retrieval.", kind: "screenshot", width: 1905, height: 900 },
+  { src: "/case-studies/voiceforge/containers.png", title: "Containerized services", alt: "Docker Desktop showing the VoiceForge web, API, worker, PostgreSQL, Ollama and Redis services", caption: "The VoiceForge services running in Docker Desktop.", kind: "screenshot", width: 1918, height: 972 },
+];
+
 // Editorial expansion of the project facts already supplied in portfolio.js.
 // Outcomes stay tied to those facts; no invented users, benchmarks or roles.
 const studies = [
@@ -7,7 +15,8 @@ const studies = [
     slug: "voiceforge-ai",
     metric: { value: "7.5×", label: "retrieved evidence capacity", detail: "800 → 6,000 characters of context" },
     sourceAvailable: false,
-    cover: { src: "/case-studies/voiceforge-ai.svg", alt: "System illustration connecting a voice waveform to retrieved documents and source citations", caption: "System illustration: voice interaction, document retrieval, and cited responses." },
+    cover: voiceForgeGallery[0],
+    gallery: voiceForgeGallery,
     headline: "Voice conversations, grounded in documents.",
     problem: "A voice interface is only as useful as the information behind its answers. VoiceForge AI brings document retrieval into a real-time browser conversation, with source citations that let a user trace an answer back to its evidence.",
     approach: "The system combines a Next.js browser experience with Python and FastAPI services. PostgreSQL and pgvector support the document knowledge layer, while hybrid retrieval and document-aware filtering shape the evidence available to a response. Docker packages the services for deployment.",
@@ -96,7 +105,7 @@ export const caseStudies = projects.map((project, index) => {
   return {
     ...project,
     ...study,
-    gallery: [
+    gallery: study.gallery ?? [
       { ...study.cover, title: study.cover.kind === "brand" ? "Project identity" : "System overview", width: study.cover.kind === "brand" ? 401 : 1440, height: study.cover.kind === "brand" ? 391 : 810 },
       { src: `/case-studies/${study.slug}-workflow.svg`, title: "How it works", alt: `${project.title} workflow: ${study.flow.join(", ")}`, caption: "An illustrated walkthrough of the project's implementation.", width: 1440, height: 900 },
       { src: `/case-studies/${study.slug}-detail.svg`, title: "A closer look", alt: `${project.title}: ${study.decisions[0].title}`, caption: `Implementation illustration: ${study.decisions[0].title.toLowerCase()}.`, width: 1440, height: 900 },

@@ -35,7 +35,7 @@ function ProjectArtwork({ project, priority }) {
         </span>
         <span className={styles.open}><ArrowUpRight size={23} aria-hidden="true" /></span>
       </Link>
-      <figcaption>{cover.kind === "brand" ? "Project identity & workflow illustration" : "System & implementation illustrations"}</figcaption>
+      <figcaption>{cover.kind === "screenshot" ? "Product screenshots" : cover.kind === "brand" ? "Project identity & workflow illustration" : "System & implementation illustrations"}</figcaption>
     </figure>
   );
 }

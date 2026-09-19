@@ -29,7 +29,7 @@ export default function CaseStudyGallery({ images, title }) {
       <div className={styles.exhibition}>
         {images.map((item, index) => (
           <figure key={item.src} className={styles.artwork}>
-          <button type="button" className={styles.preview} data-kind={item.kind} onClick={() => open(index)} aria-label={`Expand ${item.title}`}>
+          <button type="button" className={styles.preview} data-kind={item.kind} style={{ "--image-ratio": `${item.width} / ${item.height}` }} onClick={() => open(index)} aria-label={`Expand ${item.title}`}>
             <Image src={item.src} alt={item.alt} width={item.width} height={item.height} priority={index === 0} sizes={index === 0 ? "88vw" : "(max-width: 767px) 88vw, 42vw"} />
             <span className={styles.expand}><Expand size={18} aria-hidden="true" /><span>View full size</span></span>
           </button>
