@@ -1,14 +1,14 @@
-.reveal[data-state="pending"] { transform: translateY(8px); }
-.reveal[data-state="visible"] { transform: none; transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1); }
-.reveal[data-state="pending"][data-reveal="image"] { transform: translateY(12px); }
-.reveal[data-state="visible"][data-reveal="image"] { transition-duration: 300ms; }
+.reveal[data-state="pending"] { opacity: 0; transform: translateY(32px); }
+.reveal[data-state="visible"] { opacity: 1; transform: none; transition: opacity 300ms ease-out, transform 420ms cubic-bezier(0.2, 0.65, 0.3, 1); }
+.reveal[data-state="pending"][data-reveal="image"] { transform: translateY(40px) scale(0.98); }
+.reveal[data-state="visible"][data-reveal="image"] { transition-duration: 320ms, 480ms; }
 
 /* The three phrases are the only staggered entrance. Keep their parent still. */
-.reveal[data-state][data-reveal="phrases"] { transform: none; transition: none; }
-.reveal[data-state="pending"][data-reveal="phrases"] > span { opacity: 0; transform: translateX(-16px); }
-.reveal[data-state="visible"][data-reveal="phrases"] > span { opacity: 1; transform: none; transition: opacity 200ms ease-out, transform 240ms cubic-bezier(0.22, 1, 0.36, 1); }
-.reveal[data-state="visible"][data-reveal="phrases"] > span:nth-child(2) { transition-delay: 60ms; }
-.reveal[data-state="visible"][data-reveal="phrases"] > span:nth-child(3) { transition-delay: 120ms; }
+.reveal[data-state][data-reveal="phrases"] { opacity: 1; transform: none; transition: none; }
+.reveal[data-state="pending"][data-reveal="phrases"] > span { opacity: 0; transform: translateX(-32px); }
+.reveal[data-state="visible"][data-reveal="phrases"] > span { opacity: 1; transform: none; transition: opacity 240ms ease-out, transform 320ms cubic-bezier(0.2, 0.65, 0.3, 1); }
+.reveal[data-state="visible"][data-reveal="phrases"] > span:nth-child(2) { transition-delay: 80ms; }
+.reveal[data-state="visible"][data-reveal="phrases"] > span:nth-child(3) { transition-delay: 160ms; }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal[data-state][data-reveal], .reveal[data-state][data-reveal="phrases"] > span { opacity: 1; transform: none; transition: none; }

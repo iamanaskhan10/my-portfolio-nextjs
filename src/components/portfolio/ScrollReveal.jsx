@@ -23,7 +23,7 @@ export default function ScrollReveal({ as: Element = "div", className = "", vari
       if (!entry.isIntersecting) return;
       observer.disconnect();
       element.dataset.state = "visible";
-    }, { threshold: 0, rootMargin: "0px 0px -64px 0px" });
+    }, { threshold: 0, rootMargin: `0px 0px -${Math.round(window.innerHeight * 0.18)}px 0px` });
     const showImmediately = () => {
       observer.disconnect();
       element.dataset.state = "static";
