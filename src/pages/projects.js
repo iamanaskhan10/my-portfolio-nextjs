@@ -1,10 +1,20 @@
-import React from "react";
-import Projects from "../components/Projects";
-import Layout from "../components/Layout";
 import Head from "next/head";
+import Layout from "../components/Layout";
+import Projects from "../components/Projects";
 
-const ProjectsPage = () => {
-  return <Layout><Head><title>Projects · Anas Khan</title><meta name="description" content="Selected full-stack and AI projects by Anas Khan, including their problems, implementation decisions, and outcomes." /></Head><Projects showAll /></Layout>;
-};
+export default function ProjectsPage({ content }) {
+  return (
+    <Layout>
+      <Head>
+        <title>{content.site.seo.projectsTitle}</title>
+        <meta name="description" content={content.site.seo.projectsDescription} />
+      </Head>
+      <Projects showAll />
+    </Layout>
+  );
+}
 
-export default ProjectsPage;
+export async function getServerSideProps() {
+  const { getPortfolioContent } = await import("../lib/server/contentStore");
+  return { props: { content: await getPortfolioContent({ publicOnly: true }) } };
+}

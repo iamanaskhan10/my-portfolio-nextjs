@@ -42,7 +42,7 @@ export default function CaseStudy({ project, nextProject }) {
             <a href="#outcomes">Outcomes</a>
           </nav>
           <h2>Built with</h2>
-          <ul className={styles.stack}>{project.stack.split(" · ").map((tool) => <li key={tool}>{tool}</li>)}</ul>
+          <ul className={styles.stack}>{project.stack.split(/\s*·\s*/).map((tool) => <li key={tool}>{tool}</li>)}</ul>
         </aside>
         <div className={styles.story}>
           <section id="problem">

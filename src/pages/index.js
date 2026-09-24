@@ -1,15 +1,20 @@
+import Head from "next/head";
 import Layout from "../components/Layout";
 import CinematicPortfolio from "../components/CinematicPortfolio";
-import Head from "next/head";
 
-export default function Home() {
+export default function Home({ content }) {
   return (
     <Layout>
       <Head>
-        <title>Anas Khan — Full-stack &amp; AI Engineer</title>
-        <meta name="description" content="Explore Anas Khan’s full-stack and AI engineering work, interactive technology toolkit, and experience building reliable products." />
+        <title>{content.site.seo.homeTitle}</title>
+        <meta name="description" content={content.site.seo.homeDescription} />
       </Head>
       <CinematicPortfolio />
     </Layout>
   );
+}
+
+export async function getServerSideProps() {
+  const { getPortfolioContent } = await import("../lib/server/contentStore");
+  return { props: { content: await getPortfolioContent({ publicOnly: true }) } };
 }

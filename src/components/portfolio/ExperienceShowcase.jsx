@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
-import { experiences, profile } from "../../data/portfolio";
+import { usePortfolioContent } from "../../context/PortfolioContentContext";
 import useMotionPreference from "../../hooks/useMotionPreference";
 import styles from "./ExperienceShowcase.module.css";
 import ScrollReveal from "./ScrollReveal";
 
 export default function ExperienceShowcase() {
+  const { experiences, profile, site } = usePortfolioContent();
   const trackRef = useRef(null);
   const sectionRef = useRef(null);
   const drag = useRef(null);
@@ -54,13 +55,13 @@ export default function ExperienceShowcase() {
         event.currentTarget.dataset.cursor = "true";
       }} onPointerLeave={(event) => { event.currentTarget.dataset.cursor = "false"; }}>
       <div className={styles.atmosphere} aria-hidden="true">
-        {experiences.map((experience, index) => <div key={experience.role} className={styles[`tone${index}`]} style={{ opacity: current === index ? 1 : 0 }} />)}
+        {experiences.map((experience, index) => <div key={experience.id} className={styles[`tone${index % 3}`]} style={{ opacity: current === index ? 1 : 0 }} />)}
       </div>
       <span className={styles.cursor} aria-hidden="true" />
       <ScrollReveal className={styles.layout}>
         <div className={styles.intro}>
-          <h2 id="experience-heading"><span>Where I&apos;ve</span><span>built.</span></h2>
-          <a className={styles.archive} href={profile.resume} target="_blank" rel="noopener noreferrer">View résumé <ArrowUpRight size={16} aria-hidden="true" /></a>
+          <h2 id="experience-heading"><span>{site.experience.heading}</span><span>{site.experience.accent}</span></h2>
+          <a className={styles.archive} href={profile.resume} target="_blank" rel="noopener noreferrer">{site.experience.resumeLabel} <ArrowUpRight size={16} aria-hidden="true" /></a>
         </div>
         <div className={styles.gallery}>
           <div className={styles.trackWindow}>
@@ -98,7 +99,7 @@ export default function ExperienceShowcase() {
               if (event.key === "End") { event.preventDefault(); goTo(experiences.length - 1); }
             }}>
             {experiences.map((experience) => (
-              <article key={experience.role} className={styles.entry} aria-label={`${experience.role} at ${experience.company}`}>
+              <article key={experience.id} className={styles.entry} aria-label={`${experience.role} at ${experience.company}`}>
                 <div className={styles.meta}><span>{experience.company}</span><span>{experience.duration}</span></div>
                 <h3>{experience.role}</h3>
                 <p className={styles.description}>{experience.outcome}</p>

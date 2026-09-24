@@ -3,22 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
-import { caseStudies } from "../../data/caseStudies";
+import { usePortfolioContent } from "../../context/PortfolioContentContext";
 import ScrollReveal from "./ScrollReveal";
 import styles from "./ProjectShowcase.module.css";
-
-const selectedWork = [
-  {
-    slug: "voiceforge-ai",
-    description: "Real-time browser voice interaction grounded in source documents, combining retrieval, citations and conversational AI.",
-    technologies: ["Python", "FastAPI", "React", "PostgreSQL", "pgvector", "Docker"],
-  },
-  {
-    slug: "tradem8",
-    description: "A computer-vision-based trading system for detecting and analysing chart patterns.",
-    technologies: ["Python", "FastAPI", "React", "YOLO", "PostgreSQL"],
-  },
-].map((selection) => ({ ...caseStudies.find((project) => project.slug === selection.slug), ...selection }));
 
 function SelectedProject({ project, index }) {
   return (
@@ -34,7 +21,7 @@ function SelectedProject({ project, index }) {
         <h3 id={`${project.slug}-title`}>{project.title}</h3>
         <p>{project.description}</p>
         <ul className={styles.tags} aria-label={`${project.title} technologies`}>
-          {project.technologies.map((technology) => <li key={technology}>{technology}</li>)}
+          {project.stack.split(/\s*·\s*/).map((technology) => <li key={technology}>{technology}</li>)}
         </ul>
         <Link className={styles.projectLink} href={`/projects/${project.slug}`} aria-label={`View project: ${project.title}`}>
           View Project <ArrowUpRight size={22} aria-hidden="true" />
@@ -45,12 +32,15 @@ function SelectedProject({ project, index }) {
 }
 
 export default function ProjectShowcase() {
+  const { projects, site } = usePortfolioContent();
+  const featured = projects.filter((project) => project.featured);
+  const selectedWork = (featured.length ? featured : projects.slice(0, 2)).slice(0, 4);
   return (
     <section id="projects" className={styles.section} aria-labelledby="projects-heading">
       <div className={styles.inner}>
         <ScrollReveal className={styles.heading}>
-          <h2 id="projects-heading">Selected work</h2>
-          <Link className={styles.archiveLink} href="/projects">All projects <ArrowUpRight size={18} aria-hidden="true" /></Link>
+          <h2 id="projects-heading">{site.projects.heading}</h2>
+          <Link className={styles.archiveLink} href="/projects">{site.projects.archiveLabel} <ArrowUpRight size={18} aria-hidden="true" /></Link>
         </ScrollReveal>
         {selectedWork.map((project, index) => <SelectedProject key={project.slug} project={project} index={index} />)}
       </div>

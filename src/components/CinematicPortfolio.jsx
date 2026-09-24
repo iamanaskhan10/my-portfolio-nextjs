@@ -7,11 +7,12 @@ import { ArrowDownToLine, ArrowUpRight } from "lucide-react";
 import PostHeroEditorial from "./PostHeroEditorial";
 import BrandWatermark from "./portfolio/BrandWatermark";
 import LaserFrame from "./portfolio/LaserFrame";
-import { profile } from "../data/portfolio";
+import { usePortfolioContent } from "../context/PortfolioContentContext";
 import useMotionPreference from "../hooks/useMotionPreference";
 import styles from "./CinematicPortfolio.module.css";
 
 export default function CinematicPortfolio() {
+  const { profile, site } = usePortfolioContent();
   const heroRef = useRef(null);
   const sceneRef = useRef(null);
   const portraitRef = useRef(null);
@@ -69,13 +70,13 @@ export default function CinematicPortfolio() {
 
           <div className={styles.statement}>
           <h1 id="hero-heading" className={styles.title}>
-            <span className={styles.titleLine}><span className={styles.titleWord}><strong>Full-stack</strong></span></span>
-            <span className={styles.titleLine}><span className={styles.titleWord}>Engineer.</span></span>
-            <span className={styles.titleLine}><span className={styles.titleWord}>Applied AI.</span></span>
+            {site.hero.lines.map((line, index) => (
+              <span className={styles.titleLine} key={line}><span className={styles.titleWord}>{index === 0 ? <strong>{line}</strong> : line}</span></span>
+            ))}
           </h1>
           <div className={styles.exploreLinks}>
-            <a href={profile.resume} download>Download resume <ArrowDownToLine size={16} aria-hidden="true" /></a>
-            <a href={profile.resume} target="_blank" rel="noopener noreferrer">View resume <ArrowUpRight size={16} aria-hidden="true" /></a>
+            <a href={profile.resume} download>{site.hero.downloadLabel} <ArrowDownToLine size={16} aria-hidden="true" /></a>
+            <a href={profile.resume} target="_blank" rel="noopener noreferrer">{site.hero.viewLabel} <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
           </div>
 
@@ -94,7 +95,7 @@ export default function CinematicPortfolio() {
           <p className={styles.name} aria-hidden="true"><span>Anas</span>{" "}<span>Khan</span></p>
 
           <a className={styles.hire} href="#contact" aria-label="Let's talk">
-            <span>Let&apos;s talk</span>
+            <span>{site.hero.ctaLabel}</span>
           </a>
         </div>
       </motion.section>

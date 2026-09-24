@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 import { ArrowLeft, ArrowUpRight, Github } from "lucide-react";
-import { caseStudies } from "../data/caseStudies";
-import { profile } from "../data/portfolio";
+import { usePortfolioContent } from "../context/PortfolioContentContext";
 import ProjectMetric from "./portfolio/ProjectMetric";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./Projects.module.css";
 
-const categories = ["All", "AI", "Full-stack"];
 const compositions = {
   "voiceforge-ai": "voice",
   tradem8: "market",
@@ -19,7 +17,7 @@ const compositions = {
 
 function ProjectArtwork({ project, priority }) {
   const cover = project.gallery[0];
-  const detail = project.gallery[2];
+  const detail = project.gallery[2] || project.gallery[1] || cover;
 
   return (
     <figure className={styles.artwork}>
@@ -41,7 +39,9 @@ function ProjectArtwork({ project, priority }) {
 }
 
 export default function Projects({ showAll = false }) {
+  const { projects: caseStudies, profile, site } = usePortfolioContent();
   const [activeCategory, setActiveCategory] = useState("All");
+  const categories = ["All", ...new Set(caseStudies.map((project) => project.group))];
   const visibleProjects = caseStudies.filter(project => activeCategory === "All" || project.group === activeCategory);
 
   return (
@@ -53,10 +53,10 @@ export default function Projects({ showAll = false }) {
         </div>
 
         <header className={styles.heading}>
-          <h1 id="archive-heading">Selected<br /><span>projects.</span></h1>
+          <h1 id="archive-heading">{site.projects.archiveHeading}<br /><span>{site.projects.archiveAccent}</span></h1>
           <div className={styles.introduction}>
-            <p>From a conversation grounded in documents to a service that connects people. A closer look at what I build, and how it works.</p>
-            <a className={styles.textLink} href="#project-gallery">Explore the work <ArrowUpRight size={16} aria-hidden="true" /></a>
+            <p>{site.projects.archiveIntro}</p>
+            <a className={styles.textLink} href="#project-gallery">{site.projects.archiveExploreLabel} <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
         </header>
 
@@ -81,7 +81,7 @@ export default function Projects({ showAll = false }) {
                 <p className={styles.description}>{project.description}</p>
                 <ProjectMetric metric={project.metric} />
                 <ul className={styles.technologies} aria-label={project.title + " technologies"}>
-                  {project.stack.split(" · ").map(tool => <li key={tool}>{tool}</li>)}
+                  {project.stack.split(/\s*·\s*/).map(tool => <li key={tool}>{tool}</li>)}
                 </ul>
                 <div className={styles.actions}>
                   <Link className={styles.projectLink} href={"/projects/" + project.slug}>Explore project <ArrowUpRight size={17} aria-hidden="true" /></Link>
@@ -97,8 +97,8 @@ export default function Projects({ showAll = false }) {
         </div>
 
         <div className={styles.closing}>
-          <p>Something you’d like to build?</p>
-          <Link href="/#contact">Let’s talk <ArrowUpRight size={24} aria-hidden="true" /></Link>
+          <p>{site.projects.closingPrompt}</p>
+          <Link href="/#contact">{site.projects.closingLabel} <ArrowUpRight size={24} aria-hidden="true" /></Link>
         </div>
       </div>
     </section>

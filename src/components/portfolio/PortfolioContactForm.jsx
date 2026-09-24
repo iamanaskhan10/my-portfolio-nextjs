@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { profile } from "../../data/portfolio";
+import { usePortfolioContent } from "../../context/PortfolioContentContext";
 
 export default function PortfolioContactForm({ active }) {
+  const { profile } = usePortfolioContent();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState("idle");
   const [statusMessage, setStatusMessage] = useState("");

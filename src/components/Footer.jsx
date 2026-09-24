@@ -1,9 +1,10 @@
 import { ArrowUp } from "lucide-react";
-import { profile } from "../data/portfolio";
+import { usePortfolioContent } from "../context/PortfolioContentContext";
 import BrandMark from "./portfolio/BrandMark";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
+  const { profile } = usePortfolioContent();
   return (
     <footer className={styles.footer} aria-label="Anas Khan footer">
       <div className={styles.inner}>

@@ -13,6 +13,7 @@ import {
 } from "react-icons/si";
 import { technologyGroups } from "../../data/technologies";
 import ScrollReveal from "./ScrollReveal";
+import { usePortfolioContent } from "../../context/PortfolioContentContext";
 import styles from "./TechnologyStack.module.css";
 
 const icons = {
@@ -50,12 +51,13 @@ function TechnologyGroup({ group }) {
 }
 
 export default function TechnologyStack() {
+  const { site } = usePortfolioContent();
   return (
     <section id="capabilities" className={styles.section} aria-labelledby="capabilities-heading">
       <div className={styles.inner}>
         <ScrollReveal className={styles.heading}>
-          <h2 id="capabilities-heading">Technologies<br /><span>I build with.</span></h2>
-          <p>From interface to infrastructure — the languages, systems and tools behind my full-stack and AI work.</p>
+          <h2 id="capabilities-heading">{site.technology.heading}<br /><span>{site.technology.accent}</span></h2>
+          <p>{site.technology.intro}</p>
         </ScrollReveal>
         <div className={styles.groups}>
           {technologyGroups.map((group) => <TechnologyGroup key={group.name} group={group} />)}

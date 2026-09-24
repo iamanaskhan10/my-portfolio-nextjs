@@ -30,6 +30,12 @@
 /.impeccable/
 /.impeccable-*.png
 
+# Runtime portfolio CMS data and uploads
+/content/*
+!/content/.gitkeep
+/public/uploads/*
+!/public/uploads/.gitkeep
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -38,6 +44,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
