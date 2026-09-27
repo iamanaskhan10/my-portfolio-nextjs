@@ -7,6 +7,7 @@ import { ArrowDownToLine, ArrowUpRight } from "lucide-react";
 import PostHeroEditorial from "./PostHeroEditorial";
 import BrandWatermark from "./portfolio/BrandWatermark";
 import LaserFrame from "./portfolio/LaserFrame";
+import HeroPortal from "./portfolio/HeroPortal";
 import { usePortfolioContent } from "../context/PortfolioContentContext";
 import useMotionPreference from "../hooks/useMotionPreference";
 import styles from "./CinematicPortfolio.module.css";
@@ -14,12 +15,14 @@ import styles from "./CinematicPortfolio.module.css";
 export default function CinematicPortfolio() {
   const { profile, site } = usePortfolioContent();
   const heroRef = useRef(null);
+  const portalRef = useRef(null);
   const sceneRef = useRef(null);
   const portraitRef = useRef(null);
   const reducedMotion = useMotionPreference();
   const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
+    target: portalRef,
+    // Existing parallax begins after the sticky opening has released the hero.
+    offset: ["end end", "end start"],
   });
 
   useEffect(() => {
@@ -58,9 +61,9 @@ export default function CinematicPortfolio() {
 
   return (
     <div className={styles.portfolio}>
+      <HeroPortal sceneRef={portalRef}>
       <motion.section
         ref={heroRef}
-        id="home"
         className={styles.hero}
         aria-labelledby="hero-heading"
         style={{ "--hero-scroll": reducedMotion ? 0 : scrollYProgress }}
@@ -99,6 +102,7 @@ export default function CinematicPortfolio() {
           </a>
         </div>
       </motion.section>
+      </HeroPortal>
       <PostHeroEditorial />
     </div>
   );

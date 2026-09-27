@@ -1,0 +1,339 @@
+.scene {
+  position: relative;
+  background: var(--editorial-void);
+}
+
+.stage {
+  position: relative;
+}
+
+/* Present in server HTML: no hero/AK flash while JavaScript is loading. */
+.bootCover { display: none; position: absolute; z-index: 5; inset: 0; background: var(--editorial-void); }
+.scene[data-hero-entrance="waiting"]:not([data-portal-active="true"]) .bootCover { display: block; }
+.scene[data-hero-entrance="waiting"] .plane * { animation-play-state: paused !important; }
+
+.rig {
+  --display-depth: 0px;
+  --display-radius: 0px;
+  --display-scale: 1;
+  position: relative;
+  z-index: 1;
+  margin-inline: auto;
+  transform-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+
+.geometry { position: relative; transform-style: preserve-3d; transform: scale3d(var(--display-scale), var(--display-scale), var(--display-scale)); }
+.scene[data-portal-active="true"] .geometry { height: 100%; }
+.cubeSkin { display: none; position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
+.scene[data-portal-active="true"] .cubeSkin { display: block; }
+.cubeShellFace { position: absolute; top: 50%; left: 50%; width: var(--display-width); height: var(--display-height); border: 1px solid var(--line-strong); background: var(--ink); backface-visibility: hidden; transform: translate(-50%, -50%) rotateY(var(--face-angle)) translateZ(calc(var(--display-depth) / 2 - 0.5px)); }
+.cubeShellFace:nth-child(2), .cubeShellFace:nth-child(4) { width: var(--display-depth); transform: translate(-50%, -50%) rotateY(var(--face-angle)) translateZ(calc(var(--display-width) / 2 - 0.5px)); }
+.cubeTop { height: var(--display-depth); background: var(--signal-ink); transform: translate(-50%, -50%) rotateX(90deg) translateZ(calc(var(--display-height) / 2 - 0.5px)); }
+.cubeBottom { height: var(--display-depth); transform: translate(-50%, -50%) rotateX(-90deg) translateZ(calc(var(--display-height) / 2 - 0.5px)); }
+
+.plane {
+  position: relative;
+  overflow: clip;
+  border-radius: var(--display-radius);
+  backface-visibility: hidden;
+  transform: translateZ(calc(var(--display-depth) / 2));
+  background: var(--ink);
+}
+.heroSurface { position: relative; transform-origin: 0 0; }
+.scene[data-portal-active="true"] .plane { width: 100%; height: 100%; }
+.scene[data-portal-active="true"] .heroSurface { width: var(--portal-width); }
+
+.aperture,
+.controls,
+.backdrop,
+.displayFace,
+.wordBand,
+.orbit,
+.displayHeading,
+.galleryTransition,
+.displayControls {
+  display: none;
+}
+
+.scene[data-portal-active="true"] .rig {
+  width: var(--display-width, 100%);
+  height: var(--display-height, var(--portal-height));
+}
+
+.scene[data-portal-active="true"] .displayFace {
+  position: absolute;
+  inset: 0;
+  left: 50%;
+  width: var(--display-width);
+  margin-left: calc(var(--display-width) / -2);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 1.2vw, 1rem);
+  padding: clamp(1.1rem, 2.5vw, 2.5rem);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--display-radius);
+  overflow: clip;
+  backface-visibility: hidden;
+  container-type: inline-size;
+  color: var(--paper);
+  background: var(--ink);
+}
+
+.displayFace { transform: rotateY(var(--face-angle)) translateZ(calc(var(--display-depth) / 2)); }
+.scene[data-portal-active="true"] .displayFace[data-face-side="1"],
+.scene[data-portal-active="true"] .displayFace[data-face-side="3"] { width: var(--display-depth); margin-left: calc(var(--display-depth) / -2); transform: rotateY(var(--face-angle)) translateZ(calc(var(--display-width) / 2)); }
+
+.faceMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--muted);
+  font-size: clamp(0.65rem, 3cqw, 1rem);
+}
+
+.faceMeta svg,
+.faceMark { width: clamp(1.5rem, 8cqw, 3rem); flex: none; color: var(--signal); }
+
+.faceTitle {
+  margin: 0;
+  font-family: "Anton", "Arial Narrow", sans-serif;
+  font-size: clamp(1.1rem, 8cqw, 3.5rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.faceTitle span { display: block; }
+
+.faceImage {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  align-items: center;
+  margin: 0;
+}
+
+.faceImage img { width: 100%; max-height: 100%; object-fit: contain; }
+.identityMark { width: 70%; max-height: 100%; margin: auto; color: var(--signal); }
+.identityFace .faceImage img { height: 100%; object-position: center bottom; }
+.faceDuration { margin: 0; color: var(--muted); font-size: clamp(0.6rem, 2.8cqw, 0.9rem); }
+.faceDescription { margin: 0; font-size: clamp(0.7rem, 3.6cqw, 1.3rem); line-height: 1.4; }
+.faceLink { display: inline-flex; min-height: 64px; align-items: center; justify-content: space-between; gap: 1rem; margin-top: auto; color: var(--signal); font-size: clamp(1.25rem, 4cqw, 1.7rem); text-decoration: none; }
+.faceLink svg { width: 1.5em; height: 1.5em; }
+.faceLink:hover { color: var(--paper); }
+.faceLink:focus-visible { outline: 3px solid var(--signal); outline-offset: 6px; }
+
+.scene[data-portal-active="true"] .aboutFace {
+  background: radial-gradient(ellipse at 50% 38%, var(--signal-shadow), var(--ink) 68%);
+}
+
+.faceAperture { width: 42%; min-height: 0; flex: 1; align-self: center; color: var(--signal-highlight); }
+
+.scene[data-portal-active="true"] .wordBand {
+  position: absolute;
+  top: calc(var(--portal-view-height) / 2);
+  left: 50%;
+  display: flex;
+  width: max-content;
+  gap: 0.65em;
+  margin-top: -0.6em;
+  color: color-mix(in srgb, var(--ink) 22%, var(--paper));
+  font-family: "Anton", "Arial Narrow", sans-serif;
+  font-size: clamp(6rem, 17vw, 16rem);
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.scene[data-portal-active="true"] .displayControls {
+  position: absolute;
+  z-index: 3;
+  right: 1rem;
+  bottom: max(1.25rem, env(safe-area-inset-bottom), calc(var(--portal-height) - 100svh + 1.25rem));
+  left: 1rem;
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  align-items: center;
+  gap: 0.2rem 1.25rem;
+  color: var(--ink);
+  font-size: 0.8rem;
+}
+
+.faceButtons { grid-column: 1 / -1; display: flex; max-width: min(80vw, 660px); overflow-x: auto; margin-inline: auto; }
+.faceButtons button { display: grid; flex: 0 0 44px; width: 44px; height: 44px; place-items: center; border: 0; background: transparent; cursor: pointer; }
+.faceButtons button span { width: 7px; height: 7px; border: 1px solid var(--ink); border-radius: 50%; }
+.faceButtons button[aria-pressed="true"] span { background: var(--ink); }
+.faceButtons button:hover span { background: var(--signal-shadow); }
+.archiveLink, .continueLink { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: 0.65rem; text-decoration: none; }
+.archiveLink { padding: 0.5rem 1rem; border-radius: 4px; background: var(--ink); color: var(--paper); }
+.continueLink { color: var(--ink); }
+.archiveLink:hover { background: var(--signal-ink); }
+.continueLink:hover { text-decoration: underline; text-underline-offset: 4px; }
+.faceButtons button:focus-visible, .archiveLink:focus-visible, .continueLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.projectButtons { display: none; }
+.scene[data-portal-phase="gallery"] .momentButtons { display: none; }
+.scene[data-portal-phase="gallery"] .projectButtons { display: flex; }
+
+.scene[data-portal-active="true"] .backdrop {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: var(--paper);
+  pointer-events: none;
+}
+
+.fallback,
+.canvas,
+.darkness {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.canvas { visibility: hidden; }
+.darkness { background: var(--editorial-void); }
+.scene[data-portal-renderer="webgl"] .fallback { visibility: hidden; }
+.scene[data-portal-renderer="webgl"] .canvas { visibility: visible; }
+
+.scene[data-portal-active="true"] {
+  height: calc(var(--portal-height) + var(--portal-distance));
+}
+
+.scene[data-portal-active="true"] .stage {
+  position: sticky;
+  top: 0;
+  height: var(--portal-height);
+  overflow: clip;
+  perspective: 1600px;
+  perspective-origin: 50% calc(var(--portal-view-height) / 2);
+  isolation: isolate;
+}
+
+.scene[data-portal-active="true"] .aperture {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: var(--portal-view-height);
+  pointer-events: none;
+}
+
+.scene[data-portal-active="true"] .controls {
+  position: absolute;
+  z-index: 3;
+  right: 9%;
+  bottom: max(1.75rem, env(safe-area-inset-bottom), calc(var(--portal-height) - 100svh + 1.75rem));
+  left: 9%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--paper);
+  font-size: 0.8rem;
+}
+
+.prompt,
+.skip {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.prompt svg {
+  color: var(--signal);
+}
+
+.skip {
+  padding: 0 0.25rem;
+  border: 0;
+  border-bottom: 1px solid var(--signal-shadow);
+  color: var(--paper);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  transition: color 150ms ease-out, border-color 150ms ease-out;
+}
+
+.skip:hover {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+
+.skip:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 5px;
+}
+
+.scene[data-portal-active="true"] .galleryTransition {
+  position: absolute;
+  z-index: 4;
+  display: block;
+  top: calc(var(--portal-view-height) / 2 - 80px);
+  left: calc(50% - 80px);
+  width: 160px;
+  height: 160px;
+  pointer-events: none;
+}
+.galleryTransition svg { width: 100%; height: 100%; overflow: visible; fill: var(--editorial-void); }
+.scene[data-portal-active="true"] .orbit {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: block;
+  height: var(--portal-view-height);
+  perspective: 1400px;
+  color: var(--paper);
+  background: radial-gradient(ellipse at 50% 50%, #1b231d, var(--editorial-void) 70%);
+}
+.orbitHeading, .displayHeading { position: absolute; top: 5rem; left: 7%; margin: 0; color: var(--muted); font-size: clamp(0.8rem, 1.3vw, 1rem); font-weight: 400; }
+.scene[data-portal-active="true"][data-portal-phase="display"] .displayHeading { display: block; color: var(--ink); }
+.orbitCamera { position: absolute; inset: 0; transform-style: preserve-3d; }
+.orbitCard { position: absolute; top: 46%; left: 50%; display: block; width: min(82vw, 750px); color: var(--paper); text-decoration: none; backface-visibility: hidden; }
+.orbitCard img { display: block; width: 100%; height: min(50svh, 480px); object-fit: contain; }
+.orbitCaption { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 1.25rem; border-top: 1px solid var(--line-strong); margin-top: 1.25rem; font-size: clamp(1.2rem, 3vw, 2rem); }
+.orbitCaption svg { flex: none; color: var(--signal); }
+.orbitCard:focus-visible { outline: 2px solid var(--signal); outline-offset: 10px; }
+.scene[data-portal-phase="gallery"] .displayControls,
+.scene[data-portal-phase="gallery"] .continueLink { color: var(--paper); }
+.scene[data-portal-phase="gallery"] .faceButtons button span { border-color: var(--paper); }
+.scene[data-portal-phase="gallery"] .faceButtons button[aria-pressed="true"] span { background: var(--signal); border-color: var(--signal); }
+.scene[data-portal-phase="gallery"] .archiveLink { background: var(--signal); color: var(--ink); }
+.scene[data-portal-phase="gallery"] .displayControls :focus-visible { outline-color: var(--signal); }
+
+@media (max-width: 767px) {
+  .scene[data-portal-active="true"] .controls {
+    right: 1.1rem;
+    left: 1.1rem;
+    bottom: max(1.25rem, env(safe-area-inset-bottom), calc(var(--portal-height) - 100svh + 1.25rem));
+  }
+}
+
+/* Also applies immediately when the preference changes, before React cleanup. */
+@media (prefers-reduced-motion: reduce) {
+  .scene[data-hero-entrance="waiting"] .bootCover { display: none !important; }
+  .scene[data-portal-active="true"] { height: auto; }
+  .scene[data-portal-active="true"] .stage { position: relative; height: auto; perspective: none; }
+  .scene[data-portal-active="true"] .rig { width: 100%; height: auto; transform: none !important; opacity: 1 !important; pointer-events: auto !important; }
+  .scene[data-portal-active="true"] .geometry { height: auto; transform: none; }
+  .scene[data-portal-active="true"] .plane { transform: none !important; border-radius: 0; }
+  .scene[data-portal-active="true"] .heroSurface { width: 100%; transform: none !important; }
+  .scene[data-portal-active="true"] .aperture,
+  .scene[data-portal-active="true"] .controls,
+  .scene[data-portal-active="true"] .backdrop,
+  .scene[data-portal-active="true"] .displayFace,
+  .scene[data-portal-active="true"] .wordBand,
+  .scene[data-portal-active="true"] .orbit,
+  .scene[data-portal-active="true"] .cubeSkin,
+  .scene[data-portal-active="true"] .displayHeading,
+  .scene[data-portal-active="true"] .galleryTransition,
+  .scene[data-portal-active="true"] .displayControls { display: none; }
+}

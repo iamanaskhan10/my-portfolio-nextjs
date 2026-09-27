@@ -8,6 +8,7 @@
 }
 
 .hero {
+  container: portfolio-hero / inline-size;
   --hero-engrave-duration: 650ms;
   --hero-reveal-at: 750ms;
   --hero-content-left: 9%;
@@ -357,4 +358,17 @@
   .hire { transition: none; }
   .exploreLinks svg { transition: none; transform: none !important; }
 
+}
+
+/* The live hero becomes a portrait face after the fullscreen reveal. Container
+   queries keep its type and portrait composed at that width, without a clone. */
+@container portfolio-hero (max-width: 767px) {
+  .heroScene { --hero-content-left: 1.1rem; --hero-visual-center: 50%; }
+  .statement { top: 5.5rem; right: 1.1rem; left: 1.1rem; width: auto; }
+  .title { font-size: clamp(2.1rem, 8.7cqw, 3.25rem); letter-spacing: -0.015em; line-height: 0.95; transform: none; }
+  .exploreLinks { margin-top: 0.75rem; gap: 1.2rem; }
+  .exploreLinks a { padding: 0 0.45rem; border-radius: 4px; background: var(--hero-ink); font-size: 0.72rem; }
+  .portrait { height: var(--hero-portrait-height, 64%); }
+  .name { bottom: 0.48em; left: 5%; font-size: 19cqw; letter-spacing: -0.025em; transform: scaleX(1.22); }
+  .hire { bottom: 9%; left: 54%; width: min(6.5rem, 28cqw); font-size: 1.1rem; }
 }
