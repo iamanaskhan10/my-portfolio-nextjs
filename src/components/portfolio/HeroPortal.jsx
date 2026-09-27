@@ -7,6 +7,7 @@ import useGsapScene from "../../hooks/useGsapScene";
 import { usePortfolioContent } from "../../context/PortfolioContentContext";
 import IdentityDisplayFaces, { buildIdentityMoments } from "./IdentityDisplayFaces";
 import ProjectOrbit from "./ProjectOrbit";
+import { createParticlePortal } from "../../lib/animation/createParticlePortal";
 import styles from "./HeroPortal.module.css";
 
 const opening = "M0,-15.0888Q0,0 15.0888,0Q0,0 0,15.0888Q0,0 -15.0888,0Q0,0 0,-15.0888Z";
@@ -33,6 +34,7 @@ export default function HeroPortal({ children, sceneRef }) {
   const skipRef = useRef(null);
   const orbitRef = useRef(null);
   const transitionRef = useRef(null);
+  const particleCanvasRef = useRef(null);
   const glowId = useId();
 
   const setup = useCallback(({ gsap, ScrollTrigger }) => {
@@ -63,11 +65,19 @@ export default function HeroPortal({ children, sceneRef }) {
     let lastWidth;
     let lastDepth;
     let lastHeight;
+    let particleRenderer;
     const shape = { fold: 0 };
+    const particles = { progress: 0 };
+    const flight = { position: 0, reveal: 0 };
     const faces = [...rig.querySelectorAll("[data-identity-face]")];
     const orbit = orbitRef.current;
     const camera = orbit.querySelector("[data-orbit-camera]");
     const cards = [...orbit.querySelectorAll("[data-orbit-card]")];
+    const clusters = [...orbit.querySelectorAll("[data-orbit-cluster]")];
+    const satellites = clusters.map((cluster) => [...cluster.querySelectorAll("[data-orbit-satellite]")]);
+    const galleryBackground = orbit.querySelector("[data-orbit-background]");
+    const galleryHeading = orbit.querySelector("h2");
+    const particleMark = transitionRef.current.querySelector("svg");
     const projectCount = selectedProjects.length;
     const momentCount = moments.length;
     const boxEnd = 1.5 + (momentCount - 1) * 0.5;
@@ -96,7 +106,26 @@ export default function HeroPortal({ children, sceneRef }) {
     const compact = () => root.clientWidth < 768 || window.matchMedia("(hover: none) and (pointer: coarse)").matches;
     const centerShift = () => (viewHeight - measuredHeight) / 2;
     const faceWidth = () => Math.min(viewHeight * 0.56, measuredWidth * 0.72, 600);
-    const cardSpacing = () => Math.min(measuredWidth * 0.82, 750) + Math.min(measuredWidth * 0.3, 340);
+    const flightX = (position) => Math.sin(position * 1.8) * measuredWidth * 0.36;
+    const flightY = (position) => Math.cos(position * 1.3) * viewHeight * 0.12;
+    gsap.set(camera, { x: 0, y: 0, z: 0 });
+    const moveCameraX = gsap.quickSetter(camera, "x", "px");
+    const moveCameraY = gsap.quickSetter(camera, "y", "px");
+    const moveCameraZ = gsap.quickSetter(camera, "z", "px");
+    const renderGallery = () => {
+      moveCameraX(-flightX(flight.position));
+      moveCameraY(-flightY(flight.position));
+      moveCameraZ(flight.position * 1000);
+      clusters.forEach((cluster, index) => {
+        const distance = index - flight.position;
+        const visible = flight.reveal > 0 && distance > -0.56 && distance < 2.1;
+        cluster.style.display = visible ? "block" : "none";
+        if (!visible) return;
+        const opacity = distance < -0.1 ? Math.max(0, 1 + (distance + 0.1) / 0.46) : Math.min(1, (2.1 - distance) / 0.6);
+        cards[index].style.opacity = opacity * flight.reveal;
+        satellites[index].forEach((image) => { image.style.opacity = opacity * flight.reveal * 0.7; });
+      });
+    };
     const renderShape = () => {
       const width = (measuredWidth + (faceWidth() - measuredWidth) * shape.fold).toFixed(2);
       const depth = (faceWidth() * shape.fold).toFixed(2);
@@ -146,7 +175,14 @@ export default function HeroPortal({ children, sceneRef }) {
       root.style.setProperty("--portal-distance", `${distance}px`);
       root.style.setProperty("--portal-view-height", `${viewHeight}px`);
       root.style.setProperty("--portal-width", `${width}px`);
-      cards.forEach((card, index) => gsap.set(card, { x: index * cardSpacing() }));
+      clusters.forEach((cluster, index) => gsap.set(cluster, { x: flightX(index), y: flightY(index), z: -index * 1000 }));
+      satellites.forEach((images) => images.forEach((image, index) => gsap.set(image, {
+        x: (index ? 1 : -1) * Math.min(measuredWidth * 0.49, 630),
+        y: (index ? 1 : -1) * viewHeight * 0.3, z: index ? 100 : -180,
+        rotationY: index ? -12 : 12, rotationZ: index ? 5 : -5, xPercent: -50, yPercent: -50,
+      })));
+      particleRenderer?.resize(width, viewHeight);
+      renderGallery();
       trigger?.refresh();
       renderAperture();
       renderShape();
@@ -162,12 +198,18 @@ export default function HeroPortal({ children, sceneRef }) {
     gsap.set(darkRef.current, { autoAlpha: 1 });
     gsap.set(controlsRef.current, { autoAlpha: 1 });
     gsap.set(backdropRef.current, { opacity: 0 });
-    gsap.set([orbit, transitionRef.current], { autoAlpha: 0 });
-    gsap.set(transitionRef.current, { scale: 0.01 });
+    gsap.set(orbit, { visibility: "hidden" });
+    gsap.set(galleryBackground, { opacity: 0 });
+    gsap.set([galleryHeading, transitionRef.current], { autoAlpha: 0 });
+    gsap.set(particleMark, { scale: 0.7 });
     cards.forEach((card, index) => gsap.set(card, {
-      x: () => index * cardSpacing(), yPercent: -50, xPercent: -50,
-      y: index % 2 ? -24 : 24, z: index % 2 ? -80 : 0, rotationY: index % 2 ? 8 : -8,
+      yPercent: -50, xPercent: -50, rotationY: index % 2 ? 6 : -6,
     }));
+    const tokens = getComputedStyle(root);
+    particleRenderer = createParticlePortal(particleCanvasRef.current, {
+      signal: tokens.getPropertyValue("--signal").trim(), highlight: tokens.getPropertyValue("--signal-highlight").trim(), compact: compact(),
+    });
+    particleRenderer?.resize(measuredWidth, viewHeight);
     gsap.set([wordBandRef.current, displayControlsRef.current], { autoAlpha: 0 });
     gsap.set(wordBandRef.current, { xPercent: -30, rotation: -4, y: 30 });
     selectVisibleFace(0, "hero");
@@ -179,8 +221,10 @@ export default function HeroPortal({ children, sceneRef }) {
         const progress = timeline.time();
         if (progress <= 0.66) renderAperture();
         renderShape();
+        if (progress >= boxEnd && progress <= galleryStart + 0.1) particleRenderer?.render(particles.progress);
+        renderGallery();
         const gallery = projectCount > 0 && progress >= galleryStart;
-        const index = gallery ? Math.round(-Number(gsap.getProperty(camera, "x")) / cardSpacing()) : Math.round(-Number(gsap.getProperty(rig, "rotationY")) / 90);
+        const index = gallery ? Math.round(flight.position) : Math.round(-Number(gsap.getProperty(rig, "rotationY")) / 90);
         const mode = gallery ? "gallery" : progress >= 0.82 && progress < boxEnd + 0.25 ? "box" : progress < 0.82 ? "hero" : "transition";
         selectVisibleFace(mode === "hero" ? 0 : Math.max(0, Math.min((gallery ? projectCount : momentCount) - 1, index)), mode);
         const phase = progress < 0.12 ? "darkness" : progress < 0.32 ? "aperture" : progress < 0.66 ? "approach" : progress < 0.82 ? "hero" : progress < 1 ? "plane" : gallery ? "gallery" : progress >= boxEnd ? "transition" : "display";
@@ -219,12 +263,16 @@ export default function HeroPortal({ children, sceneRef }) {
       timeline.to([...faces, ...shellFaces, wordBandRef.current, displayControlsRef.current], { opacity: 0, duration: 0.2 }, boxEnd)
         .set(rig, { visibility: "hidden" }, boxEnd + 0.2)
         .set(displayControlsRef.current, { autoAlpha: 0 }, boxEnd + 0.2)
-        .to(transitionRef.current, { autoAlpha: 1, scale: 1, duration: 0.18 }, boxEnd)
-        .to(transitionRef.current, { scale: 120, rotation: 90, duration: 0.52, ease: "power2.in" }, boxEnd + 0.18)
-        .to(orbit, { autoAlpha: 1, duration: 0.16 }, galleryStart - 0.16)
-        .set(transitionRef.current, { autoAlpha: 0 }, galleryStart)
+        .set(orbit, { visibility: "visible" }, boxEnd)
+        .to(galleryBackground, { opacity: 1, duration: 0.2 }, boxEnd)
+        .to(transitionRef.current, { autoAlpha: 1, duration: 0.18 }, boxEnd + 0.06)
+        .to(particles, { progress: 1, duration: 0.66 }, boxEnd + 0.06)
+        .to(particleMark, { scale: 1.4, rotation: 45, duration: 0.5 }, boxEnd + 0.08)
+        .to(transitionRef.current, { autoAlpha: 0, duration: 0.14 }, galleryStart - 0.14)
+        .to(flight, { reveal: 1, duration: 0.2 }, galleryStart - 0.2)
+        .to(galleryHeading, { autoAlpha: 1, duration: 0.15 }, galleryStart)
         .to(displayControlsRef.current, { autoAlpha: 1, duration: 0.15 }, galleryStart)
-        .fromTo(camera, { x: 0 }, { x: () => -(projectCount - 1) * cardSpacing(), duration: Math.max(0.01, (projectCount - 1) * 0.5), immediateRender: false }, galleryStart + 0.15);
+        .to(flight, { position: projectCount - 1, duration: Math.max(0.01, (projectCount - 1) * 0.5) }, galleryStart + 0.15);
     }
     timeline.to({}, { duration: 0.01 }, duration - 0.01);
     const finishIntro = (immediate = false) => {
@@ -320,6 +368,7 @@ export default function HeroPortal({ children, sceneRef }) {
 
     return () => {
       disposed = true;
+      particleRenderer?.dispose();
       autoplay?.kill();
       finishEntrance();
       cancelAnimationFrame(focusFrame);
@@ -336,6 +385,8 @@ export default function HeroPortal({ children, sceneRef }) {
       [...faces.filter((face) => face !== plane), ...cards, orbit].forEach((face) => { face.inert = true; face.setAttribute("aria-hidden", "true"); face.style.removeProperty("visibility"); });
       plane.style.removeProperty("visibility");
       heroSurface.style.removeProperty("transform");
+      clusters.forEach((cluster) => cluster.style.removeProperty("display"));
+      [...cards, ...satellites.flat()].forEach((card) => card.style.removeProperty("opacity"));
       apertureElement.removeAttribute("transform");
       glowElement.style.removeProperty("opacity");
       root.style.removeProperty("--portal-height");
@@ -370,7 +421,7 @@ export default function HeroPortal({ children, sceneRef }) {
           <IdentityDisplayFaces moments={moments} />
           </div>
         </div>
-        <div ref={transitionRef} className={styles.galleryTransition} aria-hidden="true"><svg viewBox="-20 -20 40 40"><path d={opening} /></svg></div>
+        <div ref={transitionRef} className={styles.galleryTransition} aria-hidden="true"><canvas ref={particleCanvasRef} className={styles.particleCanvas} data-particle-portal /><svg viewBox="-20 -20 40 40"><path d={opening} /></svg></div>
         <div ref={orbitRef} className={styles.orbit} inert aria-hidden="true"><ProjectOrbit projects={selectedProjects} heading={site.projects.heading} /></div>
         <div ref={veilRef} className={styles.aperture} aria-hidden="true">
         <svg className={styles.fallback} viewBox="-500 -500 1000 1000" preserveAspectRatio="xMidYMid slice" focusable="false">
