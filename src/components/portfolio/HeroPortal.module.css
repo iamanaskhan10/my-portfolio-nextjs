@@ -14,6 +14,7 @@
 
 .rig {
   --display-depth: 0px;
+  --display-gap: 0px;
   --display-radius: 0px;
   --display-scale: 1;
   position: relative;
@@ -26,18 +27,26 @@
 .geometry { position: relative; transform-style: preserve-3d; transform: scale3d(var(--display-scale), var(--display-scale), var(--display-scale)); }
 .scene[data-portal-active="true"] .geometry { height: 100%; }
 .cubeSkin { display: none; position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
+/* Each panel has its own reverse surface. No core bridges the gaps. */
 .scene[data-portal-active="true"] .cubeSkin { display: block; }
-.cubeShellFace { position: absolute; top: 50%; left: 50%; width: var(--display-width); height: var(--display-height); border: 1px solid var(--line-strong); background: var(--ink); backface-visibility: hidden; transform: translate(-50%, -50%) rotateY(var(--face-angle)) translateZ(calc(var(--display-depth) / 2 - 0.5px)); }
-.cubeShellFace:nth-child(2), .cubeShellFace:nth-child(4) { width: var(--display-depth); transform: translate(-50%, -50%) rotateY(var(--face-angle)) translateZ(calc(var(--display-width) / 2 - 0.5px)); }
+.cubeShellFace { position: absolute; top: 50%; left: 50%; width: var(--display-width); height: var(--display-height); border: 1px solid var(--line-strong); border-radius: var(--display-radius); background: var(--ink); backface-visibility: visible; transform: translate(-50%, -50%) rotateY(var(--face-angle)) translateZ(calc(var(--display-depth) / 2 + var(--display-gap) - 1px)); }
+.cubeShellFace:nth-child(2), .cubeShellFace:nth-child(4) { width: var(--display-depth); transform: translate(-50%, -50%) rotateY(var(--face-angle)) translateZ(calc(var(--display-width) / 2 + var(--display-gap) - 1px)); }
 .cubeTop { height: var(--display-depth); background: var(--signal-ink); transform: translate(-50%, -50%) rotateX(90deg) translateZ(calc(var(--display-height) / 2 - 0.5px)); }
 .cubeBottom { height: var(--display-depth); transform: translate(-50%, -50%) rotateX(-90deg) translateZ(calc(var(--display-height) / 2 - 0.5px)); }
+.cubeTop, .cubeBottom { display: none; }
+.groundShadow { display: none; }
+.scene[data-portal-active="true"] .groundShadow { display: block; position: absolute; left: 50%; top: calc((var(--portal-view-height) + var(--display-panel-height)) / 2 + 2px); width: calc(var(--display-size) * 1.3); height: clamp(20px, 3vw, 40px); margin-left: calc(var(--display-size) * -0.65); background: radial-gradient(ellipse, #11120f88, #11120f33 38%, transparent 72%); pointer-events: none; }
+.identityPanel { display: none; }
+.scene[data-portal-active="true"] .identityPanel { position: absolute; inset: 0; display: grid; place-items: center; padding: 12%; container-type: inline-size; background: radial-gradient(ellipse at 0 0, var(--signal-shadow), transparent 48%), radial-gradient(ellipse at 100% 100%, var(--signal-ink), transparent 55%), var(--ink); }
+.identityPanel h2 { margin: 0; text-align: center; color: var(--paper); font-family: "Manrope Hero", sans-serif; font-size: clamp(1.2rem, 9cqw, 3rem); font-weight: 500; line-height: 1.2; }
+.identityPanel span { display: block; }
 
 .plane {
   position: relative;
   overflow: clip;
   border-radius: var(--display-radius);
   backface-visibility: hidden;
-  transform: translateZ(calc(var(--display-depth) / 2));
+  transform: translateZ(calc(var(--display-depth) / 2 + var(--display-gap)));
   background: var(--ink);
 }
 .heroSurface { position: relative; transform-origin: 0 0; }
@@ -63,10 +72,12 @@
 
 .scene[data-portal-active="true"] .displayFace {
   position: absolute;
-  inset: 0;
+  top: 50%;
   left: 50%;
   width: var(--display-width);
+  height: var(--display-height);
   margin-left: calc(var(--display-width) / -2);
+  margin-top: calc(var(--display-height) / -2);
   display: flex;
   flex-direction: column;
   gap: clamp(0.5rem, 1.2vw, 1rem);
@@ -80,9 +91,9 @@
   background: var(--ink);
 }
 
-.displayFace { transform: rotateY(var(--face-angle)) translateZ(calc(var(--display-depth) / 2)); }
+.displayFace { transform: rotateY(var(--face-angle)) translateZ(calc(var(--display-depth) / 2 + var(--display-gap))); }
 .scene[data-portal-active="true"] .displayFace[data-face-side="1"],
-.scene[data-portal-active="true"] .displayFace[data-face-side="3"] { width: var(--display-depth); margin-left: calc(var(--display-depth) / -2); transform: rotateY(var(--face-angle)) translateZ(calc(var(--display-width) / 2)); }
+.scene[data-portal-active="true"] .displayFace[data-face-side="3"] { width: var(--display-depth); margin-left: calc(var(--display-depth) / -2); transform: rotateY(var(--face-angle)) translateZ(calc(var(--display-width) / 2 + var(--display-gap))); }
 
 .faceMeta {
   display: flex;
@@ -140,13 +151,13 @@
   width: max-content;
   gap: 0.65em;
   margin-top: -0.6em;
-  color: color-mix(in srgb, var(--ink) 22%, var(--paper));
-  font-family: "Anton", "Arial Narrow", sans-serif;
-  font-size: clamp(6rem, 17vw, 16rem);
-  font-weight: 400;
+  color: #080a07;
+  font-family: "Manrope Hero", "Bahnschrift", sans-serif;
+  font-size: clamp(3rem, 7vw, 8rem);
+  font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
-  text-transform: uppercase;
+  letter-spacing: -0.035em;
   pointer-events: none;
 }
 
@@ -154,7 +165,7 @@
   position: absolute;
   z-index: 3;
   right: 1rem;
-  bottom: max(1.25rem, env(safe-area-inset-bottom), calc(var(--portal-height) - 100svh + 1.25rem));
+  bottom: max(6.5rem, calc(env(safe-area-inset-bottom) + 5.25rem), calc(var(--portal-height) - 100svh + 6.5rem));
   left: 1rem;
   display: grid;
   grid-template-columns: auto auto;
@@ -337,6 +348,8 @@
   .scene[data-portal-active="true"] .wordBand,
   .scene[data-portal-active="true"] .orbit,
   .scene[data-portal-active="true"] .cubeSkin,
+  .scene[data-portal-active="true"] .groundShadow,
+  .scene[data-portal-active="true"] .identityPanel,
   .scene[data-portal-active="true"] .displayHeading,
   .scene[data-portal-active="true"] .galleryTransition,
   .scene[data-portal-active="true"] .displayControls { display: none; }

@@ -9,7 +9,7 @@ export const defaultSiteText = {
     projectsDescription: "Selected full-stack and AI projects by Anas Khan, including their problems, implementation, and outcomes.",
   },
   hero: {
-    lines: ["Full-stack", "Engineer.", "Applied AI."],
+    lines: ["Full-stack", "Applied AI", "Products"],
     downloadLabel: "Download resume",
     viewLabel: "View resume",
     ctaLabel: "Let's talk",

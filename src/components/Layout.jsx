@@ -7,6 +7,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import useMotionPreference from "../hooks/useMotionPreference";
 import BrandMark from "./portfolio/BrandMark";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import styles from "./FloatingNavigation.module.css";
 
 const navigation = [
   { label: "About", href: "#about" },
@@ -151,19 +153,17 @@ export default function Layout({ children }) {
   }, [mobileMenuOpen]);
 
   return (
-    <div className="site-shell">
+    <div className={`site-shell ${styles.shell}`}>
       <a className="site-skip-link" href="#main-content">Skip to content</a>
-      <header className="site-header">
+      <header className={`site-header ${styles.dock}`}>
         <a className="site-header__brand" href={sectionHref("#home")} aria-label="Anas Khan home">
           <BrandMark className="site-header__mark" />
-          <span className="site-header__brand-name">
-            Anas <span className="site-header__brand-surname">Khan</span>
-          </span>
         </a>
         <nav className="site-header__nav" aria-label="Main navigation">
-          {navigation.map((item) => (
+          {[navigation[3], navigation[0]].map((item) => (
             <a key={item.href} href={sectionHref(item.href)} aria-current={router.pathname === "/" && activeSection === item.href.slice(1) ? "location" : undefined}>{item.label}</a>
           ))}
+          <Link href="/projects" aria-current={router.pathname.startsWith("/projects") ? "page" : undefined}>Archive</Link>
         </nav>
         <a className="site-header__contact" href={sectionHref("#contact")}>
           <span className="site-header__contact-icon" aria-hidden="true">
@@ -181,6 +181,7 @@ export default function Layout({ children }) {
           onClick={() => setMobileMenuOpen((open) => !open)}
         >
           {mobileMenuOpen ? <X size={19} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
+          <span className={styles.menuLabel}>Menu</span>
         </button>
       </header>
       <main id="main-content">{children}</main>
@@ -217,11 +218,12 @@ export default function Layout({ children }) {
                   <X size={19} aria-hidden="true" />
                 </button>
               </div>
-              <nav className="mobile-sidebar__nav" aria-label="Mobile navigation">
+              <nav className="mobile-sidebar__nav" aria-label="Site sections">
                 <a href={sectionHref("#home")} onClick={(event) => navigateFromMenu(event, "#home")}>Home</a>
                 {navigation.map((item) => (
                   <a key={item.href} href={sectionHref(item.href)} aria-current={router.pathname === "/" && activeSection === item.href.slice(1) ? "location" : undefined} onClick={(event) => navigateFromMenu(event, item.href)}>{item.label}</a>
                 ))}
+                <Link href="/projects" onClick={() => setMobileMenuOpen(false)}>Project archive</Link>
               </nav>
               <a className="mobile-sidebar__email" href={sectionHref("#contact")} onClick={(event) => navigateFromMenu(event, "#contact")}>
                 Let&apos;s build something useful

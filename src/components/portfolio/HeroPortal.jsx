@@ -23,12 +23,16 @@ export default function HeroPortal({ children, sceneRef }) {
   const rigRef = useRef(null);
   const planeRef = useRef(null);
   const heroSurfaceRef = useRef(null);
+  const identityPanelRef = useRef(null);
   const wordBandRef = useRef(null);
   const displayControlsRef = useRef(null);
   const apertureRef = useRef(null);
   const veilRef = useRef(null);
   const glowRef = useRef(null);
+  const starRef = useRef(null);
+  const shadowRef = useRef(null);
   const backdropRef = useRef(null);
+  const groundRef = useRef(null);
   const darkRef = useRef(null);
   const controlsRef = useRef(null);
   const skipRef = useRef(null);
@@ -66,6 +70,7 @@ export default function HeroPortal({ children, sceneRef }) {
     let lastDepth;
     let lastHeight;
     let particleRenderer;
+    let identityVisible = false;
     const shape = { fold: 0 };
     const particles = { progress: 0 };
     const flight = { position: 0, reveal: 0 };
@@ -85,7 +90,8 @@ export default function HeroPortal({ children, sceneRef }) {
     const duration = projectCount ? galleryStart + 0.4 + Math.max(0, projectCount - 1) * 0.5 : boxEnd + 0.2;
     const faceButtons = [...displayControlsRef.current.querySelectorAll("[data-face-button]")];
     const projectButtons = [...displayControlsRef.current.querySelectorAll("[data-project-button]")];
-    const entranceAnimations = plane.getAnimations({ subtree: true }).filter((animation) => animation instanceof CSSAnimation);
+    const entranceAnimations = plane.getAnimations({ subtree: true }).filter((animation) =>
+      animation instanceof CSSAnimation && Number.isFinite(animation.effect.getComputedTiming().endTime));
     entranceAnimations.forEach((animation) => { animation.pause(); animation.currentTime = 0; });
     root.dataset.heroEntrance = "waiting";
     const finishEntrance = () => {
@@ -94,18 +100,19 @@ export default function HeroPortal({ children, sceneRef }) {
     };
     const apertureElement = apertureRef.current;
     const glowElement = glowRef.current;
-    const aperture = { approach: 0, rotation: -14, light: 0 };
+    const aperture = { approach: 0, rotation: 0, light: 0, star: 0.5 };
     const renderAperture = () => {
-      // Constant perceptual zoom, without separate camera segments or a
-      // WebGL shader compilation/surface swap in the middle of the opening.
-      const scale = Math.pow(8 / 0.015, aperture.approach) * viewHeight / Math.max(measuredWidth, viewHeight);
-      // SVG uses downwards Y; the WebGL camera uses upwards Y.
-      apertureElement.setAttribute("transform", `rotate(${-aperture.rotation}) scale(${scale})`);
-      glowElement.style.opacity = aperture.light;
+      // The star stays small. Only the soft surrounding light spreads, while
+      // the dark veil dissolves over the stationary live hero.
+      glowElement.style.opacity = 0;
+      shadowRef.current.setAttribute("transform", `scale(${0.5 + aperture.approach * 2.1})`);
+      shadowRef.current.style.opacity = aperture.light;
+      starRef.current.setAttribute("transform", `rotate(${aperture.rotation}) scale(${1.8 * viewHeight / Math.max(measuredWidth, viewHeight)})`);
+      starRef.current.style.opacity = aperture.star;
     };
     const compact = () => root.clientWidth < 768 || window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-    const centerShift = () => (viewHeight - measuredHeight) / 2;
-    const faceWidth = () => Math.min(viewHeight * 0.56, measuredWidth * 0.72, 600);
+    const faceWidth = () => Math.min(viewHeight * 0.4, measuredWidth * 0.62, 420);
+    const faceHeight = () => faceWidth() * 1.38;
     const flightX = (position) => Math.sin(position * 1.8) * measuredWidth * 0.36;
     const flightY = (position) => Math.cos(position * 1.3) * viewHeight * 0.12;
     gsap.set(camera, { x: 0, y: 0, z: 0 });
@@ -129,14 +136,16 @@ export default function HeroPortal({ children, sceneRef }) {
     const renderShape = () => {
       const width = (measuredWidth + (faceWidth() - measuredWidth) * shape.fold).toFixed(2);
       const depth = (faceWidth() * shape.fold).toFixed(2);
-      const height = (measuredHeight + (faceWidth() - measuredHeight) * shape.fold).toFixed(2);
+      const height = (measuredHeight + (faceHeight() - measuredHeight) * shape.fold).toFixed(2);
       if (width !== lastWidth) { rig.style.setProperty("--display-width", `${width}px`); lastWidth = width; }
       if (height !== lastHeight) { rig.style.setProperty("--display-height", `${height}px`); lastHeight = height; }
       if (depth !== lastDepth) {
         rig.style.setProperty("--display-depth", `${depth}px`);
+        rig.style.setProperty("--display-gap", `${faceWidth() * 0.09 * shape.fold}px`);
+        rig.style.setProperty("--display-radius", `${10 * shape.fold}px`);
         lastDepth = depth;
       }
-      const fit = Math.min(faceWidth() / measuredWidth, faceWidth() / measuredHeight);
+      const fit = Math.min(faceWidth() / measuredWidth, faceHeight() / measuredHeight);
       const scale = 1 + (fit - 1) * shape.fold;
       heroSurface.style.transform = `translate(${(Number(width) - measuredWidth * scale) / 2}px, ${(Number(height) - measuredHeight * scale) / 2}px) scale(${scale})`;
     };
@@ -175,6 +184,8 @@ export default function HeroPortal({ children, sceneRef }) {
       root.style.setProperty("--portal-distance", `${distance}px`);
       root.style.setProperty("--portal-view-height", `${viewHeight}px`);
       root.style.setProperty("--portal-width", `${width}px`);
+      root.style.setProperty("--display-size", `${faceWidth()}px`);
+      root.style.setProperty("--display-panel-height", `${faceHeight()}px`);
       clusters.forEach((cluster, index) => gsap.set(cluster, { x: flightX(index), y: flightY(index), z: -index * 1000 }));
       satellites.forEach((images) => images.forEach((image, index) => gsap.set(image, {
         x: (index ? 1 : -1) * Math.min(measuredWidth * 0.49, 630),
@@ -192,12 +203,16 @@ export default function HeroPortal({ children, sceneRef }) {
     root.dataset.portalActive = "true";
     root.dataset.portalPhase = "darkness";
     renderAperture();
-    gsap.set(rig, { "--display-scale": 0.86, rotationY: -8, xPercent: compact() ? 0 : -10, y: centerShift(), z: -90, pointerEvents: "none" });
+    gsap.set(rig, { "--display-scale": 1, rotationY: 0, xPercent: 0, y: 0, z: 0, pointerEvents: "none" });
+    gsap.set(cubeSkin, { visibility: "hidden" });
     gsap.set(plane, { opacity: 0.3 });
+    gsap.set(identityPanelRef.current, { autoAlpha: 0 });
     gsap.set(veilRef.current, { autoAlpha: 1 });
+    gsap.set(apertureElement, { opacity: 1 });
     gsap.set(darkRef.current, { autoAlpha: 1 });
     gsap.set(controlsRef.current, { autoAlpha: 1 });
     gsap.set(backdropRef.current, { opacity: 0 });
+    gsap.set(groundRef.current, { opacity: 0, scaleX: 0.65 });
     gsap.set(orbit, { visibility: "hidden" });
     gsap.set(galleryBackground, { opacity: 0 });
     gsap.set([galleryHeading, transitionRef.current], { autoAlpha: 0 });
@@ -211,7 +226,7 @@ export default function HeroPortal({ children, sceneRef }) {
     });
     particleRenderer?.resize(measuredWidth, viewHeight);
     gsap.set([wordBandRef.current, displayControlsRef.current], { autoAlpha: 0 });
-    gsap.set(wordBandRef.current, { xPercent: -30, rotation: -4, y: 30 });
+    gsap.set(wordBandRef.current, { xPercent: -20, rotation: 0, y: 0 });
     selectVisibleFace(0, "hero");
 
     const timeline = gsap.timeline({
@@ -221,6 +236,13 @@ export default function HeroPortal({ children, sceneRef }) {
         const progress = timeline.time();
         if (progress <= 0.66) renderAperture();
         renderShape();
+        const showIdentity = progress >= 1.3;
+        if (showIdentity !== identityVisible) {
+          identityVisible = showIdentity;
+          heroSurface.inert = showIdentity;
+          heroSurface.setAttribute("aria-hidden", String(showIdentity));
+          identityPanelRef.current.setAttribute("aria-hidden", String(!showIdentity));
+        }
         if (progress >= boxEnd && progress <= galleryStart + 0.1) particleRenderer?.render(particles.progress);
         renderGallery();
         const gallery = projectCount > 0 && progress >= galleryStart;
@@ -233,34 +255,45 @@ export default function HeroPortal({ children, sceneRef }) {
     });
     timeline
       .to(darkRef.current, { autoAlpha: 0, duration: 0.08 }, 0.02)
-      .fromTo(aperture, { light: 0 }, { light: 1, duration: 0.16, immediateRender: false }, 0.02)
-      .fromTo(aperture, { approach: 0, rotation: -14 }, { approach: 1, rotation: 0, duration: 0.62, immediateRender: false }, 0.02)
-      .fromTo(rig, { "--display-scale": 0.86, rotationY: -8, xPercent: () => compact() ? 0 : -10, y: centerShift, z: -90 }, { "--display-scale": 1, rotationY: 0, xPercent: 0, y: 0, z: 0, duration: 0.36, ease: "power1.inOut", immediateRender: false }, 0.28)
+      .fromTo(aperture, { light: 0 }, { light: 0.28, duration: 0.16, immediateRender: false }, 0.02)
+      .to(aperture, { rotation: 90, duration: 0.62, ease: "power1.inOut" }, 0.02)
+      .fromTo(aperture, { approach: 0 }, { approach: 1, duration: 0.58, ease: "power1.out", immediateRender: false }, 0.06)
+      .to(aperture, { star: 0, duration: 0.42, ease: "power1.out" }, 0.16)
+      .to(aperture, { light: 0, duration: 0.46, ease: "power1.out" }, 0.18)
+      .to(apertureElement, { opacity: 0, duration: 0.48, ease: "power1.inOut" }, 0.16)
       .to(plane, { opacity: 1, duration: 0.36, ease: "power1.inOut" }, 0.28)
       .to(controlsRef.current, { autoAlpha: 0, duration: 0.06 }, 0.58)
       .set(veilRef.current, { autoAlpha: 0 }, 0.66)
       .set(rig, { pointerEvents: "auto" }, 0.66)
       .to(backdropRef.current, { opacity: 1, duration: 0.12 }, 0.82)
-      .fromTo(rig, { "--display-scale": 1, rotationX: 0, rotationY: 0, rotationZ: 0, y: 0, z: 0 }, {
+      .set(cubeSkin, { visibility: "visible" }, 0.98)
+      .fromTo(rig, { "--display-scale": 1, rotationY: 0, y: 0, z: 0 }, {
         "--display-scale": () => viewHeight < 500 ? 0.78 : 1,
-        rotationX: -12,
-        rotationY: -20,
-        rotationZ: 0,
+        rotationY: 0,
         z: () => -faceWidth() / 2,
-        y: () => (viewHeight - faceWidth()) / 2 - 20,
+        y: () => (viewHeight - faceHeight()) / 2 + 10,
         duration: 0.5,
         ease: "power1.inOut",
         immediateRender: false,
       }, 0.82);
-    timeline.fromTo(shape, { fold: 0 }, { fold: 1, duration: 0.5, ease: "power1.inOut", immediateRender: false }, 0.82)
+    timeline.fromTo(rig, { rotationZ: 0 }, { rotationZ: 42, duration: 0.26, ease: "power1.inOut", immediateRender: false }, 0.82)
+      .to(rig, { rotationZ: 0, duration: 0.24, ease: "power1.inOut" }, 1.08)
+      .fromTo(shape, { fold: 0 }, { fold: 1, duration: 0.5, ease: "power1.inOut", immediateRender: false }, 0.82)
+      .to(heroSurface, { opacity: 0, duration: 0.14 }, 1.2)
+      .to(identityPanelRef.current, { autoAlpha: 1, duration: 0.16 }, 1.24)
+      .fromTo(identityPanelRef.current.querySelectorAll("span"), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, stagger: 0.04, ease: "power2.out", immediateRender: false }, 1.3)
+      .to(groundRef.current, { opacity: 0.65, scaleX: 1, duration: 0.3, ease: "power1.out" }, 1.02)
       .to(wordBandRef.current, { autoAlpha: 1, duration: 0.16 }, 1.06)
       .to(displayControlsRef.current, { autoAlpha: 1, duration: 0.12 }, 1.18)
-      .to(wordBandRef.current, { xPercent: -70, rotation: 4, y: -30, duration: boxEnd - 1.06 }, 1.06);
+      .to(wordBandRef.current, { xPercent: -80, duration: boxEnd - 1.06 }, 1.06);
     if (momentCount > 1) timeline.to(rig, { rotationY: -(momentCount - 1) * 90 - 20, duration: (momentCount - 1) * 0.5 }, 1.39);
+    faces.slice(1).forEach((face, index) => {
+      timeline.fromTo([...face.children], { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.16, stagger: 0.025, ease: "power2.out" }, 1.39 + (index + 1) * 0.5 - 0.2);
+    });
     if (projectCount) {
       // Opacity on a preserve-3d parent flattens its descendants. Fade only
       // individual surfaces; the rig, geometry and shell stay fully opaque.
-      timeline.to([...faces, ...shellFaces, wordBandRef.current, displayControlsRef.current], { opacity: 0, duration: 0.2 }, boxEnd)
+      timeline.to([...faces, ...shellFaces, wordBandRef.current, groundRef.current, displayControlsRef.current], { opacity: 0, duration: 0.2 }, boxEnd)
         .set(rig, { visibility: "hidden" }, boxEnd + 0.2)
         .set(displayControlsRef.current, { autoAlpha: 0 }, boxEnd + 0.2)
         .set(orbit, { visibility: "visible" }, boxEnd)
@@ -275,6 +308,7 @@ export default function HeroPortal({ children, sceneRef }) {
         .to(flight, { position: projectCount - 1, duration: Math.max(0.01, (projectCount - 1) * 0.5) }, galleryStart + 0.15);
     }
     timeline.to({}, { duration: 0.01 }, duration - 0.01);
+    const foldTween = timeline.getTweensOf(rig).find((tween) => tween.vars.y !== undefined);
     const finishIntro = (immediate = false) => {
       autoplay?.kill();
       if (!introReady) {
@@ -303,7 +337,13 @@ export default function HeroPortal({ children, sceneRef }) {
         }
       },
       onRefresh: (self) => {
-        if (introReady) timeline.invalidate().time(REVEAL + self.progress * (duration - REVEAL));
+        // Only the measured fold position needs new values. Invalidating the
+        // whole timeline captures already-faded content as its starting state
+        // and leaves the hero hidden when the visitor scrolls back to the top.
+        if (introReady) {
+          foldTween?.invalidate();
+          timeline.time(REVEAL + self.progress * (duration - REVEAL));
+        }
       },
       onToggle: ({ isActive }) => { rig.style.willChange = isActive ? "transform" : "auto"; },
     });
@@ -379,20 +419,29 @@ export default function HeroPortal({ children, sceneRef }) {
       displayControls.removeEventListener("click", chooseFace);
       displayControls.removeEventListener("keydown", rotateWithKeyboard);
       rig.style.removeProperty("will-change");
-      ["--display-width", "--display-height", "--display-depth"].forEach((property) => rig.style.removeProperty(property));
+      ["--display-width", "--display-height", "--display-depth", "--display-gap", "--display-radius"].forEach((property) => rig.style.removeProperty(property));
       plane.removeAttribute("inert");
       plane.removeAttribute("aria-hidden");
       [...faces.filter((face) => face !== plane), ...cards, orbit].forEach((face) => { face.inert = true; face.setAttribute("aria-hidden", "true"); face.style.removeProperty("visibility"); });
       plane.style.removeProperty("visibility");
       heroSurface.style.removeProperty("transform");
+      heroSurface.removeAttribute("aria-hidden");
+      heroSurface.inert = false;
+      identityPanelRef.current.setAttribute("aria-hidden", "true");
       clusters.forEach((cluster) => cluster.style.removeProperty("display"));
       [...cards, ...satellites.flat()].forEach((card) => card.style.removeProperty("opacity"));
       apertureElement.removeAttribute("transform");
       glowElement.style.removeProperty("opacity");
+      starRef.current.removeAttribute("transform");
+      starRef.current.style.removeProperty("opacity");
+      shadowRef.current.removeAttribute("transform");
+      shadowRef.current.style.removeProperty("opacity");
       root.style.removeProperty("--portal-height");
       root.style.removeProperty("--portal-distance");
       root.style.removeProperty("--portal-view-height");
       root.style.removeProperty("--portal-width");
+      root.style.removeProperty("--display-size");
+      root.style.removeProperty("--display-panel-height");
       delete root.dataset.portalActive;
       delete root.dataset.portalPhase;
       delete root.dataset.displayActiveFace;
@@ -404,10 +453,11 @@ export default function HeroPortal({ children, sceneRef }) {
 
   return (
     <div ref={sceneRef} id="home" className={styles.scene} data-hero-entrance="waiting">
-      <noscript><style>{`#home [data-boot-cover] { display: none !important; } #home [data-hero-plane] * { animation-play-state: running !important; }`}</style></noscript>
+      <noscript><style>{`#home [data-boot-cover] { display: none !important; } #home [data-hero-plane] * { animation-play-state: running !important; } .site-header { visibility: visible !important; }`}</style></noscript>
       <div className={styles.stage}>
         <div className={styles.bootCover} data-boot-cover aria-hidden="true" />
         <div ref={backdropRef} className={styles.backdrop} aria-hidden="true" />
+        <div ref={groundRef} className={styles.groundShadow} aria-hidden="true" />
         <p className={styles.displayHeading}>Achievements &amp; identity</p>
         <div ref={wordBandRef} className={styles.wordBand} aria-hidden="true">{["Full-stack", "Applied AI", "Built to ship"].map((phrase) => <span key={phrase}>{phrase}</span>)}</div>
         <div ref={rigRef} className={styles.rig} data-display-rig>
@@ -417,7 +467,10 @@ export default function HeroPortal({ children, sceneRef }) {
             <div className={`${styles.cubeShellFace} ${styles.cubeTop}`} />
             <div className={`${styles.cubeShellFace} ${styles.cubeBottom}`} />
           </div>
-          <div ref={planeRef} className={styles.plane} data-hero-plane data-identity-face="0"><div ref={heroSurfaceRef} className={styles.heroSurface}>{children}</div></div>
+          <div ref={planeRef} className={styles.plane} data-hero-plane data-identity-face="0">
+            <div ref={heroSurfaceRef} className={styles.heroSurface}>{children}</div>
+            <div ref={identityPanelRef} className={styles.identityPanel} aria-hidden="true"><h2>{site.about.phrases.map((phrase) => <span key={phrase}>{phrase}</span>)}</h2></div>
+          </div>
           <IdentityDisplayFaces moments={moments} />
           </div>
         </div>
@@ -437,6 +490,8 @@ export default function HeroPortal({ children, sceneRef }) {
             <path d={mask} fill="var(--editorial-void)" fillRule="evenodd" />
             <path ref={glowRef} d={mask} fill={`url(#${glowId})`} fillRule="evenodd" />
           </g>
+          <circle ref={shadowRef} r="280" fill={`url(#${glowId})`} />
+          <path ref={starRef} d={opening} fill="var(--signal)" data-opening-star />
         </svg>
         <div ref={darkRef} className={styles.darkness} />
         </div>
