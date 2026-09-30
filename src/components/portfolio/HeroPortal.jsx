@@ -6,13 +6,13 @@ import { ArrowDown, ArrowUpRight } from "lucide-react";
 import useGsapScene from "../../hooks/useGsapScene";
 import { usePortfolioContent } from "../../context/PortfolioContentContext";
 import IdentityDisplayFaces, { buildIdentityMoments } from "./IdentityDisplayFaces";
-import ProjectOrbit from "./ProjectOrbit";
 import { createParticlePortal } from "../../lib/animation/createParticlePortal";
 import styles from "./HeroPortal.module.css";
 
 const opening = "M0,-15.0888Q0,0 15.0888,0Q0,0 0,15.0888Q0,0 -15.0888,0Q0,0 0,-15.0888Z";
 const mask = `M-100000,-100000H100000V100000H-100000Z${opening}`;
 const REVEAL = 0.7;
+const TURN_START = 1.59;
 
 /** One live hero, with a decorative aperture in front of it. Native scrolling
  * and CSS sticky own layout; GSAP owns only the scene's visual wrappers. */
@@ -36,7 +36,6 @@ export default function HeroPortal({ children, sceneRef }) {
   const darkRef = useRef(null);
   const controlsRef = useRef(null);
   const skipRef = useRef(null);
-  const orbitRef = useRef(null);
   const transitionRef = useRef(null);
   const particleCanvasRef = useRef(null);
   const glowId = useId();
@@ -63,6 +62,7 @@ export default function HeroPortal({ children, sceneRef }) {
     let trigger;
     let autoplay;
     let introReady = false;
+    let entranceStarted = false;
     let focusFrame;
     let activeFace;
     let activeMode;
@@ -71,25 +71,15 @@ export default function HeroPortal({ children, sceneRef }) {
     let lastHeight;
     let particleRenderer;
     let identityVisible = false;
-    const shape = { fold: 0 };
+    const shape = { fold: 0, rotationY: 0 };
     const particles = { progress: 0 };
-    const flight = { position: 0, reveal: 0 };
     const faces = [...rig.querySelectorAll("[data-identity-face]")];
-    const orbit = orbitRef.current;
-    const camera = orbit.querySelector("[data-orbit-camera]");
-    const cards = [...orbit.querySelectorAll("[data-orbit-card]")];
-    const clusters = [...orbit.querySelectorAll("[data-orbit-cluster]")];
-    const satellites = clusters.map((cluster) => [...cluster.querySelectorAll("[data-orbit-satellite]")]);
-    const galleryBackground = orbit.querySelector("[data-orbit-background]");
-    const galleryHeading = orbit.querySelector("h2");
     const particleMark = transitionRef.current.querySelector("svg");
-    const projectCount = selectedProjects.length;
     const momentCount = moments.length;
-    const boxEnd = 1.5 + (momentCount - 1) * 0.5;
-    const galleryStart = boxEnd + 0.75;
-    const duration = projectCount ? galleryStart + 0.4 + Math.max(0, projectCount - 1) * 0.5 : boxEnd + 0.2;
+    const boxEnd = TURN_START + 0.11 + (momentCount - 1) * 0.5;
+    const galleryStart = boxEnd + 1.1;
+    const duration = galleryStart;
     const faceButtons = [...displayControlsRef.current.querySelectorAll("[data-face-button]")];
-    const projectButtons = [...displayControlsRef.current.querySelectorAll("[data-project-button]")];
     const entranceAnimations = plane.getAnimations({ subtree: true }).filter((animation) =>
       animation instanceof CSSAnimation && Number.isFinite(animation.effect.getComputedTiming().endTime));
     entranceAnimations.forEach((animation) => { animation.pause(); animation.currentTime = 0; });
@@ -98,42 +88,40 @@ export default function HeroPortal({ children, sceneRef }) {
       entranceAnimations.forEach((animation) => { if (animation.playState !== "idle") animation.finish(); });
       root.dataset.heroEntrance = "complete";
     };
+    const beginEntrance = () => {
+      if (entranceStarted || disposed) return;
+      entranceStarted = true;
+      root.dataset.heroEntrance = "playing";
+      entranceAnimations.forEach((animation) => animation.play());
+      Promise.allSettled(entranceAnimations.map((animation) => animation.finished)).then(() => {
+        if (!disposed) root.dataset.heroEntrance = "complete";
+      });
+    };
     const apertureElement = apertureRef.current;
     const glowElement = glowRef.current;
-    const aperture = { approach: 0, rotation: 0, light: 0, star: 0.5 };
+    const aperture = { approach: 0, rotation: 0, light: 0, star: 0.5, blur: 0 };
     const renderAperture = () => {
       // The star stays small. Only the soft surrounding light spreads, while
       // the dark veil dissolves over the stationary live hero.
       glowElement.style.opacity = 0;
       shadowRef.current.setAttribute("transform", `scale(${0.5 + aperture.approach * 2.1})`);
       shadowRef.current.style.opacity = aperture.light;
+      shadowRef.current.style.filter = `blur(${aperture.blur}px)`;
       starRef.current.setAttribute("transform", `rotate(${aperture.rotation}) scale(${1.8 * viewHeight / Math.max(measuredWidth, viewHeight)})`);
       starRef.current.style.opacity = aperture.star;
     };
     const compact = () => root.clientWidth < 768 || window.matchMedia("(hover: none) and (pointer: coarse)").matches;
     const faceWidth = () => Math.min(viewHeight * 0.4, measuredWidth * 0.62, 420);
     const faceHeight = () => faceWidth() * 1.38;
-    const flightX = (position) => Math.sin(position * 1.8) * measuredWidth * 0.36;
-    const flightY = (position) => Math.cos(position * 1.3) * viewHeight * 0.12;
-    gsap.set(camera, { x: 0, y: 0, z: 0 });
-    const moveCameraX = gsap.quickSetter(camera, "x", "px");
-    const moveCameraY = gsap.quickSetter(camera, "y", "px");
-    const moveCameraZ = gsap.quickSetter(camera, "z", "px");
-    const renderGallery = () => {
-      moveCameraX(-flightX(flight.position));
-      moveCameraY(-flightY(flight.position));
-      moveCameraZ(flight.position * 1000);
-      clusters.forEach((cluster, index) => {
-        const distance = index - flight.position;
-        const visible = flight.reveal > 0 && distance > -0.56 && distance < 2.1;
-        cluster.style.display = visible ? "block" : "none";
-        if (!visible) return;
-        const opacity = distance < -0.1 ? Math.max(0, 1 + (distance + 0.1) / 0.46) : Math.min(1, (2.1 - distance) / 0.6);
-        cards[index].style.opacity = opacity * flight.reveal;
-        satellites[index].forEach((image) => { image.style.opacity = opacity * flight.reveal * 0.7; });
-      });
-    };
     const renderShape = () => {
+      // Derive the complete pose from reversible scene state. Invalidating a
+      // transform tween after refresh can retain its folded translation.
+      gsap.set(rig, {
+        y: ((viewHeight - faceHeight()) / 2 + 10) * shape.fold,
+        z: -faceWidth() / 2 * shape.fold,
+        rotationY: shape.rotationY,
+        "--display-scale": 1 + ((viewHeight < 500 ? 0.78 : 1) - 1) * shape.fold,
+      });
       const width = (measuredWidth + (faceWidth() - measuredWidth) * shape.fold).toFixed(2);
       const depth = (faceWidth() * shape.fold).toFixed(2);
       const height = (measuredHeight + (faceHeight() - measuredHeight) * shape.fold).toFixed(2);
@@ -145,9 +133,14 @@ export default function HeroPortal({ children, sceneRef }) {
         rig.style.setProperty("--display-radius", `${10 * shape.fold}px`);
         lastDepth = depth;
       }
-      const fit = Math.min(faceWidth() / measuredWidth, faceHeight() / measuredHeight);
-      const scale = 1 + (fit - 1) * shape.fold;
-      heroSurface.style.transform = `translate(${(Number(width) - measuredWidth * scale) / 2}px, ${(Number(height) - measuredHeight * scale) / 2}px) scale(${scale})`;
+      // A 90-degree turn swaps the frame's width and height. Size the hero
+      // in that unrotated space so its final outline equals the upright panel.
+      const frameWidth = measuredWidth + (faceHeight() - measuredWidth) * shape.fold;
+      const frameHeight = measuredHeight + (faceWidth() - measuredHeight) * shape.fold;
+      plane.style.setProperty("--hero-frame-width", `${frameWidth}px`);
+      plane.style.setProperty("--hero-frame-height", `${frameHeight}px`);
+      const scale = Math.min(frameWidth / measuredWidth, frameHeight / measuredHeight);
+      heroSurface.style.transform = `translate(${(frameWidth - measuredWidth * scale) / 2}px, ${(frameHeight - measuredHeight * scale) / 2}px) scale(${scale})`;
     };
     const selectVisibleFace = (index, mode) => {
       if (index === activeFace && mode === activeMode) return;
@@ -155,21 +148,19 @@ export default function HeroPortal({ children, sceneRef }) {
       activeMode = mode;
       root.dataset.displayActiveFace = String(index);
       // Four physical orientations are reused as CMS moments pass the front.
-      // Only neighbouring panels are painted, avoiding coincident faces at N > 4.
+      // Keep every physical panel painted, including its mirrored reverse.
+      // For longer CMS sequences, reuse each orientation with its nearest moment.
       faces.forEach((face, faceIndex) => {
-        const visible = mode === "hero" ? faceIndex === 0 : mode === "box" && (momentCount <= 4 || Math.abs(faceIndex - index) <= 1);
+        const occupant = faces.reduce((nearest, _, candidate) => {
+          const delta = Math.abs(candidate - index) - Math.abs(nearest - index);
+          return candidate % 4 === faceIndex % 4 && (delta < 0 || (delta === 0 && candidate < nearest)) ? candidate : nearest;
+        }, faceIndex);
+        const visible = mode === "hero" ? faceIndex === 0 : mode === "box" && faceIndex === occupant;
         face.style.visibility = visible ? "visible" : "hidden";
         face.inert = !(mode === "hero" && faceIndex === 0) && (mode !== "box" || faceIndex !== index);
         face.setAttribute("aria-hidden", String(face.inert));
       });
-      orbit.inert = mode !== "gallery";
-      orbit.setAttribute("aria-hidden", String(orbit.inert));
-      cards.forEach((card, cardIndex) => {
-        card.inert = mode !== "gallery" || cardIndex !== index;
-        card.setAttribute("aria-hidden", String(card.inert));
-      });
       faceButtons.forEach((button, buttonIndex) => button.setAttribute("aria-pressed", String(buttonIndex === index)));
-      projectButtons.forEach((button, buttonIndex) => button.setAttribute("aria-pressed", String(buttonIndex === index)));
     };
     const measure = () => {
       const height = heroContent.offsetHeight;
@@ -186,14 +177,7 @@ export default function HeroPortal({ children, sceneRef }) {
       root.style.setProperty("--portal-width", `${width}px`);
       root.style.setProperty("--display-size", `${faceWidth()}px`);
       root.style.setProperty("--display-panel-height", `${faceHeight()}px`);
-      clusters.forEach((cluster, index) => gsap.set(cluster, { x: flightX(index), y: flightY(index), z: -index * 1000 }));
-      satellites.forEach((images) => images.forEach((image, index) => gsap.set(image, {
-        x: (index ? 1 : -1) * Math.min(measuredWidth * 0.49, 630),
-        y: (index ? 1 : -1) * viewHeight * 0.3, z: index ? 100 : -180,
-        rotationY: index ? -12 : 12, rotationZ: index ? 5 : -5, xPercent: -50, yPercent: -50,
-      })));
       particleRenderer?.resize(width, viewHeight);
-      renderGallery();
       trigger?.refresh();
       renderAperture();
       renderShape();
@@ -203,7 +187,7 @@ export default function HeroPortal({ children, sceneRef }) {
     root.dataset.portalActive = "true";
     root.dataset.portalPhase = "darkness";
     renderAperture();
-    gsap.set(rig, { "--display-scale": 1, rotationY: 0, xPercent: 0, y: 0, z: 0, pointerEvents: "none" });
+    gsap.set(rig, { "--display-scale": 1, rotationY: 0, rotationZ: 0, xPercent: 0, y: 0, z: 0, pointerEvents: "none" });
     gsap.set(cubeSkin, { visibility: "hidden" });
     gsap.set(plane, { opacity: 0.3 });
     gsap.set(identityPanelRef.current, { autoAlpha: 0 });
@@ -213,16 +197,11 @@ export default function HeroPortal({ children, sceneRef }) {
     gsap.set(controlsRef.current, { autoAlpha: 1 });
     gsap.set(backdropRef.current, { opacity: 0 });
     gsap.set(groundRef.current, { opacity: 0, scaleX: 0.65 });
-    gsap.set(orbit, { visibility: "hidden" });
-    gsap.set(galleryBackground, { opacity: 0 });
-    gsap.set([galleryHeading, transitionRef.current], { autoAlpha: 0 });
-    gsap.set(particleMark, { scale: 0.7 });
-    cards.forEach((card, index) => gsap.set(card, {
-      yPercent: -50, xPercent: -50, rotationY: index % 2 ? 6 : -6,
-    }));
+    gsap.set(transitionRef.current, { autoAlpha: 0 });
+    gsap.set(particleMark, { scale: 1 });
     const tokens = getComputedStyle(root);
     particleRenderer = createParticlePortal(particleCanvasRef.current, {
-      signal: tokens.getPropertyValue("--signal").trim(), highlight: tokens.getPropertyValue("--signal-highlight").trim(), compact: compact(),
+      signal: tokens.getPropertyValue("--signal").trim(), highlight: tokens.getPropertyValue("--signal-highlight").trim(), ink: tokens.getPropertyValue("--editorial-void").trim(), compact: compact(),
     });
     particleRenderer?.resize(measuredWidth, viewHeight);
     gsap.set([wordBandRef.current, displayControlsRef.current], { autoAlpha: 0 });
@@ -235,8 +214,10 @@ export default function HeroPortal({ children, sceneRef }) {
       onUpdate: () => {
         const progress = timeline.time();
         if (progress <= 0.66) renderAperture();
+        // Let the portrait and type resolve while the opening veil dissolves.
+        if (progress >= 0.27) beginEntrance();
         renderShape();
-        const showIdentity = progress >= 1.3;
+        const showIdentity = progress >= 1.43;
         if (showIdentity !== identityVisible) {
           identityVisible = showIdentity;
           heroSurface.inert = showIdentity;
@@ -244,81 +225,60 @@ export default function HeroPortal({ children, sceneRef }) {
           identityPanelRef.current.setAttribute("aria-hidden", String(!showIdentity));
         }
         if (progress >= boxEnd && progress <= galleryStart + 0.1) particleRenderer?.render(particles.progress);
-        renderGallery();
-        const gallery = projectCount > 0 && progress >= galleryStart;
-        const index = gallery ? Math.round(flight.position) : Math.round(-Number(gsap.getProperty(rig, "rotationY")) / 90);
-        const mode = gallery ? "gallery" : progress >= 0.82 && progress < boxEnd + 0.25 ? "box" : progress < 0.82 ? "hero" : "transition";
-        selectVisibleFace(mode === "hero" ? 0 : Math.max(0, Math.min((gallery ? projectCount : momentCount) - 1, index)), mode);
-        const phase = progress < 0.12 ? "darkness" : progress < 0.32 ? "aperture" : progress < 0.66 ? "approach" : progress < 0.82 ? "hero" : progress < 1 ? "plane" : gallery ? "gallery" : progress >= boxEnd ? "transition" : "display";
+        const handoff = progress >= boxEnd + 0.65;
+        root.dataset.workHandoff = String(handoff);
+        const index = Math.round(-shape.rotationY / 90);
+        const mode = progress >= 0.82 && !handoff ? "box" : progress < 0.82 ? "hero" : "transition";
+        selectVisibleFace(mode === "hero" ? 0 : Math.max(0, Math.min(momentCount - 1, index)), mode);
+        const phase = progress < 0.12 ? "darkness" : progress < 0.32 ? "aperture" : progress < 0.66 ? "approach" : progress < 0.82 ? "hero" : progress < 1 ? "plane" : progress >= galleryStart ? "work" : progress >= boxEnd ? "transition" : "display";
         if (root.dataset.portalPhase !== phase) root.dataset.portalPhase = phase;
       },
     });
     timeline
       .to(darkRef.current, { autoAlpha: 0, duration: 0.08 }, 0.02)
       .fromTo(aperture, { light: 0 }, { light: 0.28, duration: 0.16, immediateRender: false }, 0.02)
-      .to(aperture, { rotation: 90, duration: 0.62, ease: "power1.inOut" }, 0.02)
+      .to(aperture, { rotation: 360, duration: 0.62, ease: "power2.in" }, 0.02)
       .fromTo(aperture, { approach: 0 }, { approach: 1, duration: 0.58, ease: "power1.out", immediateRender: false }, 0.06)
-      .to(aperture, { star: 0, duration: 0.42, ease: "power1.out" }, 0.16)
+      .to(aperture, { star: 0, duration: 0.32, ease: "power1.in" }, 0.26)
+      .to(aperture, { blur: 24, duration: 0.46, ease: "power1.in", }, 0.18)
       .to(aperture, { light: 0, duration: 0.46, ease: "power1.out" }, 0.18)
       .to(apertureElement, { opacity: 0, duration: 0.48, ease: "power1.inOut" }, 0.16)
       .to(plane, { opacity: 1, duration: 0.36, ease: "power1.inOut" }, 0.28)
       .to(controlsRef.current, { autoAlpha: 0, duration: 0.06 }, 0.58)
       .set(veilRef.current, { autoAlpha: 0 }, 0.66)
       .set(rig, { pointerEvents: "auto" }, 0.66)
-      .to(backdropRef.current, { opacity: 1, duration: 0.12 }, 0.82)
-      .set(cubeSkin, { visibility: "visible" }, 0.98)
-      .fromTo(rig, { "--display-scale": 1, rotationY: 0, y: 0, z: 0 }, {
-        "--display-scale": () => viewHeight < 500 ? 0.78 : 1,
-        rotationY: 0,
-        z: () => -faceWidth() / 2,
-        y: () => (viewHeight - faceHeight()) / 2 + 10,
-        duration: 0.5,
-        ease: "power1.inOut",
-        immediateRender: false,
-      }, 0.82);
-    timeline.fromTo(rig, { rotationZ: 0 }, { rotationZ: 42, duration: 0.26, ease: "power1.inOut", immediateRender: false }, 0.82)
-      .to(rig, { rotationZ: 0, duration: 0.24, ease: "power1.inOut" }, 1.08)
+      .to(backdropRef.current, { opacity: 1, duration: 0.12 }, 0.82);
+    timeline.fromTo(plane, { "--hero-roll": "0deg" }, { "--hero-roll": "90deg", duration: 0.3, ease: "power1.inOut", immediateRender: false }, 0.82)
       .fromTo(shape, { fold: 0 }, { fold: 1, duration: 0.5, ease: "power1.inOut", immediateRender: false }, 0.82)
-      .to(heroSurface, { opacity: 0, duration: 0.14 }, 1.2)
-      .to(identityPanelRef.current, { autoAlpha: 1, duration: 0.16 }, 1.24)
-      .fromTo(identityPanelRef.current.querySelectorAll("span"), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, stagger: 0.04, ease: "power2.out", immediateRender: false }, 1.3)
+      // Both surfaces share one exact outline. Keep the hero at 90 degrees
+      // and crossfade its content into the counter-rotated, upright panel.
+      .to(heroSurface, { opacity: 0, duration: 0.18 }, 1.34)
+      .to(identityPanelRef.current, { autoAlpha: 1, duration: 0.18 }, 1.34)
+      .fromTo(identityPanelRef.current.querySelectorAll("span"), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, stagger: 0.04, ease: "power2.out", immediateRender: false }, 1.34)
       .to(groundRef.current, { opacity: 0.65, scaleX: 1, duration: 0.3, ease: "power1.out" }, 1.02)
       .to(wordBandRef.current, { autoAlpha: 1, duration: 0.16 }, 1.06)
       .to(displayControlsRef.current, { autoAlpha: 1, duration: 0.12 }, 1.18)
       .to(wordBandRef.current, { xPercent: -80, duration: boxEnd - 1.06 }, 1.06);
-    if (momentCount > 1) timeline.to(rig, { rotationY: -(momentCount - 1) * 90 - 20, duration: (momentCount - 1) * 0.5 }, 1.39);
-    faces.slice(1).forEach((face, index) => {
-      timeline.fromTo([...face.children], { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.16, stagger: 0.025, ease: "power2.out" }, 1.39 + (index + 1) * 0.5 - 0.2);
-    });
-    if (projectCount) {
+    if (momentCount > 1) timeline.to(shape, { rotationY: -(momentCount - 1) * 90, duration: (momentCount - 1) * 0.5 }, TURN_START);
+    {
       // Opacity on a preserve-3d parent flattens its descendants. Fade only
       // individual surfaces; the rig, geometry and shell stay fully opaque.
-      timeline.to([...faces, ...shellFaces, wordBandRef.current, groundRef.current, displayControlsRef.current], { opacity: 0, duration: 0.2 }, boxEnd)
-        .set(rig, { visibility: "hidden" }, boxEnd + 0.2)
-        .set(displayControlsRef.current, { autoAlpha: 0 }, boxEnd + 0.2)
-        .set(orbit, { visibility: "visible" }, boxEnd)
-        .to(galleryBackground, { opacity: 1, duration: 0.2 }, boxEnd)
-        .to(transitionRef.current, { autoAlpha: 1, duration: 0.18 }, boxEnd + 0.06)
-        .to(particles, { progress: 1, duration: 0.66 }, boxEnd + 0.06)
-        .to(particleMark, { scale: 1.4, rotation: 45, duration: 0.5 }, boxEnd + 0.08)
-        .to(transitionRef.current, { autoAlpha: 0, duration: 0.14 }, galleryStart - 0.14)
-        .to(flight, { reveal: 1, duration: 0.2 }, galleryStart - 0.2)
-        .to(galleryHeading, { autoAlpha: 1, duration: 0.15 }, galleryStart)
-        .to(displayControlsRef.current, { autoAlpha: 1, duration: 0.15 }, galleryStart)
-        .to(flight, { position: projectCount - 1, duration: Math.max(0.01, (projectCount - 1) * 0.5) }, galleryStart + 0.15);
+      timeline.to(displayControlsRef.current, { autoAlpha: 0, duration: 0.12 }, boxEnd)
+        .set(transitionRef.current, { autoAlpha: 1 }, boxEnd)
+        .to(particles, { progress: 1, duration: 1.1 }, boxEnd)
+        // Keep the panels intact until the emitted star covers the viewport.
+        .set([...faces, ...shellFaces, wordBandRef.current, groundRef.current], { opacity: 0 }, boxEnd + 0.65)
+        .set(rig, { visibility: "hidden" }, boxEnd + 0.65)
+        .set(backdropRef.current, { opacity: 0 }, boxEnd + 0.65)
+        .to(transitionRef.current, { autoAlpha: 0, duration: 0.2 }, galleryStart - 0.2);
     }
     timeline.to({}, { duration: 0.01 }, duration - 0.01);
-    const foldTween = timeline.getTweensOf(rig).find((tween) => tween.vars.y !== undefined);
     const finishIntro = (immediate = false) => {
       autoplay?.kill();
       if (!introReady) {
         introReady = true;
         timeline.time(REVEAL);
-        root.dataset.heroEntrance = "playing";
-        entranceAnimations.forEach((animation) => animation.play());
-        Promise.allSettled(entranceAnimations.map((animation) => animation.finished)).then(() => {
-          if (!disposed) root.dataset.heroEntrance = "complete";
-        });
+        beginEntrance();
       }
       if (immediate) finishEntrance();
     };
@@ -337,13 +297,9 @@ export default function HeroPortal({ children, sceneRef }) {
         }
       },
       onRefresh: (self) => {
-        // Only the measured fold position needs new values. Invalidating the
-        // whole timeline captures already-faded content as its starting state
-        // and leaves the hero hidden when the visitor scrolls back to the top.
-        if (introReady) {
-          foldTween?.invalidate();
-          timeline.time(REVEAL + self.progress * (duration - REVEAL));
-        }
+        // Geometry is measured separately; scene progress owns the whole pose.
+        if (introReady) timeline.time(REVEAL + self.progress * (duration - REVEAL));
+        renderShape();
       },
       onToggle: ({ isActive }) => { rig.style.willChange = isActive ? "transform" : "auto"; },
     });
@@ -373,25 +329,25 @@ export default function HeroPortal({ children, sceneRef }) {
     const skipButton = skipRef.current;
     skipButton.addEventListener("click", skip);
     plane.addEventListener("focusin", revealFocusedContent);
-    const showFace = (index, gallery) => {
+    const showFace = (index) => {
       finishIntro(true);
-      const stop = gallery ? galleryStart + 0.15 + index * 0.5 : 1.39 + index * 0.5;
+      const stop = TURN_START + index * 0.5;
       window.scrollTo({ top: trigger.start + distance * (stop - REVEAL) / (duration - REVEAL), behavior: "instant" });
       trigger.update();
       trigger.getTween()?.progress(1);
       scrollAnimation.progress((stop - REVEAL) / (duration - REVEAL));
     };
     const chooseFace = (event) => {
-      const button = event.target.closest("button[data-face-button], button[data-project-button]");
-      if (button) showFace(Number(button.dataset.faceButton ?? button.dataset.projectButton), button.hasAttribute("data-project-button"));
+      const button = event.target.closest("button[data-face-button]");
+      if (button) showFace(Number(button.dataset.faceButton));
     };
     const rotateWithKeyboard = (event) => {
-      const buttons = activeMode === "gallery" ? projectButtons : faceButtons;
+      const buttons = faceButtons;
       const current = buttons.indexOf(event.target);
       if (current < 0 || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
       event.preventDefault();
       const next = event.key === "Home" ? 0 : event.key === "End" ? buttons.length - 1 : (current + (event.key === "ArrowRight" ? 1 : buttons.length - 1)) % buttons.length;
-      showFace(next, activeMode === "gallery");
+      showFace(next);
       buttons[next].focus({ preventScroll: true });
       buttons[next].scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
     };
@@ -422,32 +378,34 @@ export default function HeroPortal({ children, sceneRef }) {
       ["--display-width", "--display-height", "--display-depth", "--display-gap", "--display-radius"].forEach((property) => rig.style.removeProperty(property));
       plane.removeAttribute("inert");
       plane.removeAttribute("aria-hidden");
-      [...faces.filter((face) => face !== plane), ...cards, orbit].forEach((face) => { face.inert = true; face.setAttribute("aria-hidden", "true"); face.style.removeProperty("visibility"); });
+      faces.filter((face) => face !== plane).forEach((face) => { face.inert = true; face.setAttribute("aria-hidden", "true"); face.style.removeProperty("visibility"); });
       plane.style.removeProperty("visibility");
+      plane.style.removeProperty("--hero-frame-width");
+      plane.style.removeProperty("--hero-frame-height");
       heroSurface.style.removeProperty("transform");
       heroSurface.removeAttribute("aria-hidden");
       heroSurface.inert = false;
       identityPanelRef.current.setAttribute("aria-hidden", "true");
-      clusters.forEach((cluster) => cluster.style.removeProperty("display"));
-      [...cards, ...satellites.flat()].forEach((card) => card.style.removeProperty("opacity"));
       apertureElement.removeAttribute("transform");
       glowElement.style.removeProperty("opacity");
       starRef.current.removeAttribute("transform");
       starRef.current.style.removeProperty("opacity");
       shadowRef.current.removeAttribute("transform");
       shadowRef.current.style.removeProperty("opacity");
+      shadowRef.current.style.removeProperty("filter");
       root.style.removeProperty("--portal-height");
       root.style.removeProperty("--portal-distance");
       root.style.removeProperty("--portal-view-height");
       root.style.removeProperty("--portal-width");
       root.style.removeProperty("--display-size");
       root.style.removeProperty("--display-panel-height");
+      delete root.dataset.workHandoff;
       delete root.dataset.portalActive;
       delete root.dataset.portalPhase;
       delete root.dataset.displayActiveFace;
       delete root.dataset.heroEntrance;
     };
-  }, [sceneRef, selectedProjects, moments]);
+  }, [sceneRef, moments]);
 
   useGsapScene({ scope: sceneRef, setup });
 
@@ -475,7 +433,6 @@ export default function HeroPortal({ children, sceneRef }) {
           </div>
         </div>
         <div ref={transitionRef} className={styles.galleryTransition} aria-hidden="true"><canvas ref={particleCanvasRef} className={styles.particleCanvas} data-particle-portal /><svg viewBox="-20 -20 40 40"><path d={opening} /></svg></div>
-        <div ref={orbitRef} className={styles.orbit} inert aria-hidden="true"><ProjectOrbit projects={selectedProjects} heading={site.projects.heading} /></div>
         <div ref={veilRef} className={styles.aperture} aria-hidden="true">
         <svg className={styles.fallback} viewBox="-500 -500 1000 1000" preserveAspectRatio="xMidYMid slice" focusable="false">
           <defs>
@@ -503,11 +460,8 @@ export default function HeroPortal({ children, sceneRef }) {
           <div className={`${styles.faceButtons} ${styles.momentButtons}`} role="group" aria-label="Achievements and identity">
             {moments.map((moment, index) => <button key={moment.id} type="button" data-face-button={index} aria-label={`Show ${moment.label}`} aria-pressed={false}><span /></button>)}
           </div>
-          <div className={`${styles.faceButtons} ${styles.projectButtons}`} role="group" aria-label="Selected projects">
-            {selectedProjects.map((project, index) => <button key={project.slug} type="button" data-project-button={index} aria-label={`Show ${project.title}`} aria-pressed={false}><span /></button>)}
-          </div>
           <Link className={styles.archiveLink} href="/projects">{site.projects.archiveLabel} <ArrowUpRight size={15} aria-hidden="true" /></Link>
-          <a className={styles.continueLink} href="#about">Continue to About <ArrowDown size={15} aria-hidden="true" /></a>
+          <a className={styles.continueLink} href="#projects">Selected work <ArrowDown size={15} aria-hidden="true" /></a>
         </div>
       </div>
     </div>

@@ -32,6 +32,14 @@ export function validatePortfolioContent(input) {
     if (!isObject(input.site[group])) throw new Error(`Site ${group} content is invalid.`);
     fields.forEach((field) => requireText(input.site[group][field], `Site ${group} ${field}`));
   });
+  // Optional for older content documents; an empty list intentionally hides previews.
+  const introImages = input.site.projects.introImages;
+  if (introImages !== undefined) {
+    if (!Array.isArray(introImages) || introImages.length > 6) throw new Error("Choose up to six Selected work images.");
+    introImages.forEach((image) => {
+      if (!isObject(image) || typeof image.projectSlug !== "string" || !validMediaSource(image.src)) throw new Error("Selected work image is invalid.");
+    });
+  }
   requireStringArray(input.site.hero.lines, "Hero lines", 6);
   requireStringArray(input.site.about.phrases, "About phrases", 6);
 

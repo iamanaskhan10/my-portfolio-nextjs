@@ -9,35 +9,50 @@ import { usePortfolioContent } from "../../context/PortfolioContentContext";
 import useMotionPreference from "../../hooks/useMotionPreference";
 import styles from "./ProjectShowcase.module.css";
 
-function FloatingPreview({ project, index, progress }) {
-  const y = useTransform(progress, [0, 1], index % 2 === 0 ? ["72svh", "-94svh"] : ["108svh", "-62svh"]);
+function FloatingPreview({ image, index, count, progress }) {
+  const delay = index / Math.max(1, count) * 0.35;
+  const y = useTransform(progress, [0, 1], [`${80 + delay * 160}svh`, `${-110 + delay * 80}svh`]);
   return (
-    <motion.div className={styles.preview} data-side={index % 2 === 0 ? "left" : "right"} style={{ y }}>
+    <motion.div className={styles.preview} data-work-preview data-side={index % 2 === 0 ? "left" : "right"} style={{ y }}>
       <div className={styles.previewImage}>
-        <Image src={project.cover.src} alt="" fill sizes="36vw" />
+        <Image src={image.src} alt="" fill sizes="(max-width: 767px) 38vw, 27vw" />
       </div>
-      <span>{project.title}</span>
+      <span>{image.title}</span>
     </motion.div>
   );
 }
 
-function ProjectIntroduction({ projects, site, reducedMotion }) {
+function RevealWord({ word, index, count, progress, reducedMotion }) {
+  const start = 0.06 + index / count * 0.58;
+  const color = useTransform(progress, [start, start + 0.16], ["#77786f", "#ffffff"]);
+  return <motion.span data-work-word style={{ color: reducedMotion ? "#ffffff" : color }}>{word}{" "}</motion.span>;
+}
+
+function ProjectIntroduction({ projects, selectedWork, site, reducedMotion }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const opacity = useTransform(scrollYProgress, [0, 0.55, 1], [1, 1, 0.2]);
+  const words = site.projects.archiveIntro.split(/\s+/);
+  const configured = site.projects.introImages;
+  const images = Array.isArray(configured)
+    ? configured.flatMap((entry) => {
+      const project = projects.find((item) => item.slug === entry.projectSlug);
+      const image = project?.gallery.find((item) => item.src === entry.src);
+      return image ? [{ ...image, title: image.title || project.title }] : [];
+    })
+    : selectedWork.slice(0, 2).map((project) => ({ ...project.cover, title: project.title }));
 
   return (
-    <div ref={ref} className={styles.introduction}>
+    <div ref={ref} className={styles.introduction} data-work-introduction>
       <div className={styles.stage}>
-        <motion.div className={styles.introCopy} style={{ opacity: reducedMotion ? 1 : opacity }}>
+        <div className={styles.introCopy}>
           <h2 id="projects-heading">{site.projects.heading}</h2>
           <div className={styles.statement}>
-            <p>{site.projects.archiveIntro}</p>
+            <p aria-label={site.projects.archiveIntro}><span aria-hidden="true">{words.map((word, index) => <RevealWord key={`${index}-${word}`} word={word} index={index} count={words.length} progress={scrollYProgress} reducedMotion={reducedMotion} />)}</span></p>
             <a className={styles.exploreLink} href="#selected-projects">{site.projects.archiveExploreLabel} <ArrowDown size={18} aria-hidden="true" /></a>
           </div>
-        </motion.div>
+        </div>
         {!reducedMotion && <div className={styles.previews} aria-hidden="true">
-          {projects.slice(0, 2).map((project, index) => <FloatingPreview key={project.slug} project={project} index={index} progress={scrollYProgress} />)}
+          {images.map((image, index) => <FloatingPreview key={`${image.src}-${index}`} image={image} index={index} count={images.length} progress={scrollYProgress} />)}
         </div>}
       </div>
     </div>
@@ -83,12 +98,13 @@ function SelectedProject({ project, index, reducedMotion }) {
 export default function ProjectShowcase() {
   const { projects, site } = usePortfolioContent();
   const reducedMotion = useMotionPreference();
-  const featured = projects.filter((project) => project.featured);
-  const selectedWork = (featured.length ? featured : projects.slice(0, 2)).slice(0, 4);
+  const published = projects.filter((project) => project.published !== false);
+  const featured = published.filter((project) => project.featured);
+  const selectedWork = (featured.length ? featured : published.slice(0, 2)).slice(0, 4);
 
   return (
     <section id="projects" className={styles.section} aria-labelledby="projects-heading">
-      <ProjectIntroduction projects={selectedWork} site={site} reducedMotion={reducedMotion} />
+      <ProjectIntroduction projects={published} selectedWork={selectedWork} site={site} reducedMotion={reducedMotion} />
       <div id="selected-projects" className={styles.inner}>
         {selectedWork.map((project, index) => <SelectedProject key={project.slug} project={project} index={index} reducedMotion={reducedMotion} />)}
         <div className={styles.closing}>

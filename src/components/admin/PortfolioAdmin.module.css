@@ -26,9 +26,9 @@
 .fieldsetIntro { max-width: 65ch; margin: 0 0 1.5rem; color: var(--admin-muted); font-size: 0.85rem; line-height: 1.65; }
 .formGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 1.5rem; }
 .field { display: grid; min-width: 0; align-content: start; align-self: start; gap: 0.45rem; color: var(--admin-muted); font-size: 0.72rem; letter-spacing: 0.025em; text-transform: capitalize; }
-.field input, .field textarea { width: 100%; box-sizing: border-box; padding: 0.85rem 0; border: 0; border-bottom: 1px solid var(--admin-line); border-radius: 0; outline: 0; background: transparent; color: var(--paper); font: inherit; font-size: 0.92rem; line-height: 1.5; resize: vertical; text-transform: none; }
+.field input, .field textarea, .field select { width: 100%; box-sizing: border-box; padding: 0.85rem 0; border: 0; border-bottom: 1px solid var(--admin-line); border-radius: 0; outline: 0; background: transparent; color: var(--paper); font: inherit; font-size: 0.92rem; line-height: 1.5; resize: vertical; text-transform: none; }
 .field textarea { min-height: 7.25rem; }
-.field input:focus, .field textarea:focus { border-color: var(--signal); }
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--signal); }
 .field small { color: color-mix(in srgb, var(--admin-muted) 70%, var(--ink)); font-size: 0.66rem; line-height: 1.45; text-transform: none; }
 .toggles { display: flex; flex-wrap: wrap; gap: 1rem 1.6rem; margin: -1.5rem 0 3rem; }
 .toggle { display: inline-flex; min-height: 44px; align-items: center; gap: 0.65rem; color: var(--admin-muted); font-size: 0.82rem; cursor: pointer; }
@@ -83,7 +83,7 @@
 .login > a { display: inline-flex; min-height: 44px; align-items: center; gap: 0.55rem; margin-top: 1.5rem; color: var(--admin-muted); font-size: 0.8rem; text-decoration: none; }
 .login > .error { font-size: 0.8rem; }
 .setup code { color: var(--paper); }
-.admin :is(button, a, input, textarea):focus-visible, .loginPage :is(button, a, input):focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+.admin :is(button, a, input, textarea, select):focus-visible, .loginPage :is(button, a, input):focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
 
 @media (max-width: 1000px) {
   .admin { grid-template-columns: 1fr; }
@@ -117,3 +117,5 @@
 @media (prefers-reduced-motion: reduce) {
   .toggle > span::after { transition: none; }
 }
+
+.field select option { background: var(--ink); color: var(--paper); }

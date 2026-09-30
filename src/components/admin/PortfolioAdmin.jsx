@@ -328,6 +328,16 @@ export default function PortfolioAdmin() {
 
 function SiteEditor({ content, updateSite, updateProfile }) {
   const { site, profile } = content;
+  const choices = content.projects.filter((project) => project.published !== false).flatMap((project) => project.gallery.map((image) => ({ projectSlug: project.slug, src: image.src, label: `${project.title} ? ${image.title}` })));
+  const featured = content.projects.filter((project) => project.published !== false && project.featured);
+  const automatic = (featured.length ? featured : content.projects.filter((project) => project.published !== false)).slice(0, 2).flatMap((project) => project.gallery[0] ? [{ projectSlug: project.slug, src: project.gallery[0].src }] : []);
+  const introImages = site.projects.introImages ?? automatic;
+  const setIntroImages = (images) => updateSite("projects", "introImages", images);
+  const moveIntroImage = (index, direction) => {
+    const next = [...introImages];
+    [next[index], next[index + direction]] = [next[index + direction], next[index]];
+    setIntroImages(next);
+  };
   return (
     <div className={styles.editor}>
       <header className={styles.editorHeading}><h1>Site copy</h1><p>Edit the shared identity and primary section messaging.</p></header>
@@ -363,6 +373,23 @@ function SiteEditor({ content, updateSite, updateProfile }) {
         {["archiveHeading", "archiveAccent", "archiveLabel", "archiveExploreLabel", "closingPrompt", "closingLabel"].map((field) => <Field key={field} label={field.replace(/([A-Z])/g, " $1")} value={site.projects[field]} onChange={(value) => updateSite("projects", field, value)} />)}
         <Field label="Archive introduction" multiline value={site.projects.archiveIntro} onChange={(value) => updateSite("projects", "archiveIntro", value)} />
       </div></fieldset>
+      <fieldset><legend>Selected work images</legend>
+        <p className={styles.fieldsetIntro}>Choose up to six images to rise past the introduction, in order. Upload images in Media and attach them to a published project first. An empty list hides the rising images.</p>
+        {introImages.map((image, index) => <div key={index} className={styles.formGrid}>
+          <label className={styles.field}><span>Image {index + 1}</span>
+            <select value={JSON.stringify({ projectSlug: image.projectSlug, src: image.src })} onChange={(event) => setIntroImages(introImages.map((entry, position) => position === index ? JSON.parse(event.target.value) : entry))}>
+              {!choices.some((choice) => choice.projectSlug === image.projectSlug && choice.src === image.src) && <option value={JSON.stringify(image)}>Image unavailable ? choose a replacement</option>}
+              {choices.map((choice) => <option key={`${choice.projectSlug}:${choice.src}`} value={JSON.stringify({ projectSlug: choice.projectSlug, src: choice.src })}>{choice.label}</option>)}
+            </select>
+          </label>
+          <div className={styles.imageActions}>
+            <button type="button" aria-label={`Move image ${index + 1} up`} disabled={index === 0} onClick={() => moveIntroImage(index, -1)}><ArrowUp size={16} /></button>
+            <button type="button" aria-label={`Move image ${index + 1} down`} disabled={index === introImages.length - 1} onClick={() => moveIntroImage(index, 1)}><ArrowDown size={16} /></button>
+            <button type="button" aria-label={`Remove image ${index + 1}`} onClick={() => setIntroImages(introImages.filter((_, position) => position !== index))}><Trash2 size={16} /></button>
+          </div>
+        </div>)}
+        <button className={styles.primary} type="button" disabled={introImages.length >= 6 || !choices.length} onClick={() => { const choice = choices.find((entry) => !introImages.some((image) => image.projectSlug === entry.projectSlug && image.src === entry.src)) || choices[0]; setIntroImages([...introImages, { projectSlug: choice.projectSlug, src: choice.src }]); }}><Plus size={16} /> Add rising image</button>
+      </fieldset>
       <fieldset><legend>Search metadata</legend><div className={styles.formGrid}>
         {Object.entries(site.seo).map(([field, value]) => <Field key={field} label={field.replace(/([A-Z])/g, " $1")} multiline={field.toLowerCase().includes("description")} value={value} onChange={(next) => updateSite("seo", field, next)} />)}
       </div></fieldset>

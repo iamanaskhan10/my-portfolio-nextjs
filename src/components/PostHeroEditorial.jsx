@@ -15,6 +15,8 @@ export default function PostHeroEditorial() {
   const { profile, site } = usePortfolioContent();
   return (
     <>
+      <ProjectShowcase />
+
       <section className={styles.about} id="about" aria-labelledby="manifesto-heading">
         <div className={styles.aboutInner}>
           <ScrollReveal as="h2" id="manifesto-heading" className={styles.aboutTitle} variant="phrases">
@@ -31,8 +33,6 @@ export default function PostHeroEditorial() {
       <TechnologyStack />
 
       <ExperienceShowcase />
-
-      <ProjectShowcase />
 
       <section className={styles.contact} id="contact" aria-labelledby="contact-heading">
         <BrandWatermark />

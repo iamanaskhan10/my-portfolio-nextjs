@@ -37,7 +37,7 @@
 .groundShadow { display: none; }
 .scene[data-portal-active="true"] .groundShadow { display: block; position: absolute; left: 50%; top: calc((var(--portal-view-height) + var(--display-panel-height)) / 2 + 2px); width: calc(var(--display-size) * 1.3); height: clamp(20px, 3vw, 40px); margin-left: calc(var(--display-size) * -0.65); background: radial-gradient(ellipse, #11120f88, #11120f33 38%, transparent 72%); pointer-events: none; }
 .identityPanel { display: none; }
-.scene[data-portal-active="true"] .identityPanel { position: absolute; inset: 0; display: grid; place-items: center; padding: 12%; container-type: inline-size; background: radial-gradient(ellipse at 0 0, var(--signal-shadow), transparent 48%), radial-gradient(ellipse at 100% 100%, var(--signal-ink), transparent 55%), var(--ink); }
+.scene[data-portal-active="true"] .identityPanel { position: absolute; top: 50%; left: 50%; width: var(--display-width); height: var(--display-height); transform: translate(-50%, -50%) rotateZ(calc(0deg - var(--hero-roll, 0deg))); display: grid; place-items: center; padding: 12%; container-type: inline-size; background: radial-gradient(ellipse at 0 0, var(--signal-shadow), transparent 48%), radial-gradient(ellipse at 100% 100%, var(--signal-ink), transparent 55%), var(--ink); }
 .identityPanel h2 { margin: 0; text-align: center; color: var(--paper); font-family: "Manrope Hero", sans-serif; font-size: clamp(1.2rem, 9cqw, 3rem); font-weight: 500; line-height: 1.2; }
 .identityPanel span { display: block; }
 
@@ -45,12 +45,12 @@
   position: relative;
   overflow: clip;
   border-radius: var(--display-radius);
-  backface-visibility: hidden;
-  transform: translateZ(calc(var(--display-depth) / 2 + var(--display-gap)));
+  backface-visibility: visible;
+  transform: translateZ(calc(var(--display-depth) / 2 + var(--display-gap))) rotateZ(var(--hero-roll, 0deg));
   background: var(--ink);
 }
 .heroSurface { position: relative; transform-origin: 0 0; }
-.scene[data-portal-active="true"] .plane { width: 100%; height: 100%; }
+.scene[data-portal-active="true"] .plane { width: var(--hero-frame-width, 100%); height: var(--hero-frame-height, 100%); left: calc((var(--display-width) - var(--hero-frame-width)) / 2); top: calc((var(--display-height) - var(--hero-frame-height)) / 2); }
 .scene[data-portal-active="true"] .heroSurface { width: var(--portal-width); }
 
 .aperture,
@@ -85,7 +85,7 @@
   border: 1px solid var(--line-strong);
   border-radius: var(--display-radius);
   overflow: clip;
-  backface-visibility: hidden;
+  backface-visibility: visible;
   container-type: inline-size;
   color: var(--paper);
   background: var(--ink);
@@ -118,6 +118,14 @@
 }
 
 .faceTitle span { display: block; }
+
+/* The browser paints the same opaque surface in reverse from behind, so the
+   text and media mirror naturally without duplicate markup or blank walls. */
+.scene[data-portal-active="true"] .portalFace {
+  background: radial-gradient(ellipse at 50% 38%, var(--signal-shadow), var(--signal-ink) 55%, var(--ink));
+}
+.exitStar { position: absolute; top: calc(50% - 22px); left: calc(50% - 22px); width: 44px; height: 44px; fill: var(--paper); }
+.portalTitle { margin: auto 0 0; font-family: "Manrope Hero", sans-serif; font-size: clamp(1.4rem, 10cqw, 3rem); font-weight: 500; line-height: 1.15; }
 
 .faceImage {
   display: flex;
@@ -294,7 +302,7 @@
   pointer-events: none;
 }
 .particleCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.galleryTransition svg { position: absolute; top: calc(48% - 22px); left: calc(50% - 22px); width: 44px; height: 44px; fill: var(--paper); }
+.galleryTransition svg { position: absolute; top: calc(50% + 10px - 22px); left: calc(50% - 22px); width: 44px; height: 44px; fill: var(--paper); }
 .scene[data-portal-active="true"] .orbit {
   position: absolute;
   z-index: 2;
@@ -339,7 +347,7 @@
   .scene[data-portal-active="true"] .stage { position: relative; height: auto; perspective: none; }
   .scene[data-portal-active="true"] .rig { width: 100%; height: auto; transform: none !important; opacity: 1 !important; pointer-events: auto !important; }
   .scene[data-portal-active="true"] .geometry { height: auto; transform: none; }
-  .scene[data-portal-active="true"] .plane { transform: none !important; border-radius: 0; }
+  .scene[data-portal-active="true"] .plane { width: 100%; height: auto; left: 0; top: 0; transform: none !important; border-radius: 0; }
   .scene[data-portal-active="true"] .heroSurface { width: 100%; transform: none !important; }
   .scene[data-portal-active="true"] .aperture,
   .scene[data-portal-active="true"] .controls,
@@ -353,4 +361,13 @@
   .scene[data-portal-active="true"] .displayHeading,
   .scene[data-portal-active="true"] .galleryTransition,
   .scene[data-portal-active="true"] .displayControls { display: none; }
+}
+
+/* The final star reveals the real Selected work section beneath this stage. */
+.scene[data-portal-active="true"] { z-index: 2; margin-bottom: calc(0px - var(--portal-height)); }
+.scene[data-work-handoff="true"] { background: transparent; pointer-events: none; }
+.scene[data-work-handoff="true"] .stage { pointer-events: none; }
+.scene[data-work-handoff="true"] .displayHeading { visibility: hidden; }
+@media (prefers-reduced-motion: reduce) {
+  .scene[data-portal-active="true"] { margin-bottom: 0; }
 }

@@ -21,9 +21,10 @@
   background: radial-gradient(ellipse at 51% 44%, #3d4233 0%, #26291f 28%, #11130e 55%, #060705 80%);
   font-family: "Manrope Hero", sans-serif;
 }
-.portrait { position: absolute; z-index: -1; inset: -6% 18% 0 23%; pointer-events: none; mask-image: radial-gradient(ellipse at 50% 45%, #000 38%, transparent 80%); }
+.portrait { position: absolute; z-index: -1; inset: -6% 18% 0 23%; pointer-events: none; animation: portraitResolve 1400ms cubic-bezier(0.16, 1, 0.3, 1) both; mask-image: radial-gradient(ellipse at 50% 45%, #000 38%, transparent 80%); }
 .portraitImage { object-fit: cover; object-position: center 24%; filter: grayscale(1) brightness(0.38) contrast(0.95); }
 .topline, .bottomline { display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
+.topline { animation: detailReveal 650ms ease-out 180ms both; }
 .topline a { color: var(--muted); font-size: clamp(0.8rem, 1vw, 1.25rem); text-decoration: none; }
 .topline a:hover { color: var(--paper); }
 .topline .identity { display: flex; flex-direction: column; color: var(--paper); font-size: clamp(1.05rem, 1.5vw, 1.8rem); font-weight: 750; letter-spacing: 0.2em; line-height: 0.95; text-transform: uppercase; }
@@ -31,10 +32,10 @@
 .composition { margin-block: 2.5rem; }
 .nameStage { position: relative; display: flex; align-items: center; gap: 1.1vw; perspective: 1100px; }
 .headline, .leadDiscipline, .discipline { margin: 0; font-size: 9.55vw; font-weight: 650; line-height: 1.08; letter-spacing: -0.04em; text-transform: uppercase; white-space: nowrap; }
-.firstName { animation: splitFirst 1100ms cubic-bezier(0.65, 0, 0.2, 1) 650ms both; }
-.firstName > span { display: block; animation: textReveal 850ms cubic-bezier(0.16, 1, 0.3, 1) 250ms both; }
-.lastName { animation: splitLast 1100ms cubic-bezier(0.65, 0, 0.2, 1) 650ms both; }
-.reel { position: relative; flex: 0 0 var(--reel-width); width: var(--reel-width); animation: openReel 1150ms cubic-bezier(0.22, 0.7, 0.2, 1) 750ms both; }
+.firstName { animation: splitFirst 950ms cubic-bezier(0.16, 1, 0.3, 1) 100ms both; }
+.firstName > span { display: block; animation: textReveal 950ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both; }
+.lastName { animation: splitLast 950ms cubic-bezier(0.16, 1, 0.3, 1) 100ms both; }
+.reel { position: relative; flex: 0 0 var(--reel-width); width: var(--reel-width); animation: openReel 950ms cubic-bezier(0.16, 1, 0.3, 1) 260ms both; }
 .reelLink { position: relative; display: block; aspect-ratio: 1; overflow: hidden; border-radius: 4px; background: #151810; }
 .frame { position: absolute; inset: 0; opacity: 0; transition: opacity 650ms ease; }
 .frame[data-active="true"] { opacity: 1; }
@@ -46,15 +47,15 @@
 .reelCaption button { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; color: var(--paper); cursor: pointer; }
 .reelCaption button:hover { color: var(--signal); }
 .editorial { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1rem; align-items: center; margin-block: 1rem; }
-.introduction { grid-column: 4 / 7; margin: 0; color: var(--muted); font-size: clamp(0.95rem, 1.12vw, 1.4rem); line-height: 1.5; animation: detailReveal 800ms ease-out 1050ms both; }
-.leadDiscipline { grid-column: 7 / -1; justify-self: end; font-size: 7.7vw; animation: textReveal 1000ms cubic-bezier(0.16, 1, 0.3, 1) 950ms both; }
-.finalRow { display: flex; align-items: center; justify-content: space-between; gap: 1.5vw; padding-left: 6%; animation: textReveal 1000ms cubic-bezier(0.16, 1, 0.3, 1) 1150ms both; }
+.introduction { grid-column: 4 / 7; margin: 0; color: var(--muted); font-size: clamp(0.95rem, 1.12vw, 1.4rem); line-height: 1.5; animation: detailReveal 650ms ease-out 540ms both; }
+.leadDiscipline { grid-column: 7 / -1; justify-self: end; font-size: 7.7vw; animation: textReveal 950ms cubic-bezier(0.16, 1, 0.3, 1) 230ms both; }
+.finalRow { display: flex; align-items: center; justify-content: space-between; gap: 1.5vw; padding-left: 6%; animation: textReveal 950ms cubic-bezier(0.16, 1, 0.3, 1) 380ms both; }
 .discipline { font-size: 10.1vw; }
 .projectCount { display: flex; flex-direction: column; justify-content: flex-start; align-self: stretch; flex: 0 0 8vw; max-height: 8vw; padding: 1.1vw; margin-block: auto; border: 1px solid #555748; border-radius: 4px; background: linear-gradient(155deg, #14160f 30%, #44473a); color: var(--muted); font-size: clamp(0.6rem, 0.78vw, 0.95rem); font-weight: 700; line-height: 1.4; text-transform: uppercase; }
 .projectCount:hover { color: var(--paper); }
 .workArrow { display: grid; place-items: center; width: 7vw; flex-shrink: 0; color: var(--paper); }
 .workArrow svg { width: 100%; height: auto; }
-.bottomline { gap: 1.5rem; animation: detailReveal 800ms ease-out 1450ms both; }
+.bottomline { gap: 1.5rem; animation: detailReveal 650ms ease-out 700ms both; }
 .resume { display: flex; gap: 1.5rem; font-size: 0.75rem; color: var(--muted); }
 .resume a { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 2.75rem; }
 .resume a:hover { color: var(--paper); }
@@ -62,10 +63,11 @@
 .scroll:hover { color: var(--paper); }
 .hero a:focus-visible, .hero button:focus-visible { outline: 2px solid var(--signal); outline-offset: 5px; }
 .nameStage[data-has-media="false"] .headline { animation: none; }
-@keyframes textReveal { from { clip-path: inset(100% 0 0); transform: translateY(10%); } to { clip-path: inset(0); transform: translateY(0); } }
+@keyframes textReveal { from { clip-path: inset(100% 0 0); transform: translateY(18%); } to { clip-path: inset(0); transform: translateY(0); } }
+@keyframes portraitResolve { from { opacity: 0.3; transform: translateY(14px) scale(1.035); filter: blur(3px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
 @keyframes splitFirst { from { transform: translateX(calc(var(--reel-width) / 2)); } to { transform: translateX(0); } }
 @keyframes splitLast { from { transform: translateX(calc(var(--reel-width) / -2)); } to { transform: translateX(0); } }
-@keyframes openReel { from { opacity: 0; transform: rotateY(80deg) scale(0.82); } to { opacity: 1; transform: rotateY(0deg) scale(1); } }
+@keyframes openReel { from { opacity: 0; transform: rotateY(55deg) scale(0.92); } to { opacity: 1; transform: rotateY(0deg) scale(1); } }
 @keyframes detailReveal { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 767px) {
   .hero { --reel-width: 18vw; min-height: max(43rem, 100svh); padding: 1.75rem 6vw 6.5rem; }
