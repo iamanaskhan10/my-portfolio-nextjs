@@ -1,5 +1,5 @@
-.gallery { max-width: 108rem; margin-inline: auto; padding: 0 clamp(1.25rem, 6vw, 7rem) 7rem; scroll-margin-top: 3rem; }
-.index { display: flex; justify-content: space-between; align-items: baseline; gap: 2rem; padding-block: 1.5rem; margin-bottom: clamp(3rem, 7vw, 7rem); border-block: 1px solid var(--line); }
+.gallery { --paper: #11120f; --ink: #f2f0e8; --ink-raised: #e2e0d8; --muted: #53574d; --line: #11120f26; --line-strong: #11120f52; --signal: #11120f; --signal-ink: #f2f0e8; --signal-shadow: #53574d; width: 100%; padding: clamp(3rem, 6vw, 6rem) max(1.25rem, 6vw, calc((100vw - 96rem) / 2)) 7rem; background: var(--ink); color: var(--paper); scroll-margin-top: 0; }
+.index { display: flex; justify-content: space-between; align-items: baseline; gap: 2rem; padding-block: 1.5rem; margin-bottom: clamp(3rem, 7vw, 7rem); border-bottom: 1px solid var(--line-strong); }
 .index > span { flex: none; font-size: 1rem; color: var(--paper); }
 .index > span span { margin-left: 0.6rem; color: var(--muted); font-size: 0.75rem; }
 .index > div { display: flex; flex-wrap: wrap; gap: 0.25rem 1.8rem; }
@@ -17,12 +17,13 @@
 .category { display: grid; flex: 0 1 15rem; gap: 0.65rem; padding-bottom: 0.25rem; color: var(--muted); font-size: 0.83rem; line-height: 1.5; text-align: right; }
 .category > span { color: var(--paper); font-variant-numeric: tabular-nums; }
 .figure { margin: 0; }
-.media { position: relative; aspect-ratio: 1.85; overflow: hidden; background: #1b241c; border-radius: 4px; }
-.media[data-tone="1"] { background: #1c252c; }
-.media[data-tone="2"] { background: #29291f; }
-.asset { position: absolute; inset: 10% 6% 7%; animation: mediaResolve 350ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.media { position: relative; aspect-ratio: 1.85; overflow: hidden; background: #090a08; border-radius: 0; }
+.media[data-tone="1"] { background: #090a08; }
+.media[data-tone="2"] { background: #090a08; }
+.asset { position: absolute; inset: 9% 3% 3%; animation: mediaResolve 350ms cubic-bezier(0.16, 1, 0.3, 1) both; }
 .asset img, .viewerAsset img { object-fit: contain; }
 .asset video, .viewerAsset video { display: block; width: 100%; height: 100%; object-fit: contain; }
+.media, .lightbox { --paper: #f2f0e8; --ink: #11120f; --muted: #a9aaa1; --line-strong: #f2f0e852; --signal: #b9f35a; --signal-ink: #182008; }
 .mediaTopline { position: absolute; inset: 0.7rem 1rem auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: #d4d8cc; font-size: 0.7rem; }
 .mediaTopline > button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; gap: 0.5rem; padding: 0 0.8rem; border: 1px solid #87908066; border-radius: 999px; background: #10150fde; color: var(--paper); font: inherit; cursor: pointer; transition: background-color 180ms ease-out; }
 .mediaTopline > button:hover { background: var(--paper); color: var(--ink); }
@@ -47,7 +48,7 @@
 .feature[data-layout="compact"] h3 { font-size: clamp(2.4rem, 3.8vw, 4rem); }
 .feature[data-layout="compact"] .category { display: flex; justify-content: space-between; margin-top: 1rem; text-align: left; }
 .feature[data-layout="compact"] .media { aspect-ratio: 1.3; }
-.feature[data-layout="compact"] .asset { inset: 17% 7% 7%; }
+.feature[data-layout="compact"] .asset { inset: 17% 4% 4%; }
 .feature[data-layout="compact"] .projectBody { grid-template-columns: 1fr; gap: 1.2rem; }
 .feature[data-layout="compact"] .projectBody > p { font-size: 1rem; }
 .closing { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; padding-top: 3rem; margin-top: clamp(5rem, 9vw, 9rem); border-top: 1px solid var(--line); }
@@ -82,7 +83,7 @@
   .feature h3, .feature[data-layout="compact"] h3 { font-size: clamp(2.3rem, 10vw, 4rem); }
   .category { display: flex; justify-content: space-between; margin-top: 1rem; text-align: left; font-size: 0.75rem; }
   .media, .feature[data-layout="compact"] .media { aspect-ratio: 1.2; }
-  .asset, .feature[data-layout="compact"] .asset { inset: 22% 4% 7%; }
+  .asset, .feature[data-layout="compact"] .asset { inset: 22% 3% 4%; }
   .mediaTopline { inset: 0.6rem 0.65rem auto; }
   .mediaTopline > button { padding-inline: 0.6rem; }
   .mediaFooter { flex-wrap: wrap; gap: 0.75rem; }

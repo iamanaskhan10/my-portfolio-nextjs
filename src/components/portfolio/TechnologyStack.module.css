@@ -1,22 +1,22 @@
-.section { position: relative; padding: clamp(5rem, 9vw, 9rem) max(1.15rem, 6vw); background: var(--ink); color: var(--paper); scroll-margin-top: 5rem; }
+.section { position: relative; padding: clamp(5rem, 9vw, 9rem) max(1.15rem, 6vw); background: var(--editorial-void); border-top: 1px solid var(--line); color: var(--paper); scroll-margin-top: 5rem; }
 .inner { display: grid; grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.7fr); align-items: start; gap: 2rem clamp(3rem, 6vw, 6rem); max-width: 82rem; margin: 0 auto; }
 .heading { position: sticky; top: 8rem; }
-.heading h2 { margin: 0; font-family: "Anton", "Arial Narrow", sans-serif; font-size: clamp(2.5rem, 4.2vw, 4rem); font-weight: 400; line-height: 1.1; letter-spacing: -0.025em; }
+.heading h2 { margin: 0; font-family: "Manrope Hero", sans-serif; font-size: clamp(2.5rem, 4.2vw, 4rem); font-weight: 500; line-height: 1.1; letter-spacing: -0.025em; }
 .heading h2 span { color: var(--muted); }
 .heading > p { max-width: 31ch; margin: 1.5rem 0 0; color: var(--muted); font-size: var(--body-size); line-height: 1.75; }
 .groups { display: grid; align-content: start; }
 .group { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 1.5rem; min-width: 0; padding: clamp(2rem, 4vw, 3.25rem) 0; border-bottom: 1px solid var(--line); }
 .group:first-child { padding-top: 0; }
-.group h3 { margin: 0; color: var(--signal); font-size: 0.82rem; font-weight: 600; line-height: 1.45; }
+.group h3 { margin: 0; color: var(--muted); font-size: 0.82rem; font-weight: 600; line-height: 1.45; }
 .technologies { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(1.75rem, 3vw, 2.75rem) clamp(1rem, 2.5vw, 2rem); margin: 0; padding: 0; list-style: none; }
 .technology { min-width: 0; outline: none; }
-.icon { display: block; width: 34px; height: 34px; margin-bottom: 0.85rem; color: var(--tech-color); transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+.icon { display: block; width: 34px; height: 34px; margin-bottom: 0.85rem; color: var(--paper); transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1); }
 .technology strong { display: block; color: var(--paper); font-size: 0.8rem; font-weight: 600; line-height: 1.35; transition: color 180ms ease-out; }
 .technology span { display: block; max-width: 17ch; min-height: 3em; margin-top: 0.38rem; color: var(--muted); font-size: 0.72rem; line-height: 1.5; opacity: 0; transform: translateY(4px); transition: opacity 160ms ease-out, transform 200ms cubic-bezier(0.16, 1, 0.3, 1); }
 .technology:hover span, .technology:focus-visible span { opacity: 1; transform: none; }
 .technology:focus-visible { outline: 2px solid var(--signal); outline-offset: 7px; }
 @media (hover: hover) and (pointer: fine) {
-  .technology:hover .icon { transform: translateY(-3px); }
+  .technology:hover .icon { color: var(--tech-color); transform: translateY(-3px); }
   .technology:hover strong { color: var(--signal); }
 }
 @media (max-width: 1100px) {

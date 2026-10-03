@@ -1,5 +1,5 @@
-.section { position: relative; isolation: isolate; overflow: clip; min-height: min(50rem, 90svh); display: flex; align-items: center; padding: clamp(5rem, 9vw, 9rem) max(1.15rem, 4vw); scroll-margin-top: 4rem; background: #070707; color: #f7f5f0; }
-.atmosphere { position: absolute; z-index: -1; inset: 0; pointer-events: none; opacity: 0.55; }
+.section { position: relative; isolation: isolate; overflow: clip; min-height: min(50rem, 90svh); display: flex; align-items: center; padding: clamp(5rem, 9vw, 9rem) max(1.15rem, 4vw); scroll-margin-top: 4rem; background: var(--editorial-void); border-top: 1px solid var(--line); color: #f7f5f0; }
+.atmosphere { display: none; position: absolute; z-index: -1; inset: 0; pointer-events: none; opacity: 0.55; }
 .atmosphere > div { position: absolute; inset: 0; transition: opacity 550ms ease-out; }
 .tone0 { --light-core: #ff3409; --light-warm: #a77924; --light-haze: #681801; }
 .tone1 { --light-core: #6a62ff; --light-warm: #4b8db0; --light-haze: #191f65; }
@@ -53,7 +53,7 @@
 .cursor { display: none; }
 @media (hover: hover) and (pointer: fine) {
   .section[data-cursor="true"], .section[data-cursor="true"] :is(a, button) { cursor: none; }
-  .cursor { position: fixed; display: block; z-index: 50; top: 0; left: 0; width: 84px; height: 84px; border-radius: 50%; background: #fff; mix-blend-mode: difference; pointer-events: none; opacity: 0; transform: translate3d(calc(var(--cursor-x, -100px) - 50%), calc(var(--cursor-y, -100px) - 50%), 0); }
+  .cursor { position: fixed; display: block; z-index: 50; top: 0; left: 0; width: 56px; height: 56px; border-radius: 50%; background: #fff; mix-blend-mode: difference; pointer-events: none; opacity: 0; transform: translate3d(calc(var(--cursor-x, -100px) - 50%), calc(var(--cursor-y, -100px) - 50%), 0); }
   .section[data-cursor="true"] .cursor { opacity: 1; }
 }
 @media (max-width: 900px) { .section { min-height: auto; } .layout { grid-template-columns: 1fr; gap: 2rem; } .intro { padding-bottom: 0; } .intro h2 { margin-bottom: 0.2rem; } .entry { flex-basis: 66%; } }

@@ -102,15 +102,15 @@ export default function HeroPortal({ children, sceneRef }) {
     };
     const apertureElement = apertureRef.current;
     const glowElement = glowRef.current;
-    const aperture = { approach: 0, rotation: 0, light: 0, star: 0.5, blur: 0 };
+    const aperture = { approach: 0, rotation: 0, light: 0, star: 0.5, blur: 0, starScale: 1, x: 0, y: 0 };
     const renderAperture = () => {
-      // The star stays small. Only the soft surrounding light spreads, while
-      // the dark veil dissolves over the stationary live hero.
+      // Start small, then accelerate the star up-right as it grows and dissolves.
+      // Keep its surrounding light subdued while the stationary hero resolves.
       glowElement.style.opacity = 0;
       shadowRef.current.setAttribute("transform", `scale(${0.5 + aperture.approach * 2.1})`);
       shadowRef.current.style.opacity = aperture.light;
       shadowRef.current.style.filter = `blur(${aperture.blur}px)`;
-      starRef.current.setAttribute("transform", `rotate(${aperture.rotation}) scale(${1.8 * viewHeight / Math.max(measuredWidth, viewHeight)})`);
+      starRef.current.setAttribute("transform", `translate(${aperture.x} ${aperture.y}) rotate(${aperture.rotation}) scale(${aperture.starScale * 1.8 * viewHeight / Math.max(measuredWidth, viewHeight)})`);
       starRef.current.style.opacity = aperture.star;
     };
     const compact = () => root.clientWidth < 768 || window.matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -237,7 +237,10 @@ export default function HeroPortal({ children, sceneRef }) {
         const handoff = progress >= boxEnd + 0.65;
         if (root.dataset.workHandoff !== String(handoff)) root.dataset.workHandoff = String(handoff);
         const index = Math.round(-shape.rotationY / 90);
-        const mode = progress >= 0.82 && !handoff ? "box" : progress < 0.82 ? "hero" : "transition";
+        // The other faces still have viewport-sized geometry during the fold.
+        // Reveal them only after the shared-frame handoff, when rotation starts;
+        // otherwise their project images flash behind the rolling hero.
+        const mode = handoff ? "transition" : progress >= TURN_START ? "box" : "hero";
         selectVisibleFace(mode === "hero" ? 0 : Math.max(0, Math.min(momentCount - 1, index)), mode);
         const phase = progress < 0.12 ? "darkness" : progress < 0.32 ? "aperture" : progress < 0.66 ? "approach" : progress < 0.82 ? "hero" : progress < 1 ? "plane" : progress >= galleryStart ? "work" : progress >= boxEnd ? "transition" : "display";
         if (root.dataset.portalPhase !== phase) root.dataset.portalPhase = phase;
@@ -246,9 +249,11 @@ export default function HeroPortal({ children, sceneRef }) {
     timeline
       .to(darkRef.current, { autoAlpha: 0, duration: 0.08 }, 0.02)
       .fromTo(aperture, { light: 0 }, { light: 0.28, duration: 0.16, immediateRender: false }, 0.02)
-      .to(aperture, { rotation: 360, duration: 0.62, ease: "power2.in" }, 0.02)
+      .to(aperture, { rotation: 540, duration: 0.62, ease: "power2.in" }, 0.02)
+      .to(aperture, { x: 210, y: -145, duration: 0.46, ease: "power2.in" }, 0.18)
+      .to(aperture, { starScale: 3, duration: 0.4, ease: "power2.in" }, 0.24)
       .fromTo(aperture, { approach: 0 }, { approach: 1, duration: 0.58, ease: "power1.out", immediateRender: false }, 0.06)
-      .to(aperture, { star: 0, duration: 0.32, ease: "power1.in" }, 0.26)
+      .to(aperture, { star: 0, duration: 0.3, ease: "power1.in" }, 0.34)
       .to(aperture, { blur: 24, duration: 0.46, ease: "power1.in", }, 0.18)
       .to(aperture, { light: 0, duration: 0.46, ease: "power1.out" }, 0.18)
       .to(apertureElement, { opacity: 0, duration: 0.48, ease: "power1.inOut" }, 0.16)
