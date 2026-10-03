@@ -60,6 +60,13 @@ export function validatePortfolioContent(input) {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(project.slug)) throw new Error(`${project.title}: slug must use lowercase letters, numbers, and hyphens.`);
     if (slugs.has(project.slug)) throw new Error("Project slugs must be unique.");
     slugs.add(project.slug);
+    if (project.showcase !== undefined) {
+      if (!isObject(project.showcase)) throw new Error(`${project.title} showcase is invalid.`);
+      const { videoSrc, posterSrc, caption } = project.showcase;
+      if (videoSrc !== undefined && (typeof videoSrc !== "string" || (videoSrc && (!validMediaSource(videoSrc) || !/\.(mp4|webm)$/i.test(videoSrc))))) throw new Error(`${project.title} showcase video must be a local MP4 or WebM path.`);
+      if (posterSrc !== undefined && (typeof posterSrc !== "string" || (posterSrc && (!validMediaSource(posterSrc) || !/\.(png|jpe?g|webp|avif)$/i.test(posterSrc))))) throw new Error(`${project.title} poster must be a local still image path.`);
+      if (caption !== undefined && (typeof caption !== "string" || caption.length > TEXT_LIMIT)) throw new Error(`${project.title} film caption is invalid.`);
+    }
     requireStringArray(project.highlights, `${project.title} highlights`);
     requireStringArray(project.flow, `${project.title} workflow`);
     ["features", "decisions"].forEach((field) => {

@@ -1,10 +1,9 @@
 "use client";
 
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Github, Linkedin } from "lucide-react";
 import ScrollReveal from "./portfolio/ScrollReveal";
 import PortfolioContactForm from "./portfolio/PortfolioContactForm";
 import TechnologyStack from "./portfolio/TechnologyStack";
-import BrandWatermark from "./portfolio/BrandWatermark";
 import ProjectShowcase from "./portfolio/ProjectShowcase";
 import ExperienceShowcase from "./portfolio/ExperienceShowcase";
 import { usePortfolioContent } from "../context/PortfolioContentContext";
@@ -35,14 +34,15 @@ export default function PostHeroEditorial() {
       <ExperienceShowcase />
 
       <section className={styles.contact} id="contact" aria-labelledby="contact-heading">
-        <BrandWatermark />
-        <ScrollReveal className={styles.sectionIntro}>
+        <ScrollReveal className={styles.contactHeading}>
           <h2 id="contact-heading">{site.contact.heading}</h2>
+        </ScrollReveal>
+        <ScrollReveal className={styles.sectionIntro}>
           <p>{site.contact.body}</p>
+          <a className={styles.contactEmail} href={`mailto:${profile.email}`}>{profile.email}<ArrowUpRight size={25} aria-hidden="true" /></a>
           <div className={styles.contactLinks}>
             <a href={profile.github} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> GitHub</a>
             <a href={profile.linkedin} target="_blank" rel="noopener noreferrer"><Linkedin size={17} aria-hidden="true" /> LinkedIn</a>
-            <a href={`mailto:${profile.email}`}><Mail size={17} aria-hidden="true" /> Email</a>
           </div>
         </ScrollReveal>
         <ScrollReveal><PortfolioContactForm active /></ScrollReveal>

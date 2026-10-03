@@ -112,6 +112,7 @@ export default function ExperienceShowcase() {
             <div className={styles.progress} role="progressbar" aria-label="Experience position" aria-valuemin={1} aria-valuemax={experiences.length} aria-valuenow={current + 1}>
               <span style={{ transform: `scaleX(${(current + 1) / experiences.length})` }} />
             </div>
+            <span className={styles.position} aria-live="polite" aria-atomic="true"><span className={styles.srOnly}>Experience </span>{String(current + 1).padStart(2, "0")} <span>/ {String(experiences.length).padStart(2, "0")}</span></span>
             <div className={styles.arrows}>
               <button type="button" onClick={() => goTo(current - 1)} disabled={current === 0} aria-label="Previous experience" aria-controls="experience-showcase"><ArrowLeft size={19} aria-hidden="true" /></button>
               <button type="button" onClick={() => goTo(current + 1)} disabled={current === experiences.length - 1} aria-label="Next experience" aria-controls="experience-showcase"><ArrowRight size={19} aria-hidden="true" /></button>

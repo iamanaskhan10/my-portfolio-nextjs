@@ -6,6 +6,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { usePortfolioContent } from "../../context/PortfolioContentContext";
+import ProjectEditorialGallery from "./ProjectEditorialGallery";
 import useMotionPreference from "../../hooks/useMotionPreference";
 import styles from "./ProjectShowcase.module.css";
 
@@ -24,7 +25,7 @@ function FloatingPreview({ image, index, count, progress }) {
 
 function RevealWord({ word, index, count, progress, reducedMotion }) {
   const start = 0.06 + index / count * 0.58;
-  const color = useTransform(progress, [start, start + 0.16], ["#77786f", "#ffffff"]);
+  const color = useTransform(progress, [start, start + 0.16], ["#a5a69c", "#ffffff"]);
   return <motion.span data-work-word style={{ color: reducedMotion ? "#ffffff" : color }}>{word}{" "}</motion.span>;
 }
 
@@ -59,7 +60,7 @@ function ProjectIntroduction({ projects, selectedWork, site, reducedMotion }) {
   );
 }
 
-function SelectedProject({ project, index, reducedMotion }) {
+export function SelectedProject({ project, index, reducedMotion }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [54, -54]);
@@ -105,12 +106,7 @@ export default function ProjectShowcase() {
   return (
     <section id="projects" className={styles.section} aria-labelledby="projects-heading">
       <ProjectIntroduction projects={published} selectedWork={selectedWork} site={site} reducedMotion={reducedMotion} />
-      <div id="selected-projects" className={styles.inner}>
-        {selectedWork.map((project, index) => <SelectedProject key={project.slug} project={project} index={index} reducedMotion={reducedMotion} />)}
-        <div className={styles.closing}>
-          <Link className={styles.archiveLink} href="/projects">{site.projects.archiveLabel} <ArrowUpRight size={32} aria-hidden="true" /></Link>
-        </div>
-      </div>
+      <ProjectEditorialGallery projects={[...featured, ...published.filter((project) => !project.featured)]} archiveLabel={site.projects.archiveLabel} />
     </section>
   );
 }

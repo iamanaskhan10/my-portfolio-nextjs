@@ -439,6 +439,11 @@ function ProjectsEditor({ projects, project, projectIndex, setProjectIndex, upda
         <fieldset><legend>Metric</legend><div className={styles.formGrid}>
           {Object.entries(project.metric).map(([field, value]) => <Field key={field} label={field} value={value} onChange={(next) => updateProject("metric", { ...project.metric, [field]: next })} />)}
         </div></fieldset>
+        <fieldset><legend>Homepage showcase film</legend><p className={styles.fieldsetIntro}>Optional. Add an MP4 or WebM from your public media folder. The project gallery supplies the image previews; visitors choose when to play the film.</p><div className={styles.formGrid}>
+          <Field label="Video path" value={project.showcase?.videoSrc || ""} placeholder="/videos/project-demo.mp4" onChange={(value) => updateProject("showcase", { ...project.showcase, videoSrc: value })} />
+          <Field label="Poster image path" value={project.showcase?.posterSrc || ""} placeholder="Uses the project cover when empty" onChange={(value) => updateProject("showcase", { ...project.showcase, posterSrc: value })} />
+          <Field label="Film caption" multiline value={project.showcase?.caption || ""} onChange={(value) => updateProject("showcase", { ...project.showcase, caption: value })} />
+        </div></fieldset>
         <fieldset><legend>Gallery</legend><p className={styles.fieldsetIntro}>The first image becomes the project cover. Upload files from the Media section, then attach them to this project.</p>
           {project.gallery.length === 0 && <div className={styles.empty}>This draft has no images yet.</div>}
           <div className={styles.galleryEditor}>{project.gallery.map((image, index) => (

@@ -2,8 +2,7 @@
 
 import Footer from "../components/Footer";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Menu, X } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import useMotionPreference from "../hooks/useMotionPreference";
 import BrandMark from "./portfolio/BrandMark";
 import { useRouter } from "next/router";
@@ -11,10 +10,10 @@ import Link from "next/link";
 import styles from "./FloatingNavigation.module.css";
 
 const navigation = [
+  { label: "Projects", href: "#projects" },
   { label: "About", href: "#about" },
   { label: "Tech stack", href: "#capabilities" },
   { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -30,31 +29,16 @@ export default function Layout({ children }) {
   const router = useRouter();
   const sectionHref = (hash) => router.pathname === "/" ? hash : `/${hash}`;
   const reduceMotion = useMotionPreference();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
-  const mobileMenuButtonRef = useRef(null);
-  const mobileSidebarRef = useRef(null);
-  const pendingSectionRef = useRef(null);
+  const navigationRef = useRef(null);
 
-  const navigateFromMenu = (event, hash) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    if (router.pathname === "/") {
-      event.preventDefault();
-      pendingSectionRef.current = hash;
-    }
-    setMobileMenuOpen(false);
-  };
-
-  const finishMenuNavigation = () => {
-    const hash = pendingSectionRef.current;
-    pendingSectionRef.current = null;
-    if (!hash) return;
-    // Wait for the dialog to unmount and release its scroll lock before jumping.
-    requestAnimationFrame(() => {
-      document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-      window.history.pushState(null, "", hash);
-    });
-  };
+  useEffect(() => {
+    const nav = navigationRef.current;
+    const focused = nav?.contains(document.activeElement) ? document.activeElement.closest("a") : null;
+    const current = focused || nav?.querySelector("a[aria-current]");
+    if (!current || nav.scrollWidth <= nav.clientWidth) return;
+    nav.scrollTo({ left: current.offsetLeft - (nav.clientWidth - current.offsetWidth) / 2, behavior: reduceMotion ? "auto" : "smooth" });
+  }, [activeSection, router.pathname, reduceMotion]);
 
   useEffect(() => {
     if (router.pathname !== "/") return;
@@ -65,8 +49,10 @@ export default function Layout({ children }) {
       frame = 0;
       const readingLine = Math.max(100, window.innerHeight * 0.3);
       let current = sections[0]?.id;
+      let closestTop = -Infinity;
       for (const section of sections) {
-        if (section.getBoundingClientRect().top <= readingLine) current = section.id;
+        const top = section.getBoundingClientRect().top;
+        if (top <= readingLine && top >= closestTop) { current = section.id; closestTop = top; }
       }
       if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) current = sections.at(-1)?.id;
       setActiveSection(current ?? "home");
@@ -113,125 +99,32 @@ export default function Layout({ children }) {
     return () => document.removeEventListener("click", handleChapterLink);
   }, [reduceMotion]);
 
-  useEffect(() => {
-    if (!mobileMenuOpen) return undefined;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const handleSidebarKeys = (event) => {
-      if (event.key === "Escape") {
-        setMobileMenuOpen(false);
-        requestAnimationFrame(() => mobileMenuButtonRef.current?.focus());
-        return;
-      }
-
-      if (event.key !== "Tab") return;
-
-      const focusable = [...(mobileSidebarRef.current?.querySelectorAll('a[href], button:not([disabled])') ?? [])];
-      if (!focusable.length) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    window.addEventListener("keydown", handleSidebarKeys);
-    requestAnimationFrame(() => mobileSidebarRef.current?.focus());
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleSidebarKeys);
-    };
-  }, [mobileMenuOpen]);
-
   return (
     <div className={`site-shell ${styles.shell}`}>
       <a className="site-skip-link" href="#main-content">Skip to content</a>
       <header className={`site-header ${styles.dock}`}>
-        <a className="site-header__brand" href={sectionHref("#home")} aria-label="Anas Khan home">
+        <a className="site-header__brand" href={sectionHref("#home")} aria-label="Anas Khan home" aria-current={router.pathname === "/" && activeSection === "home" ? "location" : undefined}>
           <BrandMark className="site-header__mark" />
         </a>
-        <nav className="site-header__nav" aria-label="Main navigation">
-          {[navigation[3], navigation[0]].map((item) => (
+        <nav ref={navigationRef} className="site-header__nav" aria-label="Main navigation" onFocus={(event) => {
+          const link = event.target.closest("a");
+          const nav = event.currentTarget;
+          if (link && nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2, behavior: "instant" });
+        }}>
+          {navigation.filter((item) => item.href !== "#contact").map((item) => (
             <a key={item.href} href={sectionHref(item.href)} aria-current={router.pathname === "/" && activeSection === item.href.slice(1) ? "location" : undefined}>{item.label}</a>
           ))}
           <Link href="/projects" aria-current={router.pathname.startsWith("/projects") ? "page" : undefined}>Archive</Link>
         </nav>
-        <a className="site-header__contact" href={sectionHref("#contact")}>
+        <a className="site-header__contact" href={sectionHref("#contact")} aria-current={router.pathname === "/" && activeSection === "contact" ? "location" : undefined}>
           <span className="site-header__contact-icon" aria-hidden="true">
-            <ArrowRight size={15} />
+            <ArrowUpRight size={16} />
           </span>
           <span className="site-header__contact-label">Let&apos;s talk</span>
         </a>
-        <button
-          ref={mobileMenuButtonRef}
-          className="site-header__menu-toggle"
-          type="button"
-          aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={mobileMenuOpen}
-          aria-controls="mobile-sidebar"
-          onClick={() => setMobileMenuOpen((open) => !open)}
-        >
-          {mobileMenuOpen ? <X size={19} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
-          <span className={styles.menuLabel}>Menu</span>
-        </button>
       </header>
       <main id="main-content">{children}</main>
       <Footer />
-      <AnimatePresence onExitComplete={finishMenuNavigation}>
-        {mobileMenuOpen && (
-          <>
-            <motion.button
-              className="mobile-sidebar__scrim"
-              type="button"
-              aria-label="Close navigation menu"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.18 }}
-              onClick={() => setMobileMenuOpen(false)}
-            />
-            <motion.aside
-              ref={mobileSidebarRef}
-              id="mobile-sidebar"
-              className="mobile-sidebar"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Site navigation"
-              tabIndex={-1}
-              initial={reduceMotion ? { opacity: 1 } : { x: "100%" }}
-              animate={reduceMotion ? { opacity: 1 } : { x: 0 }}
-              exit={reduceMotion ? { opacity: 0 } : { x: "100%" }}
-              transition={{ type: "tween", duration: reduceMotion ? 0 : 0.26, ease: "easeOut" }}
-            >
-              <div className="mobile-sidebar__topline">
-                <span>Navigate</span>
-                <button type="button" onClick={() => setMobileMenuOpen(false)} aria-label="Close navigation menu">
-                  <X size={19} aria-hidden="true" />
-                </button>
-              </div>
-              <nav className="mobile-sidebar__nav" aria-label="Site sections">
-                <a href={sectionHref("#home")} onClick={(event) => navigateFromMenu(event, "#home")}>Home</a>
-                {navigation.map((item) => (
-                  <a key={item.href} href={sectionHref(item.href)} aria-current={router.pathname === "/" && activeSection === item.href.slice(1) ? "location" : undefined} onClick={(event) => navigateFromMenu(event, item.href)}>{item.label}</a>
-                ))}
-                <Link href="/projects" onClick={() => setMobileMenuOpen(false)}>Project archive</Link>
-              </nav>
-              <a className="mobile-sidebar__email" href={sectionHref("#contact")} onClick={(event) => navigateFromMenu(event, "#contact")}>
-                Let&apos;s build something useful
-              </a>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

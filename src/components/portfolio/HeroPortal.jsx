@@ -69,6 +69,8 @@ export default function HeroPortal({ children, sceneRef }) {
     let lastWidth;
     let lastDepth;
     let lastHeight;
+    let lastFold;
+    let lastRotation;
     let particleRenderer;
     let identityVisible = false;
     const shape = { fold: 0, rotationY: 0 };
@@ -85,6 +87,7 @@ export default function HeroPortal({ children, sceneRef }) {
     entranceAnimations.forEach((animation) => { animation.pause(); animation.currentTime = 0; });
     root.dataset.heroEntrance = "waiting";
     const finishEntrance = () => {
+      if (root.dataset.heroEntrance === "complete") return;
       entranceAnimations.forEach((animation) => { if (animation.playState !== "idle") animation.finish(); });
       root.dataset.heroEntrance = "complete";
     };
@@ -113,15 +116,21 @@ export default function HeroPortal({ children, sceneRef }) {
     const compact = () => root.clientWidth < 768 || window.matchMedia("(hover: none) and (pointer: coarse)").matches;
     const faceWidth = () => Math.min(viewHeight * 0.4, measuredWidth * 0.62, 420);
     const faceHeight = () => faceWidth() * 1.38;
-    const renderShape = () => {
-      // Derive the complete pose from reversible scene state. Invalidating a
-      // transform tween after refresh can retain its folded translation.
-      gsap.set(rig, {
-        y: ((viewHeight - faceHeight()) / 2 + 10) * shape.fold,
-        z: -faceWidth() / 2 * shape.fold,
-        rotationY: shape.rotationY,
-        "--display-scale": 1 + ((viewHeight < 500 ? 0.78 : 1) - 1) * shape.fold,
-      });
+    const moveRigY = gsap.quickSetter(rig, "y", "px");
+    const moveRigZ = gsap.quickSetter(rig, "z", "px");
+    const rotateRig = gsap.quickSetter(rig, "rotationY", "deg");
+    const renderShape = (force = false) => {
+      if (shape.rotationY !== lastRotation) {
+        rotateRig(shape.rotationY);
+        lastRotation = shape.rotationY;
+      }
+      // Geometry only changes during the fold or a real resize. Cached setters
+      // avoid constructing a tween and reading computed CSS on every frame.
+      if (!force && shape.fold === lastFold) return;
+      lastFold = shape.fold;
+      moveRigY(((viewHeight - faceHeight()) / 2 + 10) * shape.fold);
+      moveRigZ(-faceWidth() / 2 * shape.fold);
+      rig.style.setProperty("--display-scale", 1 + ((viewHeight < 500 ? 0.78 : 1) - 1) * shape.fold);
       const width = (measuredWidth + (faceWidth() - measuredWidth) * shape.fold).toFixed(2);
       const depth = (faceWidth() * shape.fold).toFixed(2);
       const height = (measuredHeight + (faceHeight() - measuredHeight) * shape.fold).toFixed(2);
@@ -180,7 +189,7 @@ export default function HeroPortal({ children, sceneRef }) {
       particleRenderer?.resize(width, viewHeight);
       trigger?.refresh();
       renderAperture();
-      renderShape();
+      renderShape(true);
     };
 
     measure();
@@ -226,7 +235,7 @@ export default function HeroPortal({ children, sceneRef }) {
         }
         if (progress >= boxEnd && progress <= galleryStart + 0.1) particleRenderer?.render(particles.progress);
         const handoff = progress >= boxEnd + 0.65;
-        root.dataset.workHandoff = String(handoff);
+        if (root.dataset.workHandoff !== String(handoff)) root.dataset.workHandoff = String(handoff);
         const index = Math.round(-shape.rotationY / 90);
         const mode = progress >= 0.82 && !handoff ? "box" : progress < 0.82 ? "hero" : "transition";
         selectVisibleFace(mode === "hero" ? 0 : Math.max(0, Math.min(momentCount - 1, index)), mode);
@@ -296,10 +305,11 @@ export default function HeroPortal({ children, sceneRef }) {
           if (self.progress > 0.025) finishEntrance();
         }
       },
-      onRefresh: (self) => {
-        // Geometry is measured separately; scene progress owns the whole pose.
-        if (introReady) timeline.time(REVEAL + self.progress * (duration - REVEAL));
-        renderShape();
+      onRefresh: () => {
+        // Stay on the scrubbed playhead: jumping to raw scroll progress here
+        // would snap ahead, then back on the next scrub update.
+        if (introReady) timeline.time(playhead.time);
+        renderShape(true);
       },
       onToggle: ({ isActive }) => { rig.style.willChange = isActive ? "transform" : "auto"; },
     });
@@ -360,7 +370,7 @@ export default function HeroPortal({ children, sceneRef }) {
     window.addEventListener("resize", measure);
     const images = [...rig.querySelectorAll("img")];
     Promise.allSettled([document.fonts.ready, ...images.map((image) => image.decode())])
-      .then(() => { if (!disposed) { measure(); trigger.refresh(); } });
+      .then(() => { if (!disposed) measure(); });
 
     return () => {
       disposed = true;

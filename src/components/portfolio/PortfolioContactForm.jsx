@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { usePortfolioContent } from "../../context/PortfolioContentContext";
 
@@ -9,13 +9,17 @@ export default function PortfolioContactForm({ active }) {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState("idle");
   const [statusMessage, setStatusMessage] = useState("");
+  const sending = useRef(false);
 
   const handleChange = (event) => {
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+    if (status === "success") setStatus("idle");
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (sending.current) return;
+    sending.current = true;
     setStatus("sending");
     setStatusMessage("");
 
@@ -36,13 +40,15 @@ export default function PortfolioContactForm({ active }) {
     } catch (error) {
       setStatus("error");
       setStatusMessage(error instanceof Error ? error.message : "Unable to send message right now.");
+    } finally {
+      sending.current = false;
     }
   };
 
   const tabIndex = active ? 0 : -1;
 
   return (
-    <form className="engineering-contact-form" onSubmit={handleSubmit}>
+    <form className="engineering-contact-form" onSubmit={handleSubmit} aria-label="Send Anas a message" aria-busy={status === "sending"}>
       <div className="engineering-contact-form__field">
         <label htmlFor="portfolio-name">Your name</label>
         <input
@@ -50,6 +56,8 @@ export default function PortfolioContactForm({ active }) {
           name="name"
           type="text"
           autoComplete="name"
+          placeholder="Your name"
+          disabled={status === "sending"}
           required
           value={form.name}
           onChange={handleChange}
@@ -63,6 +71,8 @@ export default function PortfolioContactForm({ active }) {
           name="email"
           type="email"
           autoComplete="email"
+          placeholder="you@example.com"
+          disabled={status === "sending"}
           required
           value={form.email}
           onChange={handleChange}
@@ -75,6 +85,8 @@ export default function PortfolioContactForm({ active }) {
           id="portfolio-message"
           name="message"
           rows="4"
+          placeholder="Tell me about your idea, team, or project."
+          disabled={status === "sending"}
           required
           value={form.message}
           onChange={handleChange}

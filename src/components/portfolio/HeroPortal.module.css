@@ -11,6 +11,8 @@
 .bootCover { display: none; position: absolute; z-index: 5; inset: 0; background: var(--editorial-void); }
 .scene[data-hero-entrance="waiting"]:not([data-portal-active="true"]) .bootCover { display: block; }
 .scene[data-hero-entrance="waiting"] .plane * { animation-play-state: paused !important; }
+/* Release entrance blur, masks and 3D layers before the scroll-driven fold. */
+.scene[data-hero-entrance="complete"] .plane * { animation: none !important; }
 
 .rig {
   --display-depth: 0px;

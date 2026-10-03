@@ -33,16 +33,29 @@
 .projectFooter > span:first-child { max-width: 42ch; color: #b4bca8; font-size: 0.72rem; line-height: 1.7; }
 .projectArrow { display: grid; width: 42px; height: 42px; flex: none; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--paper); transition: color 200ms ease-out, background-color 200ms ease-out, transform 250ms cubic-bezier(0.16, 1, 0.3, 1); }
 .projectCard:hover .projectArrow { transform: rotate(45deg); color: var(--signal-ink); background: var(--signal); border-color: var(--signal); }
-.contact { display: grid; grid-template-columns: 0.85fr 1.15fr; align-items: start; gap: clamp(3rem, 8vw, 8rem); }
+.contact { display: grid; grid-template-columns: 0.85fr 1.15fr; align-items: start; gap: clamp(3rem, 5vw, 5rem) clamp(3rem, 8vw, 8rem); border-top: 1px solid var(--line); }
 .sectionIntro > p { margin-top: 1.5rem; }
-.contact { background: radial-gradient(ellipse at 0 100%, #b9f35a08, transparent 60%), #0c0f0c; }
+.contact { background: var(--ink); padding-bottom: clamp(7rem, 10vw, 10rem); }
+.contactHeading { grid-column: 1 / -1; padding-bottom: clamp(2rem, 4vw, 4rem); border-bottom: 1px solid var(--line-strong); }
+.contactHeading h2 { max-width: 19ch; margin: 0; color: var(--paper); font-family: "Manrope Hero", sans-serif; font-size: clamp(3rem, 6.5vw, 6rem); font-weight: 500; line-height: 1.07; letter-spacing: -0.04em; text-wrap: balance; }
+.contact .sectionIntro > p { margin-top: 0; max-width: 38ch; }
+.contactEmail { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 44px; width: fit-content; max-width: 100%; margin-top: 2rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--signal-shadow); color: var(--paper); font-family: "Manrope Hero", sans-serif; font-size: clamp(1rem, 1.6vw, 1.5rem); text-decoration: none; overflow-wrap: anywhere; }
+.contactEmail svg { flex: none; color: var(--signal); transition: transform 180ms ease-out; }
+.contactEmail:hover { color: var(--signal); }
+.contactEmail:hover svg { transform: translate(2px, -2px); }
+.contactEmail:focus-visible { outline: 2px solid var(--signal); outline-offset: 5px; }
 .contactLinks { display: flex; flex-wrap: wrap; gap: 0.55rem 1.5rem; margin-top: 1.5rem; }
 .contactLinks a { display: inline-flex; min-height: 44px; align-items: center; gap: 0.5rem; color: var(--paper); font-size: 0.85rem; text-decoration: none; transition: color 180ms ease-out; }
 .contactLinks a:hover { color: var(--signal); }
-.contact :global(.engineering-contact-form) { background: #171c13; border-color: #34402a; border-radius: 14px; padding: clamp(1.35rem, 3vw, 2.5rem); gap: 1.4rem; }
+.contact :global(.engineering-contact-form) { background: transparent; border: 0; border-radius: 0; padding: 0; gap: 2rem 1.75rem; }
 .contact :global(.engineering-contact-form label) { font-size: 0.9rem; font-weight: 500; letter-spacing: 0; text-transform: none; }
-.contact :global(.engineering-contact-form input), .contact :global(.engineering-contact-form textarea) { font-size: 1rem; background: #10140d; border-color: #39442e; border-radius: 6px; }
-.contact :global(.engineering-contact-form__footer) { flex-wrap: wrap; }
+.contact :global(.engineering-contact-form input), .contact :global(.engineering-contact-form textarea) { min-height: 52px; padding: 0.85rem 0; font-size: 1rem; background: transparent; border: 0; border-bottom: 1px solid var(--line-strong); border-radius: 0; }
+.contact :global(.engineering-contact-form textarea) { min-height: 140px; }
+.contact :global(.engineering-contact-form input:focus), .contact :global(.engineering-contact-form textarea:focus) { border-color: var(--signal); outline: 2px solid var(--signal); outline-offset: 5px; }
+.contact :global(.engineering-contact-form input::placeholder), .contact :global(.engineering-contact-form textarea::placeholder) { color: var(--muted); opacity: 0.8; }
+.contact :global(.engineering-contact-form__footer) { flex-wrap: wrap; gap: 1rem; }
+.contact :global(.engineering-contact-form__footer button) { min-height: 54px; min-width: 12rem; justify-content: space-between; border-radius: 4px; text-transform: none; letter-spacing: 0; font-size: 0.95rem; }
+.contact :global(.engineering-contact-form__status) { flex-basis: 100%; }
 .contact :global(.engineering-contact-form__status:empty) { display: none; }
 .inlineLink:focus-visible, .projectCard:focus-visible, .contactLinks a:focus-visible { outline: 2px solid var(--signal); outline-offset: 5px; }
 
@@ -62,4 +75,4 @@
   .contact :global(.engineering-contact-form) { grid-template-columns: 1fr; }
   .sectionIntro h2 { max-width: 14ch; }
 }
-@media (prefers-reduced-motion: reduce) { .aboutTitle > span, .inlineLink svg { transition: none; } .inlineLink:hover svg, .inlineLink:focus-visible svg, .projectCard:hover .projectArrow { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .aboutTitle > span, .inlineLink svg, .contactEmail svg { transition: none; } .inlineLink:hover svg, .inlineLink:focus-visible svg, .projectCard:hover .projectArrow, .contactEmail:hover svg { transform: none; } }
