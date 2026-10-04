@@ -37,15 +37,9 @@
 .lastName { animation: splitLast 950ms cubic-bezier(0.16, 1, 0.3, 1) 100ms both; }
 .reel { position: relative; flex: 0 0 var(--reel-width); width: var(--reel-width); animation: openReel 950ms cubic-bezier(0.16, 1, 0.3, 1) 260ms both; }
 .reelLink { position: relative; display: block; aspect-ratio: 1; overflow: hidden; border-radius: 4px; background: #151810; }
-.frame { position: absolute; inset: 0; opacity: 0; transition: opacity 650ms ease; }
+.frame { position: absolute; inset: 0; opacity: 0; transition: opacity 110ms ease-out; }
 .frame[data-active="true"] { opacity: 1; }
 .frame img { object-fit: cover; object-position: top center; }
-.reelArrow { position: absolute; right: 0.3rem; bottom: 0.3rem; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; color: var(--paper); background: #151810; }
-.reelArrow svg { width: 15px; }
-.reelCaption { position: absolute; top: 100%; left: 0; right: 0; display: flex; align-items: center; justify-content: flex-end; min-height: 2.75rem; color: var(--muted); }
-.reelCaption > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.reelCaption button { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; color: var(--paper); cursor: pointer; }
-.reelCaption button:hover { color: var(--signal); }
 .editorial { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1rem; align-items: center; margin-block: 1rem; }
 .introduction { grid-column: 4 / 7; margin: 0; color: var(--muted); font-size: clamp(0.95rem, 1.12vw, 1.4rem); line-height: 1.5; animation: detailReveal 650ms ease-out 540ms both; }
 .leadDiscipline { grid-column: 7 / -1; justify-self: end; font-size: 7.7vw; animation: textReveal 950ms cubic-bezier(0.16, 1, 0.3, 1) 230ms both; }

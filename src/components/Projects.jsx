@@ -48,15 +48,15 @@ export default function Projects({ showAll = false }) {
     <section className={styles.archive} id="projects" aria-labelledby="archive-heading">
       <div className={styles.inner}>
         <div className={styles.topbar}>
-          <Link className={styles.textLink} href="/#projects"><ArrowLeft size={16} aria-hidden="true" /> Back to portfolio</Link>
-          <a className={styles.textLink} href={profile.github} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> GitHub <ArrowUpRight size={15} aria-hidden="true" /></a>
+          <Link className="portfolio-button portfolio-button--small" href="/#projects"><ArrowLeft size={16} aria-hidden="true" /> Back to portfolio</Link>
+          <a className="portfolio-button portfolio-button--small" href={profile.github} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> GitHub <ArrowUpRight size={15} aria-hidden="true" /></a>
         </div>
 
         <header className={styles.heading}>
           <h1 id="archive-heading">{site.projects.archiveHeading}<br /><span>{site.projects.archiveAccent}</span></h1>
           <div className={styles.introduction}>
             <p>{site.projects.archiveIntro}</p>
-            <a className={styles.textLink} href="#project-gallery">{site.projects.archiveExploreLabel} <ArrowUpRight size={16} aria-hidden="true" /></a>
+            <a className="portfolio-button portfolio-button--small" href="#project-gallery">{site.projects.archiveExploreLabel} <ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>
         </header>
 
@@ -84,11 +84,11 @@ export default function Projects({ showAll = false }) {
                   {project.stack.split(/\s*·\s*/).map(tool => <li key={tool}>{tool}</li>)}
                 </ul>
                 <div className={styles.actions}>
-                  <Link className={styles.projectLink} href={"/projects/" + project.slug}>Explore project <ArrowUpRight size={17} aria-hidden="true" /></Link>
+                  <Link className="portfolio-button" href={"/projects/" + project.slug}>Explore project <ArrowUpRight size={17} aria-hidden="true" /></Link>
                   {project.sourceAvailable === false ? (
-                    <Link className={styles.textLink} href="/#contact">Discuss project <ArrowUpRight size={15} aria-hidden="true" /></Link>
+                    <Link className="portfolio-button portfolio-button--small" href="/#contact">Discuss project <ArrowUpRight size={15} aria-hidden="true" /></Link>
                   ) : (
-                    <a className={styles.textLink} href={project.link} target="_blank" rel="noopener noreferrer" aria-label={project.title + " on GitHub"}><Github size={16} aria-hidden="true" /> GitHub <ArrowUpRight size={15} aria-hidden="true" /></a>
+                    <a className="portfolio-button portfolio-button--small" href={project.link} target="_blank" rel="noopener noreferrer" aria-label={project.title + " on GitHub"}><Github size={16} aria-hidden="true" /> GitHub <ArrowUpRight size={15} aria-hidden="true" /></a>
                   )}
                 </div>
               </div>
@@ -98,7 +98,7 @@ export default function Projects({ showAll = false }) {
 
         <div className={styles.closing}>
           <p>{site.projects.closingPrompt}</p>
-          <Link href="/#contact">{site.projects.closingLabel} <ArrowUpRight size={24} aria-hidden="true" /></Link>
+          <Link className="portfolio-button" href="/#contact">{site.projects.closingLabel} <ArrowUpRight size={24} aria-hidden="true" /></Link>
         </div>
       </div>
     </section>

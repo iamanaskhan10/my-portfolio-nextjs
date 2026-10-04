@@ -61,7 +61,7 @@ export default function ExperienceShowcase() {
       <ScrollReveal className={styles.layout}>
         <div className={styles.intro}>
           <h2 id="experience-heading"><span>{site.experience.heading}</span><span>{site.experience.accent}</span></h2>
-          <a className={styles.archive} href={profile.resume} target="_blank" rel="noopener noreferrer">{site.experience.resumeLabel} <ArrowUpRight size={16} aria-hidden="true" /></a>
+          <a className="portfolio-button" href={profile.resume} target="_blank" rel="noopener noreferrer">{site.experience.resumeLabel} <ArrowUpRight size={16} aria-hidden="true" /></a>
         </div>
         <div className={styles.gallery}>
           <div className={styles.trackWindow}>

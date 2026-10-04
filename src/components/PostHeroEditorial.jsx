@@ -24,7 +24,7 @@ export default function PostHeroEditorial() {
           <ScrollReveal className={styles.aboutCopy}>
             <h3>{site.about.heading}</h3>
             <p>{site.about.body}</p>
-            <a className={styles.inlineLink} href="#capabilities">{site.about.linkLabel} <ArrowDown size={16} aria-hidden="true" /></a>
+            <a className={`${styles.inlineLink} portfolio-button`} href="#capabilities">{site.about.linkLabel} <ArrowDown size={16} aria-hidden="true" /></a>
           </ScrollReveal>
         </div>
       </section>
@@ -41,8 +41,8 @@ export default function PostHeroEditorial() {
           <p>{site.contact.body}</p>
           <a className={styles.contactEmail} href={`mailto:${profile.email}`}>{profile.email}<ArrowUpRight size={25} aria-hidden="true" /></a>
           <div className={styles.contactLinks}>
-            <a href={profile.github} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> GitHub</a>
-            <a href={profile.linkedin} target="_blank" rel="noopener noreferrer"><Linkedin size={17} aria-hidden="true" /> LinkedIn</a>
+            <a className="portfolio-button portfolio-button--small" href={profile.github} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> GitHub</a>
+            <a className="portfolio-button portfolio-button--small" href={profile.linkedin} target="_blank" rel="noopener noreferrer"><Linkedin size={17} aria-hidden="true" /> LinkedIn</a>
           </div>
         </ScrollReveal>
         <ScrollReveal><PortfolioContactForm active /></ScrollReveal>

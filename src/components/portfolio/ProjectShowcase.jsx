@@ -25,7 +25,7 @@ function FloatingPreview({ image, index, count, progress }) {
 
 function RevealWord({ word, index, count, progress, reducedMotion }) {
   const start = 0.06 + index / count * 0.58;
-  const color = useTransform(progress, [start, start + 0.16], ["#a5a69c", "#ffffff"]);
+  const color = useTransform(progress, [start, start + 0.16], ["#d3d2c9", "#ffffff"]);
   return <motion.span data-work-word style={{ color: reducedMotion ? "#ffffff" : color }}>{word}{" "}</motion.span>;
 }
 
@@ -49,7 +49,7 @@ function ProjectIntroduction({ projects, selectedWork, site, reducedMotion }) {
           <h2 id="projects-heading">{site.projects.heading}</h2>
           <div className={styles.statement}>
             <p aria-label={site.projects.archiveIntro}><span aria-hidden="true">{words.map((word, index) => <RevealWord key={`${index}-${word}`} word={word} index={index} count={words.length} progress={scrollYProgress} reducedMotion={reducedMotion} />)}</span></p>
-            <a className={styles.exploreLink} href="#selected-projects">{site.projects.archiveExploreLabel} <ArrowDown size={18} aria-hidden="true" /></a>
+            <a className={`${styles.exploreLink} portfolio-button`} href="#selected-projects">{site.projects.archiveExploreLabel} <ArrowDown size={18} aria-hidden="true" /></a>
           </div>
         </div>
         {!reducedMotion && <div className={styles.previews} aria-hidden="true">

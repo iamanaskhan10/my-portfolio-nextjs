@@ -94,7 +94,7 @@ export default function PortfolioContactForm({ active }) {
         />
       </div>
       <div className="engineering-contact-form__footer">
-        <button type="submit" className="engineering-button engineering-button--solid" disabled={status === "sending"} tabIndex={tabIndex}>
+        <button type="submit" className="portfolio-button" disabled={status === "sending"} tabIndex={tabIndex}>
           {status === "sending" ? "Sending…" : "Send message"}
           <ArrowUpRight size={16} aria-hidden="true" />
         </button>

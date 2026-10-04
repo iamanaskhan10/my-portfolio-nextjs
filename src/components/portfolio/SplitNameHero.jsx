@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowDown, ArrowDownToLine, ArrowUpRight, Pause, Play } from "lucide-react";
+import { ArrowDown, ArrowDownToLine, ArrowUpRight } from "lucide-react";
 import { usePortfolioContent } from "../../context/PortfolioContentContext";
 import useMotionPreference from "../../hooks/useMotionPreference";
 import styles from "./SplitNameHero.module.css";
@@ -11,10 +11,10 @@ import styles from "./SplitNameHero.module.css";
 export default function SplitNameHero() {
   const { profile, site, projects } = usePortfolioContent();
   const rootRef = useRef(null);
-  const zoomRef = useRef(null);
+  const reelMotionRef = useRef(null);
   const reducedMotion = useMotionPreference();
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const reelComplete = useRef(false);
   const [interacting, setInteracting] = useState(false);
   const frames = useMemo(() => projects.filter((project) => project.published !== false && project.cover?.src), [projects]);
   const current = reducedMotion ? 0 : active % Math.max(1, frames.length);
@@ -23,17 +23,27 @@ export default function SplitNameHero() {
   const lastName = name.join(" ");
 
   useEffect(() => {
-    if (reducedMotion || frames.length < 2) return;
-    const image = rootRef.current.querySelector('[data-work-reel] [data-active="true"] img');
+    if (reducedMotion || frames.length < 2 || reelComplete.current) return;
+    const image = rootRef.current.querySelector('[data-work-reel] [data-active="true"]');
     if (!image) return;
-    const zoom = image.animate(
-      [{ transform: "scale(1.16)" }, { transform: "scale(1)" }],
-      { duration: 3600, easing: "linear", fill: "both" },
+    const motion = image.animate(
+      [
+        { transform: current === 0 ? "translateY(0) rotate(0deg) scale(1)" : "translateY(105%) rotate(7deg) scale(0.92)", offset: 0 },
+        { transform: "translateY(-10%) rotate(-3deg) scale(1.025)", offset: 0.38 },
+        { transform: "translateY(4%) rotate(1deg) scale(0.99)", offset: 0.56 },
+        { transform: "translateY(0) rotate(0deg) scale(1)", offset: 0.72 },
+        { transform: "translateY(0) rotate(0deg) scale(1)", offset: 1 },
+      ],
+      { duration: 680, easing: "ease-out", fill: "both" },
     );
-    zoom.pause();
-    zoomRef.current = zoom;
-    zoom.onfinish = () => setActive((index) => (index + 1) % frames.length);
-    return () => { zoom.onfinish = null; zoom.cancel(); zoomRef.current = null; };
+    motion.pause();
+    reelMotionRef.current = motion;
+    motion.onfinish = () => {
+      // A short burst settles by itself, so the clean preview needs no player UI.
+      if (current >= Math.min(frames.length - 1, 4)) reelComplete.current = true;
+      else setActive((index) => index + 1);
+    };
+    return () => { motion.onfinish = null; motion.cancel(); reelMotionRef.current = null; };
   }, [current, frames, reducedMotion]);
 
   useEffect(() => {
@@ -42,12 +52,13 @@ export default function SplitNameHero() {
     const portal = root.closest("#home");
     let visible = false;
     const sync = () => {
+      if (reelComplete.current) return;
       const entrance = portal?.dataset.heroEntrance;
       const phase = portal?.dataset.portalPhase;
       // Freeze the live work frame during the cube fold and outside the hero.
-      const playing = visible && !document.hidden && !paused && !interacting && (!entrance || entrance === "complete") && (!phase || phase === "hero");
-      if (playing) zoomRef.current?.play();
-      else zoomRef.current?.pause();
+      const playing = visible && !document.hidden && !interacting && (!entrance || entrance === "complete") && (!phase || phase === "hero");
+      if (playing) reelMotionRef.current?.play();
+      else reelMotionRef.current?.pause();
     };
     const visibility = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
     visibility.observe(root);
@@ -55,12 +66,12 @@ export default function SplitNameHero() {
     if (portal) scene.observe(portal, { attributes: true, attributeFilter: ["data-hero-entrance", "data-portal-phase"] });
     document.addEventListener("visibilitychange", sync);
     return () => {
-      zoomRef.current?.pause();
+      reelMotionRef.current?.pause();
       visibility.disconnect();
       scene.disconnect();
       document.removeEventListener("visibilitychange", sync);
     };
-  }, [current, frames, interacting, paused, reducedMotion]);
+  }, [current, frames, interacting, reducedMotion]);
 
   return (
     <section ref={rootRef} className={styles.hero} aria-labelledby="hero-heading" data-split-hero>
@@ -85,16 +96,8 @@ export default function SplitNameHero() {
                   <Image src={project.cover.src} alt="" fill priority={index === 0} sizes="(max-width: 767px) 20vw, 9vw" />
                 </span>
               ))}
-              <span className={styles.reelArrow}><ArrowUpRight size={21} aria-hidden="true" /></span>
             </Link>
-            <div className={styles.reelCaption}>
-              <span>{frames[current].title}</span>
-              {!reducedMotion && frames.length > 1 && (
-                <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Play work preview" : "Pause work preview"} aria-pressed={paused}>
-                  {paused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
-                </button>
-              )}
-            </div>
+
           </div>
         )}
         <span className={`${styles.headline} ${styles.lastName}`} aria-hidden="true">&amp;</span>
@@ -111,8 +114,8 @@ export default function SplitNameHero() {
       </div>
       <div className={styles.bottomline}>
           <div className={styles.resume}>
-            <a href={profile.resume} download>{site.hero.downloadLabel}<ArrowDownToLine size={15} aria-hidden="true" /></a>
-            <a href={profile.resume} target="_blank" rel="noopener noreferrer">{site.hero.viewLabel}<ArrowUpRight size={15} aria-hidden="true" /></a>
+            <a className="portfolio-button portfolio-button--small" href={profile.resume} download>{site.hero.downloadLabel}<ArrowDownToLine size={15} aria-hidden="true" /></a>
+            <a className="portfolio-button portfolio-button--small" href={profile.resume} target="_blank" rel="noopener noreferrer">{site.hero.viewLabel}<ArrowUpRight size={15} aria-hidden="true" /></a>
           </div>
           <a className={styles.scroll} href="#about">Scroll<ArrowDown size={19} aria-hidden="true" /></a>
       </div>

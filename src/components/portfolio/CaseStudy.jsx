@@ -14,7 +14,7 @@ export default function CaseStudy({ project, nextProject }) {
   return (
     <article className={styles.caseStudy}>
       <header className={styles.hero}>
-        <button className={styles.back} type="button" onClick={() => router.back()}><ArrowLeft size={16} aria-hidden="true" /> Back</button>
+        <button className={`${styles.back} portfolio-button portfolio-button--small`} type="button" onClick={() => router.back()}><ArrowLeft size={16} aria-hidden="true" /> Back</button>
         <h1>{project.title}</h1>
         <p className={styles.headline}>{project.headline}</p>
         <div className={styles.heroBottom}>
@@ -23,9 +23,9 @@ export default function CaseStudy({ project, nextProject }) {
             <div><dt>Year</dt><dd>{project.period}</dd></div>
           </dl>
           {project.sourceAvailable === false ? (
-            <Link className={styles.source} href="/#contact">Discuss this project <ArrowUpRight size={17} aria-hidden="true" /></Link>
+            <Link className="portfolio-button" href="/#contact">Discuss this project <ArrowUpRight size={17} aria-hidden="true" /></Link>
           ) : (
-            <a className={styles.source} href={project.link} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> View on GitHub <ArrowUpRight size={17} aria-hidden="true" /></a>
+            <a className="portfolio-button" href={project.link} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> View on GitHub <ArrowUpRight size={17} aria-hidden="true" /></a>
           )}
         </div>
       </header>

@@ -317,7 +317,7 @@
 .orbitBackground { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--signal-shadow) 16%, var(--editorial-void)), var(--editorial-void) 72%); }
 .orbitHeading, .displayHeading { position: absolute; top: 5rem; left: 7%; margin: 0; color: var(--muted); font-size: clamp(0.8rem, 1.3vw, 1rem); font-weight: 400; }
 .orbitHeading { z-index: 1; }
-.scene[data-portal-active="true"][data-portal-phase="display"] .displayHeading { display: block; color: var(--ink); }
+.scene[data-portal-active="true"] .displayHeading { display: block; color: var(--ink); }
 .orbitCamera { position: absolute; inset: 0; transform-style: preserve-3d; }
 .orbitCluster { position: absolute; inset: 0; display: none; transform-style: preserve-3d; }
 .orbitCard { position: absolute; top: 46%; left: 50%; display: block; width: min(82vw, 1040px); color: var(--paper); text-decoration: none; backface-visibility: hidden; }

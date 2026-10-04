@@ -13,6 +13,7 @@ const opening = "M0,-15.0888Q0,0 15.0888,0Q0,0 0,15.0888Q0,0 -15.0888,0Q0,0 0,-1
 const mask = `M-100000,-100000H100000V100000H-100000Z${opening}`;
 const REVEAL = 0.7;
 const TURN_START = 1.59;
+const PANEL_REVEAL = 1.52;
 
 /** One live hero, with a decorative aperture in front of it. Native scrolling
  * and CSS sticky own layout; GSAP owns only the scene's visual wrappers. */
@@ -76,6 +77,7 @@ export default function HeroPortal({ children, sceneRef }) {
     const shape = { fold: 0, rotationY: 0 };
     const particles = { progress: 0 };
     const faces = [...rig.querySelectorAll("[data-identity-face]")];
+    const displayHeading = root.querySelector("[data-display-heading]");
     const particleMark = transitionRef.current.querySelector("svg");
     const momentCount = moments.length;
     const boxEnd = TURN_START + 0.11 + (momentCount - 1) * 0.5;
@@ -214,6 +216,8 @@ export default function HeroPortal({ children, sceneRef }) {
     });
     particleRenderer?.resize(measuredWidth, viewHeight);
     gsap.set([wordBandRef.current, displayControlsRef.current], { autoAlpha: 0 });
+    gsap.set(displayHeading, { autoAlpha: 0 });
+    gsap.set(faces.slice(1), { opacity: 0 });
     gsap.set(wordBandRef.current, { xPercent: -20, rotation: 0, y: 0 });
     selectVisibleFace(0, "hero");
 
@@ -238,9 +242,9 @@ export default function HeroPortal({ children, sceneRef }) {
         if (root.dataset.workHandoff !== String(handoff)) root.dataset.workHandoff = String(handoff);
         const index = Math.round(-shape.rotationY / 90);
         // The other faces still have viewport-sized geometry during the fold.
-        // Reveal them only after the shared-frame handoff, when rotation starts;
+        // Fade them in only after the shared-frame handoff;
         // otherwise their project images flash behind the rolling hero.
-        const mode = handoff ? "transition" : progress >= TURN_START ? "box" : "hero";
+        const mode = handoff ? "transition" : progress >= PANEL_REVEAL ? "box" : "hero";
         selectVisibleFace(mode === "hero" ? 0 : Math.max(0, Math.min(momentCount - 1, index)), mode);
         const phase = progress < 0.12 ? "darkness" : progress < 0.32 ? "aperture" : progress < 0.66 ? "approach" : progress < 0.82 ? "hero" : progress < 1 ? "plane" : progress >= galleryStart ? "work" : progress >= boxEnd ? "transition" : "display";
         if (root.dataset.portalPhase !== phase) root.dataset.portalPhase = phase;
@@ -261,7 +265,7 @@ export default function HeroPortal({ children, sceneRef }) {
       .to(controlsRef.current, { autoAlpha: 0, duration: 0.06 }, 0.58)
       .set(veilRef.current, { autoAlpha: 0 }, 0.66)
       .set(rig, { pointerEvents: "auto" }, 0.66)
-      .to(backdropRef.current, { opacity: 1, duration: 0.12 }, 0.82);
+      .to(backdropRef.current, { opacity: 1, duration: 0.5, ease: "power1.inOut" }, 0.82);
     timeline.fromTo(plane, { "--hero-roll": "0deg" }, { "--hero-roll": "90deg", duration: 0.3, ease: "power1.inOut", immediateRender: false }, 0.82)
       .fromTo(shape, { fold: 0 }, { fold: 1, duration: 0.5, ease: "power1.inOut", immediateRender: false }, 0.82)
       // Both surfaces share one exact outline. Keep the hero at 90 degrees
@@ -270,14 +274,16 @@ export default function HeroPortal({ children, sceneRef }) {
       .to(identityPanelRef.current, { autoAlpha: 1, duration: 0.18 }, 1.34)
       .fromTo(identityPanelRef.current.querySelectorAll("span"), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, stagger: 0.04, ease: "power2.out", immediateRender: false }, 1.34)
       .to(groundRef.current, { opacity: 0.65, scaleX: 1, duration: 0.3, ease: "power1.out" }, 1.02)
-      .to(wordBandRef.current, { autoAlpha: 1, duration: 0.16 }, 1.06)
-      .to(displayControlsRef.current, { autoAlpha: 1, duration: 0.12 }, 1.18)
-      .to(wordBandRef.current, { xPercent: -80, duration: boxEnd - 1.06 }, 1.06);
+      .to(faces.slice(1), { opacity: 1, duration: 0.3, ease: "power1.inOut" }, PANEL_REVEAL)
+      .to(wordBandRef.current, { autoAlpha: 1, duration: 0.3, ease: "power1.inOut" }, 1.42)
+      .to(displayHeading, { autoAlpha: 1, duration: 0.3, ease: "power1.inOut" }, 1.42)
+      .to(displayControlsRef.current, { autoAlpha: 1, duration: 0.3, ease: "power1.inOut" }, PANEL_REVEAL)
+      .to(wordBandRef.current, { xPercent: -80, duration: boxEnd - 1.42 }, 1.42);
     if (momentCount > 1) timeline.to(shape, { rotationY: -(momentCount - 1) * 90, duration: (momentCount - 1) * 0.5 }, TURN_START);
     {
       // Opacity on a preserve-3d parent flattens its descendants. Fade only
       // individual surfaces; the rig, geometry and shell stay fully opaque.
-      timeline.to(displayControlsRef.current, { autoAlpha: 0, duration: 0.12 }, boxEnd)
+      timeline.to([displayControlsRef.current, displayHeading], { autoAlpha: 0, duration: 0.12 }, boxEnd)
         .set(transitionRef.current, { autoAlpha: 1 }, boxEnd)
         .to(particles, { progress: 1, duration: 1.1 }, boxEnd)
         // Keep the panels intact until the emitted star covers the viewport.
@@ -431,7 +437,7 @@ export default function HeroPortal({ children, sceneRef }) {
         <div className={styles.bootCover} data-boot-cover aria-hidden="true" />
         <div ref={backdropRef} className={styles.backdrop} aria-hidden="true" />
         <div ref={groundRef} className={styles.groundShadow} aria-hidden="true" />
-        <p className={styles.displayHeading}>Achievements &amp; identity</p>
+        <p className={styles.displayHeading} data-display-heading>Achievements &amp; identity</p>
         <div ref={wordBandRef} className={styles.wordBand} aria-hidden="true">{["Full-stack", "Applied AI", "Built to ship"].map((phrase) => <span key={phrase}>{phrase}</span>)}</div>
         <div ref={rigRef} className={styles.rig} data-display-rig>
           <div className={styles.geometry}>
@@ -475,8 +481,8 @@ export default function HeroPortal({ children, sceneRef }) {
           <div className={`${styles.faceButtons} ${styles.momentButtons}`} role="group" aria-label="Achievements and identity">
             {moments.map((moment, index) => <button key={moment.id} type="button" data-face-button={index} aria-label={`Show ${moment.label}`} aria-pressed={false}><span /></button>)}
           </div>
-          <Link className={styles.archiveLink} href="/projects">{site.projects.archiveLabel} <ArrowUpRight size={15} aria-hidden="true" /></Link>
-          <a className={styles.continueLink} href="#projects">Selected work <ArrowDown size={15} aria-hidden="true" /></a>
+          <Link className={`${styles.archiveLink} portfolio-button portfolio-button--small`} href="/projects">{site.projects.archiveLabel} <ArrowUpRight size={15} aria-hidden="true" /></Link>
+          <a className={`${styles.continueLink} portfolio-button portfolio-button--small`} href="#projects">Selected work <ArrowDown size={15} aria-hidden="true" /></a>
         </div>
       </div>
     </div>

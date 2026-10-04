@@ -116,7 +116,7 @@ export default function Layout({ children }) {
           ))}
           <Link href="/projects" aria-current={router.pathname.startsWith("/projects") ? "page" : undefined}>Archive</Link>
         </nav>
-        <a className="site-header__contact" href={sectionHref("#contact")} aria-current={router.pathname === "/" && activeSection === "contact" ? "location" : undefined}>
+        <a className="site-header__contact portfolio-button portfolio-button--small" href={sectionHref("#contact")} aria-current={router.pathname === "/" && activeSection === "contact" ? "location" : undefined}>
           <span className="site-header__contact-icon" aria-hidden="true">
             <ArrowUpRight size={16} />
           </span>
