@@ -44,7 +44,8 @@
   .shell .dock :global(.site-header__contact) { padding-inline: 0.65rem; font-size: 0.78rem; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .shell:has(:global(#home[data-hero-entrance="waiting"])) .dock { visibility: hidden; }
+  .shell:has(:global(#home[data-hero-entrance="waiting"])) .dock,
+  .shell:has(:global(#home[data-portal-phase="curtain"])) .dock { visibility: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
   .shell .dock a, .shell .dock svg { transition: none !important; }

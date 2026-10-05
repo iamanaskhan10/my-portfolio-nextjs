@@ -1,4 +1,5 @@
 .scene {
+  --intro-ink: #141517;
   position: relative;
   background: var(--editorial-void);
 }
@@ -8,7 +9,7 @@
 }
 
 /* Present in server HTML: no hero/AK flash while JavaScript is loading. */
-.bootCover { display: none; position: absolute; z-index: 5; inset: 0; background: var(--editorial-void); }
+.bootCover { display: none; position: absolute; z-index: 5; inset: 0; background: var(--intro-ink); }
 .scene[data-hero-entrance="waiting"]:not([data-portal-active="true"]) .bootCover { display: block; }
 .scene[data-hero-entrance="waiting"] .plane * { animation-play-state: paused !important; }
 /* Release entrance blur, masks and 3D layers before the scroll-driven fold. */
@@ -55,7 +56,7 @@
 .scene[data-portal-active="true"] .plane { width: var(--hero-frame-width, 100%); height: var(--hero-frame-height, 100%); left: calc((var(--display-width) - var(--hero-frame-width)) / 2); top: calc((var(--display-height) - var(--hero-frame-height)) / 2); }
 .scene[data-portal-active="true"] .heroSurface { width: var(--portal-width); }
 
-.aperture,
+.curtain,
 .controls,
 .backdrop,
 .displayFace,
@@ -198,6 +199,10 @@
 .continueLink:hover { text-decoration: underline; text-underline-offset: 4px; }
 .faceButtons button:focus-visible, .archiveLink:focus-visible, .continueLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 .projectButtons { display: none; }
+@media (max-height: 700px) and (min-width: 600px) {
+  .scene[data-portal-active="true"] .displayControls { grid-template-columns: auto auto auto; gap: 0.7rem; bottom: calc(var(--portal-height) - var(--portal-view-height) + 5.5rem); }
+  .faceButtons { grid-column: auto; max-width: 35vw; }
+}
 .scene[data-portal-phase="gallery"] .momentButtons { display: none; }
 .scene[data-portal-phase="gallery"] .projectButtons { display: flex; }
 
@@ -209,19 +214,17 @@
   pointer-events: none;
 }
 
-.fallback,
-.canvas,
-.darkness {
+.curtain svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  fill: var(--intro-ink);
 }
 
-.canvas { visibility: hidden; }
-.darkness { background: var(--editorial-void); }
-.scene[data-portal-renderer="webgl"] .fallback { visibility: hidden; }
-.scene[data-portal-renderer="webgl"] .canvas { visibility: visible; }
+.introLabel { position: absolute; inset: 0; display: grid; place-items: center; color: var(--paper); font-family: "Manrope Hero", sans-serif; font-size: clamp(2rem, 4.5vw, 4.5rem); font-weight: 500; letter-spacing: -0.03em; }
+.introLabel span { display: flex; align-items: center; gap: 0.45em; }
+.introLabel span::before { content: ""; width: 0.16em; height: 0.16em; border-radius: 50%; background: currentColor; }
 
 .scene[data-portal-active="true"] {
   height: calc(var(--portal-height) + var(--portal-distance));
@@ -237,7 +240,7 @@
   isolation: isolate;
 }
 
-.scene[data-portal-active="true"] .aperture {
+.scene[data-portal-active="true"] .curtain {
   position: absolute;
   z-index: 2;
   inset: 0;
@@ -255,22 +258,17 @@
   left: 9%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 1rem;
   color: var(--paper);
   font-size: 0.8rem;
 }
 
-.prompt,
 .skip {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
   gap: 0.65rem;
-}
-
-.prompt svg {
-  color: var(--signal);
 }
 
 .skip {
@@ -351,7 +349,7 @@
   .scene[data-portal-active="true"] .geometry { height: auto; transform: none; }
   .scene[data-portal-active="true"] .plane { width: 100%; height: auto; left: 0; top: 0; transform: none !important; border-radius: 0; }
   .scene[data-portal-active="true"] .heroSurface { width: 100%; transform: none !important; }
-  .scene[data-portal-active="true"] .aperture,
+  .scene[data-portal-active="true"] .curtain,
   .scene[data-portal-active="true"] .controls,
   .scene[data-portal-active="true"] .backdrop,
   .scene[data-portal-active="true"] .displayFace,

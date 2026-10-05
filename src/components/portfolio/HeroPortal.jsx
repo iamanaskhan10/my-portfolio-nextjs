@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useId, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import useGsapScene from "../../hooks/useGsapScene";
@@ -10,12 +10,11 @@ import { createParticlePortal } from "../../lib/animation/createParticlePortal";
 import styles from "./HeroPortal.module.css";
 
 const opening = "M0,-15.0888Q0,0 15.0888,0Q0,0 0,15.0888Q0,0 -15.0888,0Q0,0 0,-15.0888Z";
-const mask = `M-100000,-100000H100000V100000H-100000Z${opening}`;
 const REVEAL = 0.7;
 const TURN_START = 1.59;
 const PANEL_REVEAL = 1.52;
 
-/** One live hero, with a decorative aperture in front of it. Native scrolling
+/** One live hero, with a curved opening curtain in front of it. Native scrolling
  * and CSS sticky own layout; GSAP owns only the scene's visual wrappers. */
 export default function HeroPortal({ children, sceneRef }) {
   const { projects, site, profile, experiences } = usePortfolioContent();
@@ -27,19 +26,15 @@ export default function HeroPortal({ children, sceneRef }) {
   const identityPanelRef = useRef(null);
   const wordBandRef = useRef(null);
   const displayControlsRef = useRef(null);
-  const apertureRef = useRef(null);
+  const curtainPathRef = useRef(null);
+  const introLabelRef = useRef(null);
   const veilRef = useRef(null);
-  const glowRef = useRef(null);
-  const starRef = useRef(null);
-  const shadowRef = useRef(null);
   const backdropRef = useRef(null);
   const groundRef = useRef(null);
-  const darkRef = useRef(null);
   const controlsRef = useRef(null);
   const skipRef = useRef(null);
   const transitionRef = useRef(null);
   const particleCanvasRef = useRef(null);
-  const glowId = useId();
 
   const setup = useCallback(({ gsap, ScrollTrigger }) => {
     const root = sceneRef.current;
@@ -102,18 +97,11 @@ export default function HeroPortal({ children, sceneRef }) {
         if (!disposed) root.dataset.heroEntrance = "complete";
       });
     };
-    const apertureElement = apertureRef.current;
-    const glowElement = glowRef.current;
-    const aperture = { approach: 0, rotation: 0, light: 0, star: 0.5, blur: 0, starScale: 1, x: 0, y: 0 };
-    const renderAperture = () => {
-      // Start small, then accelerate the star up-right as it grows and dissolves.
-      // Keep its surrounding light subdued while the stationary hero resolves.
-      glowElement.style.opacity = 0;
-      shadowRef.current.setAttribute("transform", `scale(${0.5 + aperture.approach * 2.1})`);
-      shadowRef.current.style.opacity = aperture.light;
-      shadowRef.current.style.filter = `blur(${aperture.blur}px)`;
-      starRef.current.setAttribute("transform", `translate(${aperture.x} ${aperture.y}) rotate(${aperture.rotation}) scale(${aperture.starScale * 1.8 * viewHeight / Math.max(measuredWidth, viewHeight)})`);
-      starRef.current.style.opacity = aperture.star;
+    const curtain = { edge: 1002, curve: 0 };
+    const renderCurtain = () => {
+      // The center trails the edges, then catches up as the curtain leaves.
+      // One quadratic curve stays smooth at every viewport aspect ratio.
+      curtainPathRef.current.setAttribute("d", `M0,-4H1000V${curtain.edge}Q500,${curtain.edge + curtain.curve} 0,${curtain.edge}Z`);
     };
     const compact = () => root.clientWidth < 768 || window.matchMedia("(hover: none) and (pointer: coarse)").matches;
     const faceWidth = () => Math.min(viewHeight * 0.4, measuredWidth * 0.62, 420);
@@ -132,7 +120,7 @@ export default function HeroPortal({ children, sceneRef }) {
       lastFold = shape.fold;
       moveRigY(((viewHeight - faceHeight()) / 2 + 10) * shape.fold);
       moveRigZ(-faceWidth() / 2 * shape.fold);
-      rig.style.setProperty("--display-scale", 1 + ((viewHeight < 500 ? 0.78 : 1) - 1) * shape.fold);
+      rig.style.setProperty("--display-scale", 1 + ((viewHeight < 500 ? 0.7 : viewHeight < 700 ? 0.78 : 1) - 1) * shape.fold);
       const width = (measuredWidth + (faceWidth() - measuredWidth) * shape.fold).toFixed(2);
       const depth = (faceWidth() * shape.fold).toFixed(2);
       const height = (measuredHeight + (faceHeight() - measuredHeight) * shape.fold).toFixed(2);
@@ -190,21 +178,20 @@ export default function HeroPortal({ children, sceneRef }) {
       root.style.setProperty("--display-panel-height", `${faceHeight()}px`);
       particleRenderer?.resize(width, viewHeight);
       trigger?.refresh();
-      renderAperture();
+      renderCurtain();
       renderShape(true);
     };
 
     measure();
     root.dataset.portalActive = "true";
-    root.dataset.portalPhase = "darkness";
-    renderAperture();
+    root.dataset.portalPhase = "curtain";
+    renderCurtain();
     gsap.set(rig, { "--display-scale": 1, rotationY: 0, rotationZ: 0, xPercent: 0, y: 0, z: 0, pointerEvents: "none" });
     gsap.set(cubeSkin, { visibility: "hidden" });
-    gsap.set(plane, { opacity: 0.3 });
+    gsap.set(plane, { opacity: 1 });
     gsap.set(identityPanelRef.current, { autoAlpha: 0 });
     gsap.set(veilRef.current, { autoAlpha: 1 });
-    gsap.set(apertureElement, { opacity: 1 });
-    gsap.set(darkRef.current, { autoAlpha: 1 });
+    gsap.set(introLabelRef.current, { opacity: 1, y: 0 });
     gsap.set(controlsRef.current, { autoAlpha: 1 });
     gsap.set(backdropRef.current, { opacity: 0 });
     gsap.set(groundRef.current, { opacity: 0, scaleX: 0.65 });
@@ -226,9 +213,9 @@ export default function HeroPortal({ children, sceneRef }) {
       defaults: { ease: "none" },
       onUpdate: () => {
         const progress = timeline.time();
-        if (progress <= 0.66) renderAperture();
-        // Let the portrait and type resolve while the opening veil dissolves.
-        if (progress >= 0.27) beginEntrance();
+        renderCurtain();
+        // Resolve the hero behind the lifting curtain, before it is exposed.
+        if (progress >= 0.1) beginEntrance();
         renderShape();
         const showIdentity = progress >= 1.43;
         if (showIdentity !== identityVisible) {
@@ -246,23 +233,16 @@ export default function HeroPortal({ children, sceneRef }) {
         // otherwise their project images flash behind the rolling hero.
         const mode = handoff ? "transition" : progress >= PANEL_REVEAL ? "box" : "hero";
         selectVisibleFace(mode === "hero" ? 0 : Math.max(0, Math.min(momentCount - 1, index)), mode);
-        const phase = progress < 0.12 ? "darkness" : progress < 0.32 ? "aperture" : progress < 0.66 ? "approach" : progress < 0.82 ? "hero" : progress < 1 ? "plane" : progress >= galleryStart ? "work" : progress >= boxEnd ? "transition" : "display";
+        const phase = progress < 0.66 ? "curtain" : progress < 0.82 ? "hero" : progress < 1 ? "plane" : progress >= galleryStart ? "work" : progress >= boxEnd ? "transition" : "display";
         if (root.dataset.portalPhase !== phase) root.dataset.portalPhase = phase;
       },
     });
     timeline
-      .to(darkRef.current, { autoAlpha: 0, duration: 0.08 }, 0.02)
-      .fromTo(aperture, { light: 0 }, { light: 0.28, duration: 0.16, immediateRender: false }, 0.02)
-      .to(aperture, { rotation: 540, duration: 0.62, ease: "power2.in" }, 0.02)
-      .to(aperture, { x: 210, y: -145, duration: 0.46, ease: "power2.in" }, 0.18)
-      .to(aperture, { starScale: 3, duration: 0.4, ease: "power2.in" }, 0.24)
-      .fromTo(aperture, { approach: 0 }, { approach: 1, duration: 0.58, ease: "power1.out", immediateRender: false }, 0.06)
-      .to(aperture, { star: 0, duration: 0.3, ease: "power1.in" }, 0.34)
-      .to(aperture, { blur: 24, duration: 0.46, ease: "power1.in", }, 0.18)
-      .to(aperture, { light: 0, duration: 0.46, ease: "power1.out" }, 0.18)
-      .to(apertureElement, { opacity: 0, duration: 0.48, ease: "power1.inOut" }, 0.16)
-      .to(plane, { opacity: 1, duration: 0.36, ease: "power1.inOut" }, 0.28)
-      .to(controlsRef.current, { autoAlpha: 0, duration: 0.06 }, 0.58)
+      .to(curtain, { edge: -4, duration: 0.56, ease: "power3.inOut" }, 0.1)
+      .to(curtain, { curve: 180, duration: 0.18, ease: "power2.out" }, 0.1)
+      .to(curtain, { curve: 0, duration: 0.36, ease: "power2.inOut" }, 0.28)
+      .to(introLabelRef.current, { y: -70, opacity: 0, duration: 0.2, ease: "power2.in" }, 0.1)
+      .to(controlsRef.current, { autoAlpha: 0, duration: 0.1 }, 0.1)
       .set(veilRef.current, { autoAlpha: 0 }, 0.66)
       .set(rig, { pointerEvents: "auto" }, 0.66)
       .to(backdropRef.current, { opacity: 1, duration: 0.5, ease: "power1.inOut" }, 0.82);
@@ -328,7 +308,7 @@ export default function HeroPortal({ children, sceneRef }) {
       finishIntro(true);
       timeline.time(REVEAL + trigger.progress * (duration - REVEAL));
     } else {
-      autoplay = timeline.tweenTo(REVEAL, { duration: 1.9, ease: "none", onComplete: () => finishIntro() });
+      autoplay = timeline.tweenTo(REVEAL, { duration: 1.6, ease: "none", onComplete: () => finishIntro() });
     }
 
     const reveal = () => {
@@ -407,13 +387,7 @@ export default function HeroPortal({ children, sceneRef }) {
       heroSurface.removeAttribute("aria-hidden");
       heroSurface.inert = false;
       identityPanelRef.current.setAttribute("aria-hidden", "true");
-      apertureElement.removeAttribute("transform");
-      glowElement.style.removeProperty("opacity");
-      starRef.current.removeAttribute("transform");
-      starRef.current.style.removeProperty("opacity");
-      shadowRef.current.removeAttribute("transform");
-      shadowRef.current.style.removeProperty("opacity");
-      shadowRef.current.style.removeProperty("filter");
+      curtainPathRef.current.setAttribute("d", "M0,-4H1000V1002H0Z");
       root.style.removeProperty("--portal-height");
       root.style.removeProperty("--portal-distance");
       root.style.removeProperty("--portal-view-height");
@@ -454,27 +428,13 @@ export default function HeroPortal({ children, sceneRef }) {
           </div>
         </div>
         <div ref={transitionRef} className={styles.galleryTransition} aria-hidden="true"><canvas ref={particleCanvasRef} className={styles.particleCanvas} data-particle-portal /><svg viewBox="-20 -20 40 40"><path d={opening} /></svg></div>
-        <div ref={veilRef} className={styles.aperture} aria-hidden="true">
-        <svg className={styles.fallback} viewBox="-500 -500 1000 1000" preserveAspectRatio="xMidYMid slice" focusable="false">
-          <defs>
-            <radialGradient id={glowId} gradientUnits="userSpaceOnUse" cx="0" cy="0" r="280">
-              <stop offset="0" stopColor="var(--signal-highlight)" stopOpacity="0.85" />
-              <stop offset="0.28" stopColor="var(--signal)" stopOpacity="0.7" />
-              <stop offset="0.65" stopColor="var(--signal-shadow)" stopOpacity="0.35" />
-              <stop offset="1" stopColor="var(--signal-shadow)" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          <g ref={apertureRef}>
-            <path d={mask} fill="var(--editorial-void)" fillRule="evenodd" />
-            <path ref={glowRef} d={mask} fill={`url(#${glowId})`} fillRule="evenodd" />
-          </g>
-          <circle ref={shadowRef} r="280" fill={`url(#${glowId})`} />
-          <path ref={starRef} d={opening} fill="var(--signal)" data-opening-star />
-        </svg>
-        <div ref={darkRef} className={styles.darkness} />
+        <div ref={veilRef} className={styles.curtain} data-opening-curtain aria-hidden="true">
+          <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" focusable="false">
+            <path ref={curtainPathRef} d="M0,-4H1000V1002H0Z" data-curtain-path />
+          </svg>
+          <div className={styles.introLabel}><span ref={introLabelRef}>{profile.name}</span></div>
         </div>
         <div ref={controlsRef} className={styles.controls}>
-          <span className={styles.prompt}>{profile.name}</span>
           <button ref={skipRef} type="button" className={styles.skip}>Skip intro <ArrowUpRight size={15} aria-hidden="true" /></button>
         </div>
         <div ref={displayControlsRef} className={styles.displayControls}>
