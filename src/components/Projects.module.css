@@ -4,7 +4,7 @@
 .textLink { display: inline-flex; align-items: center; gap: 0.65rem; min-height: 44px; color: var(--muted); font-size: 0.85rem; text-decoration: none; }
 .textLink:hover { color: var(--paper); }
 .heading { display: grid; grid-template-columns: 1.2fr 0.8fr; align-items: flex-end; gap: clamp(2rem, 6vw, 6rem); margin: 3rem 0 3.5rem; }
-.heading h1 { margin: 0; font-family: "Anton", "Arial Narrow", sans-serif; font-size: clamp(3.75rem, 8vw, 6rem); font-weight: 400; line-height: 1.02; letter-spacing: -0.025em; }
+.heading h1 { margin: 0; font-family: "Manrope Hero", sans-serif; font-size: clamp(3.75rem, 8vw, 6rem); font-weight: 400; line-height: 1.02; letter-spacing: -0.025em; }
 .heading h1 > span { color: var(--muted); }
 .introduction { max-width: 38ch; padding-bottom: 0.2rem; }
 .introduction > p { margin: 0 0 1rem; color: var(--muted); font-size: 1.05rem; line-height: 1.8; }

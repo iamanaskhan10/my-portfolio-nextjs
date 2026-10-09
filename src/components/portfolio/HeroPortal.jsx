@@ -1,13 +1,15 @@
 "use client";
 
+
+import PortfolioButton from "./PortfolioButton";
 import { useCallback, useMemo, useRef } from "react";
-import Link from "next/link";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import useGsapScene from "../../hooks/useGsapScene";
 import { usePortfolioContent } from "../../context/PortfolioContentContext";
 import IdentityDisplayFaces, { buildIdentityMoments } from "./IdentityDisplayFaces";
 import { createParticlePortal } from "../../lib/animation/createParticlePortal";
 import styles from "./HeroPortal.module.css";
+import Marquee from "./Marquee";
 
 const opening = "M0,-15.0888Q0,0 15.0888,0Q0,0 0,15.0888Q0,0 -15.0888,0Q0,0 0,-15.0888Z";
 const REVEAL = 0.7;
@@ -78,6 +80,9 @@ export default function HeroPortal({ children, sceneRef }) {
     const particles = { progress: 0 };
     const faces = [...rig.querySelectorAll("[data-identity-face]")];
     const displayHeading = root.querySelector("[data-display-heading]");
+    const marquee = wordBandRef.current.querySelector("[data-marquee]");
+    const syncMarquee = () => { marquee.dataset.active = String(!document.hidden && activeMode === "box"); };
+    document.addEventListener("visibilitychange", syncMarquee);
     const particleMark = transitionRef.current.querySelector("svg");
     const momentCount = moments.length;
     const boxEnd = TURN_START + 0.11 + (momentCount - 1) * 0.5;
@@ -150,6 +155,7 @@ export default function HeroPortal({ children, sceneRef }) {
       if (index === activeFace && mode === activeMode) return;
       activeFace = index;
       activeMode = mode;
+      syncMarquee();
       root.dataset.displayActiveFace = String(index);
       // Four physical orientations are reused as CMS moments pass the front.
       // Keep every physical panel painted, including its mirrored reverse.
@@ -193,7 +199,7 @@ export default function HeroPortal({ children, sceneRef }) {
     root.dataset.portalActive = "true";
     root.dataset.portalPhase = "curtain";
     renderCurtain();
-    gsap.set(rig, { "--display-scale": 1, rotationY: 0, rotationZ: 0, xPercent: 0, y: 0, z: 0, pointerEvents: "none" });
+    gsap.set(rig, { "--display-scale": 1, "--panel-open": 0, rotationY: 0, rotationZ: 0, xPercent: 0, y: 0, z: 0, pointerEvents: "none" });
     gsap.set(cubeSkin, { visibility: "hidden" });
     gsap.set(plane, { opacity: 1 });
     gsap.set(identityPanelRef.current, { autoAlpha: 0 });
@@ -212,7 +218,6 @@ export default function HeroPortal({ children, sceneRef }) {
     gsap.set([wordBandRef.current, displayControlsRef.current], { autoAlpha: 0 });
     gsap.set(displayHeading, { autoAlpha: 0 });
     gsap.set(faces.slice(1), { opacity: 1 });
-    gsap.set(wordBandRef.current, { xPercent: -20, rotation: 0, y: 0 });
     selectVisibleFace(0, "hero");
 
     const timeline = gsap.timeline({
@@ -249,10 +254,12 @@ export default function HeroPortal({ children, sceneRef }) {
       .to(identityPanelRef.current, { autoAlpha: 1, duration: 0.18 }, 1.34)
       .fromTo(identityPanelRef.current.querySelectorAll("span"), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, stagger: 0.04, ease: "power2.out", immediateRender: false }, 1.34)
       .to(groundRef.current, { opacity: 0.65, scaleX: 1, duration: 0.3, ease: "power1.out" }, 1.02)
+      // Opaque side panels begin behind the hero and slide into their final
+      // depth before the carousel turns. Visibility alone must not pop them out.
+      .to(rig, { "--panel-open": 1, duration: TURN_START - PANELS_READY, ease: "power2.inOut" }, PANELS_READY)
       .to(wordBandRef.current, { autoAlpha: 1, duration: 0.3, ease: "power1.inOut" }, 1.42)
       .to(displayHeading, { autoAlpha: 1, duration: 0.3, ease: "power1.inOut" }, 1.42)
-      .to(displayControlsRef.current, { autoAlpha: 1, duration: 0.3, ease: "power1.inOut" }, PANEL_REVEAL)
-      .to(wordBandRef.current, { xPercent: -80, duration: boxEnd - 1.42 }, 1.42);
+      .to(displayControlsRef.current, { autoAlpha: 1, duration: 0.3, ease: "power1.inOut" }, PANEL_REVEAL);
     if (momentCount > 1) timeline.to(shape, { rotationY: -(momentCount - 1) * 90, duration: (momentCount - 1) * 0.5 }, TURN_START);
     {
       // Opacity on a preserve-3d parent flattens its descendants. Fade only
@@ -372,6 +379,8 @@ export default function HeroPortal({ children, sceneRef }) {
 
     return () => {
       disposed = true;
+      document.removeEventListener("visibilitychange", syncMarquee);
+      marquee.dataset.active = "false";
       particleRenderer?.dispose();
       autoplay?.kill();
       finishEntrance();
@@ -419,7 +428,7 @@ export default function HeroPortal({ children, sceneRef }) {
         <div ref={backdropRef} className={styles.backdrop} aria-hidden="true" />
         <div ref={groundRef} className={styles.groundShadow} aria-hidden="true" />
         <p className={styles.displayHeading} data-display-heading>Achievements &amp; identity</p>
-        <div ref={wordBandRef} className={styles.wordBand} aria-hidden="true">{["Full-stack", "Applied AI", "Built to ship"].map((phrase) => <span key={phrase}>{phrase}</span>)}</div>
+        <div ref={wordBandRef} className={styles.wordBand} aria-hidden="true"><Marquee items={["Full-stack", "Applied AI", "Built to ship"]} /></div>
         <div ref={rigRef} className={styles.rig} data-display-rig>
           <div className={styles.geometry}>
           <div className={styles.cubeSkin} data-cube-skin aria-hidden="true">
@@ -448,8 +457,8 @@ export default function HeroPortal({ children, sceneRef }) {
           <div className={`${styles.faceButtons} ${styles.momentButtons}`} role="group" aria-label="Achievements and identity">
             {moments.map((moment, index) => <button key={moment.id} type="button" data-face-button={index} aria-label={`Show ${moment.label}`} aria-pressed={false}><span /></button>)}
           </div>
-          <Link className={`${styles.archiveLink} portfolio-button portfolio-button--small`} href="/projects">{site.projects.archiveLabel} <ArrowUpRight size={15} aria-hidden="true" /></Link>
-          <a className={`${styles.continueLink} portfolio-button portfolio-button--small`} href="#projects">Selected work <ArrowDown size={15} aria-hidden="true" /></a>
+          <PortfolioButton variant="inverse" size="small" className={styles.archiveLink} href="/projects">{site.projects.archiveLabel} <ArrowUpRight size={15} aria-hidden="true" /></PortfolioButton>
+          <PortfolioButton variant="inverse" size="small" className={styles.continueLink} href="#projects">Selected work <ArrowDown size={15} aria-hidden="true" /></PortfolioButton>
         </div>
       </div>
     </div>

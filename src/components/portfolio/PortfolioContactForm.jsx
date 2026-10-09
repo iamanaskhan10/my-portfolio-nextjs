@@ -1,5 +1,7 @@
 "use client";
 
+
+import PortfolioButton from "./PortfolioButton";
 import { useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { usePortfolioContent } from "../../context/PortfolioContentContext";
@@ -94,10 +96,10 @@ export default function PortfolioContactForm({ active }) {
         />
       </div>
       <div className="engineering-contact-form__footer">
-        <button type="submit" className="portfolio-button" disabled={status === "sending"} tabIndex={tabIndex}>
+        <PortfolioButton type="submit"  disabled={status === "sending"} tabIndex={tabIndex}>
           {status === "sending" ? "Sending…" : "Send message"}
           <ArrowUpRight size={16} aria-hidden="true" />
-        </button>
+        </PortfolioButton>
         <p className={`engineering-contact-form__status engineering-contact-form__status--${status}`} aria-live="polite">
           {status === "success" && "Message sent. I’ll get back to you soon."}
           {status === "error" && (

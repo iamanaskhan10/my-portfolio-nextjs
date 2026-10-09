@@ -1,5 +1,9 @@
 "use client";
 
+import SectionHeading from "./portfolio/SectionHeading";
+
+
+import PortfolioButton from "./portfolio/PortfolioButton";
 import { useState } from "react";
 import { ArrowLeft, ArrowUpRight, Github } from "lucide-react";
 import { usePortfolioContent } from "../context/PortfolioContentContext";
@@ -48,15 +52,15 @@ export default function Projects({ showAll = false }) {
     <section className={styles.archive} id="projects" aria-labelledby="archive-heading">
       <div className={styles.inner}>
         <div className={styles.topbar}>
-          <Link className="portfolio-button portfolio-button--small" href="/#projects"><ArrowLeft size={16} aria-hidden="true" /> Back to portfolio</Link>
-          <a className="portfolio-button portfolio-button--small" href={profile.github} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> GitHub <ArrowUpRight size={15} aria-hidden="true" /></a>
+          <PortfolioButton size="small" href="/#projects"><ArrowLeft size={16} aria-hidden="true" /> Back to portfolio</PortfolioButton>
+          <PortfolioButton size="small" href={profile.github} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> GitHub <ArrowUpRight size={15} aria-hidden="true" /></PortfolioButton>
         </div>
 
         <header className={styles.heading}>
-          <h1 id="archive-heading">{site.projects.archiveHeading}<br /><span>{site.projects.archiveAccent}</span></h1>
+          <SectionHeading as="h1" id="archive-heading">{site.projects.archiveHeading}<br /><span>{site.projects.archiveAccent}</span></SectionHeading>
           <div className={styles.introduction}>
             <p>{site.projects.archiveIntro}</p>
-            <a className="portfolio-button portfolio-button--small" href="#project-gallery">{site.projects.archiveExploreLabel} <ArrowUpRight size={16} aria-hidden="true" /></a>
+            <PortfolioButton size="small" href="#project-gallery">{site.projects.archiveExploreLabel} <ArrowUpRight size={16} aria-hidden="true" /></PortfolioButton>
           </div>
         </header>
 
@@ -84,11 +88,11 @@ export default function Projects({ showAll = false }) {
                   {project.stack.split(/\s*·\s*/).map(tool => <li key={tool}>{tool}</li>)}
                 </ul>
                 <div className={styles.actions}>
-                  <Link className="portfolio-button" href={"/projects/" + project.slug}>Explore project <ArrowUpRight size={17} aria-hidden="true" /></Link>
+                  <PortfolioButton  href={"/projects/" + project.slug}>Explore project <ArrowUpRight size={17} aria-hidden="true" /></PortfolioButton>
                   {project.sourceAvailable === false ? (
-                    <Link className="portfolio-button portfolio-button--small" href="/#contact">Discuss project <ArrowUpRight size={15} aria-hidden="true" /></Link>
+                    <PortfolioButton size="small" href="/#contact">Discuss project <ArrowUpRight size={15} aria-hidden="true" /></PortfolioButton>
                   ) : (
-                    <a className="portfolio-button portfolio-button--small" href={project.link} target="_blank" rel="noopener noreferrer" aria-label={project.title + " on GitHub"}><Github size={16} aria-hidden="true" /> GitHub <ArrowUpRight size={15} aria-hidden="true" /></a>
+                    <PortfolioButton size="small" href={project.link} target="_blank" rel="noopener noreferrer" aria-label={project.title + " on GitHub"}><Github size={16} aria-hidden="true" /> GitHub <ArrowUpRight size={15} aria-hidden="true" /></PortfolioButton>
                   )}
                 </div>
               </div>
@@ -98,7 +102,7 @@ export default function Projects({ showAll = false }) {
 
         <div className={styles.closing}>
           <p>{site.projects.closingPrompt}</p>
-          <Link className="portfolio-button" href="/#contact">{site.projects.closingLabel} <ArrowUpRight size={24} aria-hidden="true" /></Link>
+          <PortfolioButton  href="/#contact">{site.projects.closingLabel} <ArrowUpRight size={24} aria-hidden="true" /></PortfolioButton>
         </div>
       </div>
     </section>

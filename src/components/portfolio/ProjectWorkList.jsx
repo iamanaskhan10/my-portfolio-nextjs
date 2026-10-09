@@ -1,5 +1,7 @@
 "use client";
 
+
+import PortfolioButton from "./PortfolioButton";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
@@ -106,7 +108,7 @@ export default function ProjectWorkList({ projects, archiveLabel }) {
         </Link>
       </li>)}
     </ul> : <p className={styles.empty}>Projects will appear here when published.</p>}
-    <div className={styles.more}><Link href="/projects" className="portfolio-button portfolio-button--large"><span>{archiveLabel || "More work"}</span><sup>{projects.length}</sup></Link></div>
+    <div className={styles.more}><PortfolioButton href="/projects" size="large"><span>{archiveLabel || "More work"}</span><sup>{projects.length}</sup></PortfolioButton></div>
     {mounted && createPortal(<><motion.div className={styles.follower} style={{ x: reducedMotion ? x : smoothX, y: reducedMotion ? y : smoothY }} aria-hidden="true" data-work-follower data-visible={visible}>
       <div className={styles.preview}>
         <div className={styles.reel} style={{ transform: `translateY(-${active * 100}%)` }}>

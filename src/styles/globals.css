@@ -1,6 +1,14 @@
 @import "tailwindcss";
 
 @font-face {
+  font-family: "Manrope Hero";
+  src: url("/fonts/Manrope-Variable.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Anton";
   src: url("/fonts/Anton-Regular.ttf") format("truetype");
   font-style: normal;
@@ -9,20 +17,22 @@
 }
 
 :root {
+  --hero-cream: #d4cfb8;
+  --hero-charcoal: #11120f;
   --ink: #11120f;
   --ink-raised: #191a16;
-  --paper: #f2f0e8;
-  --muted: #a9aaa1;
-  --line: rgba(242, 240, 232, 0.16);
-  --line-strong: rgba(242, 240, 232, 0.32);
-  --signal: #b9f35a;
-  --signal-highlight: #e4ffaf;
-  --signal-mid: #9bd047;
-  --signal-shadow: #526c22;
+  --paper: var(--hero-cream);
+  --muted: #b9b69f;
+  --line: rgba(212, 207, 184, 0.16);
+  --line-strong: rgba(212, 207, 184, 0.32);
+  --signal: var(--hero-cream);
+  --signal-highlight: #ebe7d6;
+  --signal-mid: #b9b69f;
+  --signal-shadow: #55564b;
   --editorial-void: #090a08;
-  --signal-ink: #182008;
+  --signal-ink: var(--hero-charcoal);
   --danger: #ffaaa0;
-  --success: #b9f35a;
+  --success: #c5d1ad;
   --body-size: clamp(1.0625rem, 1.2vw, 1.125rem);
 }
 
@@ -37,7 +47,7 @@ body {
   margin: 0;
   color: var(--paper);
   background: var(--ink);
-  font-family: "Bahnschrift", "Aptos", "Segoe UI", sans-serif;
+  font-family: "Manrope Hero", sans-serif;
   font-size: var(--body-size);
 }
 
@@ -640,8 +650,10 @@ body {
   transition: transform 180ms ease-out, border-color 180ms ease-out, background-color 180ms ease-out, color 180ms ease-out;
 }
 
-/* Shared portfolio action: outlined at rest, a blue fill rises on interaction. */
-.site-shell .portfolio-button {
+.portfolio-heading { font-family: "Manrope Hero", sans-serif; font-weight: 500; line-height: 1.08; letter-spacing: -0.035em; text-wrap: balance; }
+
+/* Shared hero CTA: cream at rest, charcoal fill rises on interaction. */
+:root .portfolio-button {
   position: relative;
   isolation: isolate;
   display: inline-flex;
@@ -653,10 +665,10 @@ body {
   min-height: 56px;
   padding: 1rem 1.8rem;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, currentColor 38%, transparent);
+  border: 1px solid var(--button-surface, var(--hero-cream));
   border-radius: 999px;
-  background: transparent;
-  color: inherit;
+  background: var(--button-surface, var(--hero-cream));
+  color: var(--button-content, var(--hero-charcoal));
   font-family: "Manrope Hero", sans-serif;
   font-size: 0.9rem;
   font-weight: 500;
@@ -669,33 +681,34 @@ body {
   transform: none;
   transition: color 250ms ease, border-color 250ms ease;
 }
-.site-shell .portfolio-button::before {
+:root .portfolio-button::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: #455ce9;
+  background: var(--button-content, var(--hero-charcoal));
   transform: translateY(105%);
   transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
 }
-.site-shell .portfolio-button:hover:not(:disabled),
-.site-shell .portfolio-button:focus-visible {
-  color: #fff;
-  border-color: #455ce9;
-  background: transparent;
+:root .portfolio-button:hover:not(:disabled),
+:root .portfolio-button:focus-visible {
+  color: var(--button-surface, var(--hero-cream));
+  border-color: var(--button-content, var(--hero-charcoal));
+  background: var(--button-surface, var(--hero-cream));
   transform: none;
 }
-.site-shell .portfolio-button:hover:not(:disabled)::before,
-.site-shell .portfolio-button:focus-visible::before { transform: translateY(0); }
-.site-shell .portfolio-button:focus-visible { outline: 2px solid #455ce9; outline-offset: 4px; }
-.site-shell .portfolio-button:disabled { opacity: 0.55; cursor: wait; }
-.site-shell .portfolio-button--small { min-height: 44px; padding: 0.65rem 1.1rem; font-size: 0.78rem; }
-.site-shell .portfolio-button--large { min-height: 6rem; padding: 1.8rem 3rem; font-size: 1rem; }
-.site-shell .portfolio-button svg { flex: none; }
+:root .portfolio-button:hover:not(:disabled)::before,
+:root .portfolio-button:focus-visible::before { transform: translateY(0); }
+:root .portfolio-button:focus-visible { outline: 2px solid var(--hero-cream); outline-offset: 4px; }
+:root .portfolio-button:disabled { opacity: 0.55; cursor: wait; }
+:root .portfolio-button--small { min-height: 44px; padding: 0.65rem 1.1rem; font-size: 0.78rem; }
+:root .portfolio-button--large { min-height: 6rem; padding: 1.8rem 3rem; font-size: 1rem; }
+:root .portfolio-button svg { flex: none; }
+:root .portfolio-button--inverse { --button-surface: var(--hero-charcoal); --button-content: var(--hero-cream); }
 @media (prefers-reduced-motion: reduce) {
-  .site-shell .portfolio-button, .site-shell .portfolio-button::before { transition: none; }
+  :root .portfolio-button, :root .portfolio-button::before { transition: none; }
 }
 
 .engineering-button:hover {

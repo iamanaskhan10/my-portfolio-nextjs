@@ -1,5 +1,7 @@
 "use client";
 
+
+import PortfolioButton from "./portfolio/PortfolioButton";
 import Footer from "../components/Footer";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
@@ -116,12 +118,12 @@ export default function Layout({ children }) {
           ))}
           <Link href="/projects" aria-current={router.pathname.startsWith("/projects") ? "page" : undefined}>Archive</Link>
         </nav>
-        <a className="site-header__contact portfolio-button portfolio-button--small" href={sectionHref("#contact")} aria-current={router.pathname === "/" && activeSection === "contact" ? "location" : undefined}>
+        <PortfolioButton size="small" className="site-header__contact" href={sectionHref("#contact")} aria-current={router.pathname === "/" && activeSection === "contact" ? "location" : undefined}>
           <span className="site-header__contact-icon" aria-hidden="true">
             <ArrowUpRight size={16} />
           </span>
           <span className="site-header__contact-label">Let&apos;s talk</span>
-        </a>
+        </PortfolioButton>
       </header>
       <main id="main-content">{children}</main>
       <Footer />

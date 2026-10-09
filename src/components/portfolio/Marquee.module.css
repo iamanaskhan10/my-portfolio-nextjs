@@ -1,0 +1,6 @@
+.viewport { width: 100%; overflow: hidden; }
+.track { display: flex; width: max-content; animation: travel var(--marquee-duration, 30s) linear infinite; animation-play-state: paused; }
+.viewport[data-active="true"] .track { animation-play-state: running; }
+.group { display: flex; flex-shrink: 0; min-width: 100vw; align-items: center; justify-content: space-around; gap: 0.65em; padding-right: 0.65em; }
+@keyframes travel { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .track { animation: none; } }

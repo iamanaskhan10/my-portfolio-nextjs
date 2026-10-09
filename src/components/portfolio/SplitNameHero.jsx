@@ -1,5 +1,7 @@
 "use client";
 
+
+import PortfolioButton from "./PortfolioButton";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -114,8 +116,8 @@ export default function SplitNameHero() {
       </div>
       <div className={styles.bottomline}>
           <div className={styles.resume}>
-            <a className="portfolio-button portfolio-button--small" href={profile.resume} download>{site.hero.downloadLabel}<ArrowDownToLine size={15} aria-hidden="true" /></a>
-            <a className="portfolio-button portfolio-button--small" href={profile.resume} target="_blank" rel="noopener noreferrer">{site.hero.viewLabel}<ArrowUpRight size={15} aria-hidden="true" /></a>
+            <PortfolioButton size="small" href={profile.resume} download>{site.hero.downloadLabel}<ArrowDownToLine size={15} aria-hidden="true" /></PortfolioButton>
+            <PortfolioButton size="small" href={profile.resume} target="_blank" rel="noopener noreferrer">{site.hero.viewLabel}<ArrowUpRight size={15} aria-hidden="true" /></PortfolioButton>
           </div>
           <a className={styles.scroll} href="#about">Scroll<ArrowDown size={19} aria-hidden="true" /></a>
       </div>

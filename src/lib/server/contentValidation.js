@@ -35,9 +35,10 @@ export function validatePortfolioContent(input) {
   // Optional for older content documents; an empty list intentionally hides previews.
   const introImages = input.site.projects.introImages;
   if (introImages !== undefined) {
-    if (!Array.isArray(introImages) || introImages.length > 6) throw new Error("Choose up to six Selected work images.");
+    if (!Array.isArray(introImages)) throw new Error("Selected work images must be a list.");
     introImages.forEach((image) => {
-      if (!isObject(image) || typeof image.projectSlug !== "string" || !validMediaSource(image.src)) throw new Error("Selected work image is invalid.");
+      if (!isObject(image) || (image.projectSlug !== undefined && typeof image.projectSlug !== "string") || !validMediaSource(image.src)) throw new Error("Selected work image is invalid.");
+      if (image.title !== undefined && (typeof image.title !== "string" || image.title.length > SHORT_LIMIT)) throw new Error("Selected work image caption is invalid.");
     });
   }
   requireStringArray(input.site.hero.lines, "Hero lines", 6);

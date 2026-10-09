@@ -1,9 +1,11 @@
 ﻿.section { position: relative; background: var(--editorial-void); color: var(--paper); scroll-margin-top: 4rem; }
-.introduction { position: relative; height: 220svh; }
+.introduction { position: relative; height: var(--intro-travel, 220svh); }
 .stage { position: sticky; top: 0; height: 100svh; min-height: 40rem; overflow: clip; }
 .introCopy { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 3fr; gap: 3rem; align-items: start; max-width: 100rem; margin-inline: auto; padding: clamp(8rem, 19svh, 13rem) max(1.15rem, 6vw) 4rem; }
 .introCopy h2 { margin: 0.65rem 0 0; max-width: 7ch; font-family: "Manrope Hero", sans-serif; font-size: clamp(1.8rem, 2.5vw, 2.5rem); font-weight: 500; line-height: 1.1; text-transform: none; }
 .statement > p { font-family: "Manrope Hero", sans-serif; max-width: 22ch; margin: 0; font-size: clamp(2.8rem, 4.8vw, 5rem); line-height: 1.1; letter-spacing: -0.035em; text-wrap: pretty; }
+.revealWord { position: relative; display: inline-block; color: #85867d; }
+.wordFill { position: absolute; inset: 0; color: #fff; pointer-events: none; }
 .exploreLink { display: inline-flex; align-items: center; gap: 1rem; min-height: 44px; margin-top: 2rem; color: var(--muted); font-size: 0.9rem; text-decoration: none; }
 .exploreLink:hover { color: var(--signal); }
 .previews { position: absolute; inset: 0; pointer-events: none; }
@@ -55,7 +57,7 @@
   .introCopy { grid-template-columns: 1fr 3fr; gap: 2rem; }
 }
 @media (max-width: 767px) {
-  .introduction { height: 210svh; }
+  .introduction { height: var(--intro-travel, 220svh); }
   .stage { position: sticky; height: 100svh; min-height: 0; overflow: clip; }
   .introCopy { grid-template-columns: 1fr; gap: 2rem; padding-block: 5rem 2rem; opacity: 1 !important; }
   .introCopy h2 { max-width: none; font-size: clamp(2.75rem, 10vw, 4rem); }

@@ -98,9 +98,9 @@
   background: var(--ink);
 }
 
-.displayFace { transform: rotateY(var(--face-angle)) translateZ(calc(var(--display-depth) / 2 + var(--display-gap))); }
+.displayFace { transform: rotateY(var(--face-angle)) translateZ(calc(var(--display-depth) / 2 + var(--display-gap) * var(--panel-open, 1))); }
 .scene[data-portal-active="true"] .displayFace[data-face-side="1"],
-.scene[data-portal-active="true"] .displayFace[data-face-side="3"] { width: var(--display-depth); margin-left: calc(var(--display-depth) / -2); transform: rotateY(var(--face-angle)) translateZ(calc(var(--display-width) / 2 + var(--display-gap))); }
+.scene[data-portal-active="true"] .displayFace[data-face-side="3"] { width: var(--display-depth); margin-left: calc(var(--display-depth) / -2); transform: rotateY(var(--face-angle)) translateZ(calc(var(--display-width) / 2 + var(--display-gap) * var(--panel-open, 1))); }
 
 .faceMeta {
   display: flex;
@@ -161,10 +161,9 @@
 .scene[data-portal-active="true"] .wordBand {
   position: absolute;
   top: calc(var(--portal-view-height) / 2);
-  left: 50%;
-  display: flex;
-  width: max-content;
-  gap: 0.65em;
+  left: 0;
+  display: block;
+  width: 100%;
   margin-top: -0.6em;
   color: #080a07;
   font-family: "Manrope Hero", "Bahnschrift", sans-serif;

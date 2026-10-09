@@ -1,5 +1,9 @@
 ﻿"use client";
 
+import SectionHeading from "./SectionHeading";
+
+
+import PortfolioButton from "./PortfolioButton";
 import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,8 +15,10 @@ import useMotionPreference from "../../hooks/useMotionPreference";
 import styles from "./ProjectShowcase.module.css";
 
 function FloatingPreview({ image, index, count, progress }) {
-  const delay = index / Math.max(1, count) * 0.35;
-  const y = useTransform(progress, [0, 1], [`${80 + delay * 160}svh`, `${-110 + delay * 80}svh`]);
+  const span = 1 + Math.max(0, count - 1) * 0.42;
+  const start = 0.04 + index * 0.42 / span * 0.9;
+  const end = 0.04 + (index * 0.42 + 1) / span * 0.9;
+  const y = useTransform(progress, [start, end], ["100svh", "-50svh"]);
   return (
     <motion.div className={styles.preview} data-work-preview data-side={index % 2 === 0 ? "left" : "right"} style={{ y }}>
       <div className={styles.previewImage}>
@@ -23,19 +29,23 @@ function FloatingPreview({ image, index, count, progress }) {
   );
 }
 
-function RevealWord({ word, index, count, progress, reducedMotion }) {
-  const start = 0.06 + index / count * 0.58;
-  const color = useTransform(progress, [start, start + 0.16], ["#d3d2c9", "#ffffff"]);
-  return <motion.span data-work-word style={{ color: reducedMotion ? "#ffffff" : color }}>{word}{" "}</motion.span>;
+function RevealWord({ word, offset, total, progress, reducedMotion }) {
+  const start = 0.08 + offset / total * 0.72;
+  const end = 0.08 + (offset + word.length) / total * 0.72;
+  const clipPath = useTransform(progress, [start, end], ["inset(0 100% 0 0)", "inset(0 0% 0 0)"]);
+  return <><span className={styles.revealWord} data-work-word style={reducedMotion ? { color: "#ffffff" } : undefined}>{word}<motion.span className={styles.wordFill} data-work-word-fill style={{ clipPath: reducedMotion ? "none" : clipPath }}>{word}</motion.span></span>{" "}</>;
 }
 
 function ProjectIntroduction({ projects, selectedWork, site, reducedMotion }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const words = site.projects.archiveIntro.split(/\s+/);
+  const words = site.projects.archiveIntro.trim().split(/\s+/);
+  const total = Math.max(1, words.join(" ").length);
+  let offset = 0;
   const configured = site.projects.introImages;
   const images = Array.isArray(configured)
     ? configured.flatMap((entry) => {
+      if (!entry.projectSlug) return [{ src: entry.src, title: entry.title || "" }];
       const project = projects.find((item) => item.slug === entry.projectSlug);
       const image = project?.gallery.find((item) => item.src === entry.src);
       return image ? [{ ...image, title: image.title || project.title }] : [];
@@ -43,13 +53,17 @@ function ProjectIntroduction({ projects, selectedWork, site, reducedMotion }) {
     : selectedWork.slice(0, 2).map((project) => ({ ...project.cover, title: project.title }));
 
   return (
-    <div ref={ref} className={styles.introduction} data-work-introduction>
+    <div ref={ref} className={styles.introduction} data-work-introduction style={{ "--intro-travel": `${220 + Math.max(0, images.length - 2) * 45}svh` }}>
       <div className={styles.stage}>
         <div className={styles.introCopy}>
-          <h2 id="projects-heading">{site.projects.heading}</h2>
+          <SectionHeading id="projects-heading">{site.projects.heading}</SectionHeading>
           <div className={styles.statement}>
-            <p aria-label={site.projects.archiveIntro}><span aria-hidden="true">{words.map((word, index) => <RevealWord key={`${index}-${word}`} word={word} index={index} count={words.length} progress={scrollYProgress} reducedMotion={reducedMotion} />)}</span></p>
-            <a className={`${styles.exploreLink} portfolio-button`} href="#selected-projects">{site.projects.archiveExploreLabel} <ArrowDown size={18} aria-hidden="true" /></a>
+            <p aria-label={site.projects.archiveIntro}><span aria-hidden="true">{words.map((word, index) => {
+              const wordOffset = offset;
+              offset += word.length + 1;
+              return <RevealWord key={`${index}-${word}`} word={word} offset={wordOffset} total={total} progress={scrollYProgress} reducedMotion={reducedMotion} />;
+            })}</span></p>
+            <PortfolioButton className={styles.exploreLink} href="#selected-projects">{site.projects.archiveExploreLabel} <ArrowDown size={18} aria-hidden="true" /></PortfolioButton>
           </div>
         </div>
         {!reducedMotion && <div className={styles.previews} aria-hidden="true">

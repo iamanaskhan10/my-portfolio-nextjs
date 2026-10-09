@@ -1,5 +1,9 @@
 "use client";
 
+import SectionHeading from "./SectionHeading";
+
+
+import PortfolioButton from "./PortfolioButton";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { usePortfolioContent } from "../../context/PortfolioContentContext";
@@ -60,8 +64,8 @@ export default function ExperienceShowcase() {
       <span className={styles.cursor} aria-hidden="true" />
       <ScrollReveal className={styles.layout}>
         <div className={styles.intro}>
-          <h2 id="experience-heading"><span>{site.experience.heading}</span><span>{site.experience.accent}</span></h2>
-          <a className="portfolio-button" href={profile.resume} target="_blank" rel="noopener noreferrer">{site.experience.resumeLabel} <ArrowUpRight size={16} aria-hidden="true" /></a>
+          <SectionHeading id="experience-heading"><span>{site.experience.heading}</span><span>{site.experience.accent}</span></SectionHeading>
+          <PortfolioButton  href={profile.resume} target="_blank" rel="noopener noreferrer">{site.experience.resumeLabel} <ArrowUpRight size={16} aria-hidden="true" /></PortfolioButton>
         </div>
         <div className={styles.gallery}>
           <div className={styles.trackWindow}>

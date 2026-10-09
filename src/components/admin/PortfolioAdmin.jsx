@@ -8,6 +8,7 @@ import {
   FolderKanban, Image as ImageIcon, LogOut, Plus, Save, Trash2, Upload,
 } from "lucide-react";
 import BrandMark from "../portfolio/BrandMark";
+import PortfolioButton from "../portfolio/PortfolioButton";
 import styles from "./PortfolioAdmin.module.css";
 
 const navigation = [
@@ -287,7 +288,7 @@ export default function PortfolioAdmin() {
         {configured ? (
           <>
             <Field label="Admin password" type="password" autoComplete="current-password" value={password} onChange={setPassword} required />
-            <button className={styles.primary} type="submit" disabled={busy}>{busy ? "Signing in..." : "Sign in"}</button>
+            <PortfolioButton size="small" type="submit" disabled={busy}>{busy ? "Signing in..." : "Sign in"}</PortfolioButton>
           </>
         ) : (
           <div className={styles.setup} role="status">Add <code>ADMIN_PASSWORD</code> and <code>ADMIN_SESSION_SECRET</code> to <code>.env.local</code>, then restart the server.</div>
@@ -314,10 +315,10 @@ export default function PortfolioAdmin() {
       <section className={styles.workspace}>
         <header className={styles.toolbar}>
           <div><span>{dirty ? "Unsaved changes" : `Saved · ${lastSaved}`}</span>{notice && <strong className={styles[notice.type]}>{notice.text}</strong>}</div>
-          <button className={styles.primary} type="button" onClick={save} disabled={busy || !dirty}><Save size={17} />{busy ? "Working..." : "Publish changes"}</button>
+          <PortfolioButton size="small" onClick={save} disabled={busy || !dirty}><Save size={17} />{busy ? "Working..." : "Publish changes"}</PortfolioButton>
         </header>
 
-        {section === "site" && <SiteEditor content={content} updateSite={updateSite} updateProfile={updateProfile} />}
+        {section === "site" && <SiteEditor content={content} media={media} upload={upload} busy={busy} updateSite={updateSite} updateProfile={updateProfile} />}
         {section === "projects" && <ProjectsEditor projects={content.projects} project={selectedProject} projectIndex={projectIndex} setProjectIndex={setProjectIndex} updateProject={updateProject} addProject={addProject} deleteProject={deleteProject} />}
         {section === "experience" && <ExperienceEditor experiences={content.experiences} experience={selectedExperience} experienceIndex={experienceIndex} setExperienceIndex={setExperienceIndex} updateExperience={updateExperience} addExperience={addExperience} deleteExperience={deleteExperience} />}
         {section === "media" && <MediaEditor media={media} project={selectedProject} upload={upload} busy={busy} addToProject={addMediaToProject} deleteMedia={deleteMedia} />}
@@ -326,9 +327,12 @@ export default function PortfolioAdmin() {
   );
 }
 
-function SiteEditor({ content, updateSite, updateProfile }) {
+function SiteEditor({ content, media, upload, busy, updateSite, updateProfile }) {
   const { site, profile } = content;
-  const choices = content.projects.filter((project) => project.published !== false).flatMap((project) => project.gallery.map((image) => ({ projectSlug: project.slug, src: image.src, label: `${project.title} ? ${image.title}` })));
+  const choices = [
+    ...media.map((image) => ({ projectSlug: "", src: image.url, label: `Uploaded: ${image.name}` })),
+    ...content.projects.filter((project) => project.published !== false).flatMap((project) => project.gallery.map((image) => ({ projectSlug: project.slug, src: image.src, label: `${project.title} — ${image.title}` }))),
+  ];
   const featured = content.projects.filter((project) => project.published !== false && project.featured);
   const automatic = (featured.length ? featured : content.projects.filter((project) => project.published !== false)).slice(0, 2).flatMap((project) => project.gallery[0] ? [{ projectSlug: project.slug, src: project.gallery[0].src }] : []);
   const introImages = site.projects.introImages ?? automatic;
@@ -374,11 +378,13 @@ function SiteEditor({ content, updateSite, updateProfile }) {
         <Field label="Archive introduction" multiline value={site.projects.archiveIntro} onChange={(value) => updateSite("projects", "archiveIntro", value)} />
       </div></fieldset>
       <fieldset><legend>Selected work images</legend>
-        <p className={styles.fieldsetIntro}>Choose up to six images to rise past the introduction, in order. Upload images in Media and attach them to a published project first. An empty list hides the rising images.</p>
-        {introImages.map((image, index) => <div key={index} className={styles.formGrid}>
+        <p className={styles.fieldsetIntro}>Choose uploaded or project images and arrange their order. Add as many as you want, or remove all to show only the text. The scrolling sequence adjusts to your image count.</p>
+        <p className={styles.fieldsetIntro} aria-live="polite">{introImages.length} {introImages.length === 1 ? "image" : "images"} selected</p>
+        {introImages.map((image, index) => <div key={index} className={styles.introImageRow}>
+          <img src={image.src} alt="" className={styles.introThumbnail} />
           <label className={styles.field}><span>Image {index + 1}</span>
-            <select value={JSON.stringify({ projectSlug: image.projectSlug, src: image.src })} onChange={(event) => setIntroImages(introImages.map((entry, position) => position === index ? JSON.parse(event.target.value) : entry))}>
-              {!choices.some((choice) => choice.projectSlug === image.projectSlug && choice.src === image.src) && <option value={JSON.stringify(image)}>Image unavailable ? choose a replacement</option>}
+            <select value={JSON.stringify({ projectSlug: image.projectSlug || "", src: image.src })} onChange={(event) => setIntroImages(introImages.map((entry, position) => position === index ? JSON.parse(event.target.value) : entry))}>
+              {!choices.some((choice) => choice.projectSlug === (image.projectSlug || "") && choice.src === image.src) && <option value={JSON.stringify({ projectSlug: image.projectSlug || "", src: image.src })}>Image unavailable — choose a replacement</option>}
               {choices.map((choice) => <option key={`${choice.projectSlug}:${choice.src}`} value={JSON.stringify({ projectSlug: choice.projectSlug, src: choice.src })}>{choice.label}</option>)}
             </select>
           </label>
@@ -388,7 +394,10 @@ function SiteEditor({ content, updateSite, updateProfile }) {
             <button type="button" aria-label={`Remove image ${index + 1}`} onClick={() => setIntroImages(introImages.filter((_, position) => position !== index))}><Trash2 size={16} /></button>
           </div>
         </div>)}
-        <button className={styles.primary} type="button" disabled={introImages.length >= 6 || !choices.length} onClick={() => { const choice = choices.find((entry) => !introImages.some((image) => image.projectSlug === entry.projectSlug && image.src === entry.src)) || choices[0]; setIntroImages([...introImages, { projectSlug: choice.projectSlug, src: choice.src }]); }}><Plus size={16} /> Add rising image</button>
+        <div className={styles.imageActions}>
+          <button className={styles.primary} type="button" disabled={!choices.length} onClick={() => { const choice = choices.find((entry) => !introImages.some((image) => image.projectSlug === entry.projectSlug && image.src === entry.src)) || choices[0]; setIntroImages([...introImages, { projectSlug: choice.projectSlug, src: choice.src }]); }}><Plus size={16} /> Add rising image</button>
+          <label className={styles.upload}><Upload size={16} />{busy ? "Uploading..." : "Upload image"}<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={upload} disabled={busy} /></label>
+        </div>
       </fieldset>
       <fieldset><legend>Search metadata</legend><div className={styles.formGrid}>
         {Object.entries(site.seo).map(([field, value]) => <Field key={field} label={field.replace(/([A-Z])/g, " $1")} multiline={field.toLowerCase().includes("description")} value={value} onChange={(next) => updateSite("seo", field, next)} />)}
