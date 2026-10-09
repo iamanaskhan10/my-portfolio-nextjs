@@ -56,6 +56,10 @@ body {
   background: var(--signal);
 }
 
+/* The dock stays still while project navigation fades only the page content. */
+html[data-project-transition="entering"] #main-content { opacity: 0; }
+html[data-project-transition] :is([data-work-follower], [data-work-cursor]) { visibility: hidden; }
+
 ::-webkit-scrollbar {
   width: 10px;
 }

@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { transitionProject } from "../../lib/animation/transitionProject";
 import { motion, useMotionValue, useSpring, useTransform, useVelocity } from "framer-motion";
 import useMotionPreference from "../../hooks/useMotionPreference";
 import styles from "./ProjectWorkList.module.css";
@@ -23,6 +25,7 @@ function WorkCover({ project, floating = false }) {
 }
 
 export default function ProjectWorkList({ projects, archiveLabel }) {
+  const router = useRouter();
   const [active, setActive] = useState(0);
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -101,7 +104,10 @@ export default function ProjectWorkList({ projects, archiveLabel }) {
     <p className={styles.label}>Recent work</p>
     {projects.length ? <ul className={styles.rows} onPointerLeave={() => setVisible(false)}>
       {projects.map((project, index) => <li key={project.slug}>
-        <Link href={`/projects/${project.slug}`} className={styles.row} data-work-row data-work-index={index} onPointerEnter={(event) => track(event, index)} onPointerMove={(event) => track(event, index)} onClick={() => setVisible(false)}>
+        <Link href={`/projects/${project.slug}`} className={styles.row} data-work-row data-work-index={index} onPointerEnter={(event) => track(event, index)} onPointerMove={(event) => track(event, index)} onClick={(event) => {
+          transitionProject(event, router, `/projects/${project.slug}`);
+          setVisible(false);
+        }}>
           <div className={styles.mobileCover}><WorkCover project={project} /></div>
           <h3>{project.title}</h3>
           <div className={styles.details}><span>{project.category}</span><span className={styles.period}>{project.period}</span></div>

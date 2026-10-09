@@ -18,7 +18,7 @@ export default function CaseStudy({ project, nextProject }) {
   return (
     <article className={styles.caseStudy}>
       <header className={styles.hero}>
-        <PortfolioButton className={`${styles.back} portfolio-button portfolio-button--small`} type="button" onClick={() => router.back()}><ArrowLeft size={16} aria-hidden="true" /> Back</PortfolioButton>
+        <PortfolioButton className={styles.back} size="small" type="button" onClick={() => router.back()}><ArrowLeft size={16} aria-hidden="true" /> Back</PortfolioButton>
         <SectionHeading as="h1">{project.title}</SectionHeading>
         <p className={styles.headline}>{project.headline}</p>
         <div className={styles.heroBottom}>
