@@ -11,8 +11,10 @@ import styles from "./HeroPortal.module.css";
 
 const opening = "M0,-15.0888Q0,0 15.0888,0Q0,0 0,15.0888Q0,0 -15.0888,0Q0,0 0,-15.0888Z";
 const REVEAL = 0.7;
+const FOLD_START = 0.74;
 const TURN_START = 1.59;
 const PANEL_REVEAL = 1.52;
+const PANELS_READY = 1.32;
 
 /** One live hero, with a curved opening curtain in front of it. Native scrolling
  * and CSS sticky own layout; GSAP owns only the scene's visual wrappers. */
@@ -35,6 +37,7 @@ export default function HeroPortal({ children, sceneRef }) {
   const skipRef = useRef(null);
   const transitionRef = useRef(null);
   const particleCanvasRef = useRef(null);
+  const introPlayedRef = useRef(false);
 
   const setup = useCallback(({ gsap, ScrollTrigger }) => {
     const root = sceneRef.current;
@@ -46,6 +49,8 @@ export default function HeroPortal({ children, sceneRef }) {
     const shellFaces = [...cubeSkin.children];
     // A direct section URL is a request for content, not the opening sequence.
     if (window.location.hash && window.location.hash !== "#home") {
+      introPlayedRef.current = true;
+      root.dataset.introComplete = "true";
       delete root.dataset.heroEntrance;
       return;
     }
@@ -169,7 +174,9 @@ export default function HeroPortal({ children, sceneRef }) {
       measuredHeight = height;
       measuredWidth = width;
       viewHeight = viewport;
-      distance = Math.round(height * (compact() ? 2.1 : 2.6) * (duration - REVEAL));
+      // Viewport-based travel keeps short windows from requiring several
+      // screens of wheel input just to fold a taller hero.
+      distance = Math.round(viewHeight * (compact() ? 1.55 : 1.8) * (duration - REVEAL));
       root.style.setProperty("--portal-height", `${height}px`);
       root.style.setProperty("--portal-distance", `${distance}px`);
       root.style.setProperty("--portal-view-height", `${viewHeight}px`);
@@ -178,7 +185,7 @@ export default function HeroPortal({ children, sceneRef }) {
       root.style.setProperty("--display-panel-height", `${faceHeight()}px`);
       particleRenderer?.resize(width, viewHeight);
       trigger?.refresh();
-      renderCurtain();
+      if (!introReady) renderCurtain();
       renderShape(true);
     };
 
@@ -204,7 +211,7 @@ export default function HeroPortal({ children, sceneRef }) {
     particleRenderer?.resize(measuredWidth, viewHeight);
     gsap.set([wordBandRef.current, displayControlsRef.current], { autoAlpha: 0 });
     gsap.set(displayHeading, { autoAlpha: 0 });
-    gsap.set(faces.slice(1), { opacity: 0 });
+    gsap.set(faces.slice(1), { opacity: 1 });
     gsap.set(wordBandRef.current, { xPercent: -20, rotation: 0, y: 0 });
     selectVisibleFace(0, "hero");
 
@@ -213,9 +220,6 @@ export default function HeroPortal({ children, sceneRef }) {
       defaults: { ease: "none" },
       onUpdate: () => {
         const progress = timeline.time();
-        renderCurtain();
-        // Resolve the hero behind the lifting curtain, before it is exposed.
-        if (progress >= 0.1) beginEntrance();
         renderShape();
         const showIdentity = progress >= 1.43;
         if (showIdentity !== identityVisible) {
@@ -228,33 +232,23 @@ export default function HeroPortal({ children, sceneRef }) {
         const handoff = progress >= boxEnd + 0.65;
         if (root.dataset.workHandoff !== String(handoff)) root.dataset.workHandoff = String(handoff);
         const index = Math.round(-shape.rotationY / 90);
-        // The other faces still have viewport-sized geometry during the fold.
-        // Fade them in only after the shared-frame handoff;
-        // otherwise their project images flash behind the rolling hero.
-        const mode = handoff ? "transition" : progress >= PANEL_REVEAL ? "box" : "hero";
+        // Reveal fully painted panels once their geometry reaches panel size.
+        // No opacity entrance, and no oversized images behind the folding hero.
+        const mode = handoff ? "transition" : progress >= PANELS_READY ? "box" : "hero";
         selectVisibleFace(mode === "hero" ? 0 : Math.max(0, Math.min(momentCount - 1, index)), mode);
-        const phase = progress < 0.66 ? "curtain" : progress < 0.82 ? "hero" : progress < 1 ? "plane" : progress >= galleryStart ? "work" : progress >= boxEnd ? "transition" : "display";
+        const phase = !introReady ? "curtain" : progress < FOLD_START ? "hero" : progress < 1 ? "plane" : progress >= galleryStart ? "work" : progress >= boxEnd ? "transition" : "display";
         if (root.dataset.portalPhase !== phase) root.dataset.portalPhase = phase;
       },
     });
-    timeline
-      .to(curtain, { edge: -4, duration: 0.56, ease: "power3.inOut" }, 0.1)
-      .to(curtain, { curve: 180, duration: 0.18, ease: "power2.out" }, 0.1)
-      .to(curtain, { curve: 0, duration: 0.36, ease: "power2.inOut" }, 0.28)
-      .to(introLabelRef.current, { y: -70, opacity: 0, duration: 0.2, ease: "power2.in" }, 0.1)
-      .to(controlsRef.current, { autoAlpha: 0, duration: 0.1 }, 0.1)
-      .set(veilRef.current, { autoAlpha: 0 }, 0.66)
-      .set(rig, { pointerEvents: "auto" }, 0.66)
-      .to(backdropRef.current, { opacity: 1, duration: 0.5, ease: "power1.inOut" }, 0.82);
-    timeline.fromTo(plane, { "--hero-roll": "0deg" }, { "--hero-roll": "90deg", duration: 0.3, ease: "power1.inOut", immediateRender: false }, 0.82)
-      .fromTo(shape, { fold: 0 }, { fold: 1, duration: 0.5, ease: "power1.inOut", immediateRender: false }, 0.82)
+    timeline.to(backdropRef.current, { opacity: 1, duration: PANELS_READY - FOLD_START, ease: "power1.inOut" }, FOLD_START);
+    timeline.fromTo(plane, { "--hero-roll": "0deg" }, { "--hero-roll": "90deg", duration: PANELS_READY - FOLD_START, ease: "power1.inOut", immediateRender: false }, FOLD_START)
+      .fromTo(shape, { fold: 0 }, { fold: 1, duration: PANELS_READY - FOLD_START, ease: "power1.inOut", immediateRender: false }, FOLD_START)
       // Both surfaces share one exact outline. Keep the hero at 90 degrees
       // and crossfade its content into the counter-rotated, upright panel.
       .to(heroSurface, { opacity: 0, duration: 0.18 }, 1.34)
       .to(identityPanelRef.current, { autoAlpha: 1, duration: 0.18 }, 1.34)
       .fromTo(identityPanelRef.current.querySelectorAll("span"), { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, stagger: 0.04, ease: "power2.out", immediateRender: false }, 1.34)
       .to(groundRef.current, { opacity: 0.65, scaleX: 1, duration: 0.3, ease: "power1.out" }, 1.02)
-      .to(faces.slice(1), { opacity: 1, duration: 0.3, ease: "power1.inOut" }, PANEL_REVEAL)
       .to(wordBandRef.current, { autoAlpha: 1, duration: 0.3, ease: "power1.inOut" }, 1.42)
       .to(displayHeading, { autoAlpha: 1, duration: 0.3, ease: "power1.inOut" }, 1.42)
       .to(displayControlsRef.current, { autoAlpha: 1, duration: 0.3, ease: "power1.inOut" }, PANEL_REVEAL)
@@ -275,6 +269,10 @@ export default function HeroPortal({ children, sceneRef }) {
     timeline.to({}, { duration: 0.01 }, duration - 0.01);
     const finishIntro = (immediate = false) => {
       autoplay?.kill();
+      introPlayedRef.current = true;
+      root.dataset.introComplete = "true";
+      gsap.set([veilRef.current, controlsRef.current], { autoAlpha: 0 });
+      gsap.set(rig, { pointerEvents: "auto" });
       if (!introReady) {
         introReady = true;
         timeline.time(REVEAL);
@@ -285,11 +283,11 @@ export default function HeroPortal({ children, sceneRef }) {
     const playhead = { time: REVEAL };
     const scrollAnimation = gsap.fromTo(playhead, { time: REVEAL }, {
       time: duration, duration: 1, ease: "none", paused: true,
-      onUpdate: () => { if (introReady) timeline.time(playhead.time); },
+      onUpdate: () => { if (introReady) timeline.time(Math.max(REVEAL, playhead.time)); },
     });
     trigger = ScrollTrigger.create({
       id: "hero-portal", trigger: root, start: "top top", end: () => `+=${distance}`,
-      animation: scrollAnimation, scrub: 0.4,
+      animation: scrollAnimation, scrub: 0.65,
       onUpdate: (self) => {
         if (!introReady && self.scroll() > self.start + 12) finishIntro(true);
         if (introReady) {
@@ -299,16 +297,25 @@ export default function HeroPortal({ children, sceneRef }) {
       onRefresh: () => {
         // Stay on the scrubbed playhead: jumping to raw scroll progress here
         // would snap ahead, then back on the next scrub update.
-        if (introReady) timeline.time(playhead.time);
+        if (introReady) timeline.time(Math.max(REVEAL, playhead.time));
         renderShape(true);
       },
       onToggle: ({ isActive }) => { rig.style.willChange = isActive ? "transform" : "auto"; },
     });
-    if (window.scrollY > trigger.start + 12) {
+    if (introPlayedRef.current || window.scrollY > trigger.start + 12) {
       finishIntro(true);
       timeline.time(REVEAL + trigger.progress * (duration - REVEAL));
     } else {
-      autoplay = timeline.tweenTo(REVEAL, { duration: 1.6, ease: "none", onComplete: () => finishIntro() });
+      // The one-time opening has its own clock. Scroll scrubbing and refresh
+      // can never rewind the curtain or the name after it has left.
+      autoplay = gsap.timeline({ onUpdate: renderCurtain, onComplete: () => finishIntro() })
+        .call(beginEntrance, [], 0.23)
+        .to(curtain, { edge: -4, duration: 1.28, ease: "power3.inOut" }, 0.23)
+        .to(curtain, { curve: 180, duration: 0.41, ease: "power2.out" }, 0.23)
+        .to(curtain, { curve: 0, duration: 0.82, ease: "power2.inOut" }, 0.64)
+        .to(introLabelRef.current, { y: -70, opacity: 0, duration: 0.46, ease: "power2.in" }, 0.23)
+        .to(controlsRef.current, { autoAlpha: 0, duration: 0.23 }, 0.23)
+        .to({}, { duration: 0.09 }, 1.51);
     }
 
     const reveal = () => {
@@ -324,9 +331,9 @@ export default function HeroPortal({ children, sceneRef }) {
       cancelAnimationFrame(focusFrame);
       focusFrame = requestAnimationFrame(() => plane.querySelector("a[href]")?.focus({ preventScroll: true }));
     };
-    // Keyboard users never land behind the mask. Do not change focus while
+    // Keyboard users never land behind the curtain. Do not change focus while
     // scrolling, and keep the real content available to assistive technology.
-    const revealFocusedContent = () => { if (timeline.time() < 0.66) reveal(); };
+    const revealFocusedContent = () => { if (!introReady) reveal(); };
     const skipButton = skipRef.current;
     skipButton.addEventListener("click", skip);
     plane.addEventListener("focusin", revealFocusedContent);

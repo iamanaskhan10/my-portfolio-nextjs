@@ -35,14 +35,15 @@ export const projects = [
     title: "VoiceForge AI",
     group: "AI",
     image: "https://images.unsplash.com/photo-1552174588-6733961c358e?auto=format&fit=crop&q=86&w=1200",
-    category: "RAG-powered voice agent platform",
+    category: "AI voice agent & workflow platform",
     period: "2026",
     description:
-      "Real-time browser voice interaction grounded in documents, with hybrid retrieval, source citations, and containerized services.",
-    stack: "Python · FastAPI · Next.js · PostgreSQL · pgvector · Docker",
+      "A browser voice-agent platform combining speech processing, document knowledge, and action tools through a LangGraph workflow, with a Next.js dashboard and FastAPI backend.",
+    stack: "Next.js · Python · FastAPI · LangGraph · LangChain · Whisper · Piper · PostgreSQL · pgvector · Redis · Ollama · OpenAI · Gemini · Docker",
     highlights: [
       "Expanded available evidence context from 800 to 6,000 characters.",
       "Added document-aware filtering to keep answers relevant to their sources.",
+      "Connected voice, knowledge retrieval, and search, booking, lead, and transfer tools through LangGraph.",
     ],
     link: "https://github.com/iamanaskhan10/voice-agent",
   },
