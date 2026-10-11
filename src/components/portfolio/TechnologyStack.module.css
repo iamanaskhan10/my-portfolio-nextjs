@@ -15,6 +15,10 @@
 .technology span { display: block; max-width: 17ch; min-height: 3em; margin-top: 0.38rem; color: var(--muted); font-size: 0.72rem; line-height: 1.5; opacity: 0; transform: translateY(4px); transition: opacity 160ms ease-out, transform 200ms cubic-bezier(0.16, 1, 0.3, 1); }
 .technology:hover span, .technology:focus-visible span { opacity: 1; transform: none; }
 .technology:focus-visible { outline: 2px solid var(--signal); outline-offset: 7px; }
+.group[data-core-stack] .technologies { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.group[data-core-stack] .technology strong { font-size: 1rem; }
+.group[data-core-stack] .technology span { opacity: 1; transform: none; }
+@media (any-hover: none) { .technology span { opacity: 1; transform: none; } }
 @media (hover: hover) and (pointer: fine) {
   .technology:hover .icon { color: var(--tech-color); transform: translateY(-3px); }
   .technology:hover strong { color: var(--signal); }
@@ -34,7 +38,7 @@
   .heading { display: block; }
   .heading > p { max-width: 40ch; margin-top: 1.25rem; }
   .group { gap: 1.5rem; padding-block: 2.25rem; }
-  .technologies { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.25rem 1.5rem; }
+  .technologies, .group[data-core-stack] .technologies { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.25rem 1.5rem; }
   .technology span { max-width: 19ch; }
 }
 @media (prefers-reduced-motion: reduce) { .icon, .technology strong, .technology span { transition: none; } .icon, .technology span { transform: none !important; } }

@@ -448,7 +448,7 @@ function ProjectsEditor({ projects, project, projectIndex, setProjectIndex, upda
         <fieldset><legend>Metric</legend><div className={styles.formGrid}>
           {Object.entries(project.metric).map(([field, value]) => <Field key={field} label={field} value={value} onChange={(next) => updateProject("metric", { ...project.metric, [field]: next })} />)}
         </div></fieldset>
-        <fieldset><legend>Homepage showcase film</legend><p className={styles.fieldsetIntro}>Optional. Add an MP4 or WebM from your public media folder. The project gallery supplies the image previews; visitors choose when to play the film.</p><div className={styles.formGrid}>
+        <fieldset><legend>Project demo video</legend><p className={styles.fieldsetIntro}>Optional. Add a local MP4 or WebM path to show a playable demo on this project&apos;s detail page. Visitors choose when to play it. Leave empty to show only the image gallery.</p><div className={styles.formGrid}>
           <Field label="Video path" value={project.showcase?.videoSrc || ""} placeholder="/videos/project-demo.mp4" onChange={(value) => updateProject("showcase", { ...project.showcase, videoSrc: value })} />
           <Field label="Poster image path" value={project.showcase?.posterSrc || ""} placeholder="Uses the project cover when empty" onChange={(value) => updateProject("showcase", { ...project.showcase, posterSrc: value })} />
           <Field label="Film caption" multiline value={project.showcase?.caption || ""} onChange={(value) => updateProject("showcase", { ...project.showcase, caption: value })} />

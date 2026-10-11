@@ -16,18 +16,31 @@ The first publish creates `content/portfolio.json`. Uploads are stored in `publi
 
 In `/admin`, open **Projects** and select the project. Published projects appear in the homepage work list, with **Featured on homepage** projects first. Each full row links directly to its case study. On hover-capable devices, a mouse reveals the cover in a square window that follows the pointer at any browser width; moving to another row slides the next cover vertically within that window. Scrolling with a stationary mouse updates the preview to the row beneath it. Devices without hover show square cover tiles with the title, category, and period in two columns, or one column at widths up to 600px. Covers fill their squares edge to edge and may crop, so keep essential imagery away from the edges. Project names, categories, covers, order, and the archive-link label remain CMS-driven.
 
-For still images or GIFs, upload through **Media**, attach the asset to the project, then edit its **Gallery** entry. Set **Source**, **Title**, **Alt text**, **Caption**, **Width**, and **Height** accurately. Use **Earlier** and **Later** to set the gallery order. The first image becomes the project cover, so use a still image first for a dependable homepage preview. If the cover is a GIF, the work list uses **Poster image path** from the retained film settings or the first non-GIF gallery image; without a usable still it shows a placeholder. Gallery edits also affect shared project imagery elsewhere on the site.
+For still images or GIFs, upload through **Media**, attach the asset to the project, then edit its **Gallery** entry. Set **Source**, **Title**, **Alt text**, **Caption**, **Width**, and **Height** accurately. Use **Earlier** and **Later** to set the gallery order. The first image becomes the project cover, so use a still image first for a dependable homepage preview. If the cover is a GIF, the work list uses **Poster image path** from Project demo video or the first non-GIF gallery image; without a usable still it shows a placeholder. Gallery edits also affect shared project imagery elsewhere on the site.
 
 Publish and check the mouse hover preview at wide and narrow browser widths, the cover tiles on a device without hover, and the direct case-study link. The homepage work list has no gallery controls; open the case study to check its complete image gallery, captions, and full-screen viewer.
 
-The **Homepage showcase film** fields remain available for the retained legacy gallery layouts. Configured films do not play in the current homepage work list or the case-study image gallery. To maintain an existing optional film configuration:
+## Project demo video
 
-1. Add a local `.mp4` or `.webm` file to `public/videos`, for example `public/videos/project-demo.mp4`, and include it in the deployed site files. The Media uploader handles images, so video files are added separately.
-2. In **Homepage showcase film**, set **Video path** to `/videos/project-demo.mp4` (omit `public`). Use a local path beginning with `/`, without spaces, query strings, or an external URL.
+In **Projects ? Project demo video**, configure an optional clip for the actual case-study page. A configured video appears above the image gallery and adds **Watch demo** alongside the source or discussion action. The homepage work list continues to use a still cover.
+
+1. Add a real user-provided local `.mp4` or `.webm` clip to `public/videos`, for example `public/videos/project-demo.mp4`, and include it in deployed site files. The image uploader does not upload videos.
+2. Set **Video path** to `/videos/project-demo.mp4` (omit `public`). Use a local path beginning with `/`, without spaces, query strings, or an external URL.
 3. Set **Poster image path** to a local still `.png`, `.jpg`, `.jpeg`, `.webp`, or `.avif` path, or leave it empty to use the project cover. Set **Film caption** to an accurate description of the clip.
-4. Publish to save the configuration. A legacy gallery, if rendered, places the film before its images and plays it only through visitor controls. Clear **Video path** and publish to remove that film configuration. The current homepage work list continues to use a still cover.
+4. Publish and open the case study. The player uses native controls, does not autoplay or preload the clip, supports inline playback on mobile, and pauses offscreen or when the page becomes hidden. Clear **Video path** and publish to remove both the demo section and Watch demo action.
 
-The existing **Site copy → Selected work images** setting controls the rising images in the introduction independently of these project previews. Keep captions factual and retain illustration labels where applicable.
+These fields retain the existing `project.showcase.videoSrc`, `posterSrc`, and `caption` schema. No project demo is fabricated or automatically assigned. The screenshot gallery remains available if a clip cannot load. GitHub follows source availability; projects without public source retain their discussion action.
+
+## Selected work introduction images
+
+Open **Site copy ? Selected work images** to control rising images independently of covers and demos. The sequence accepts zero, one, or many images without a fixed image-count cap.
+
+1. Use **Upload image** here to upload PNG, JPEG, WebP, or GIF media, or select an existing upload or published project's gallery image. Uploading adds to the media library; it does not automatically add to the sequence.
+2. Use **Add rising image** to add an entry, then choose its image from the selector. A direct upload need not belong to a project gallery.
+3. Use up/down controls to reorder and the remove control to remove entries. Remove every entry for a text-only introduction. This does not delete the media files.
+4. Publish and check the saved sequence. If a referenced project image becomes unavailable, choose a replacement.
+
+Older content without `site.projects.introImages` defaults to the first two selected covers; an explicitly empty list stays empty. Scroll travel starts at 220svh and adds 45svh per image beyond two. The introduction statement fills white from left to right word by word and reverses on upward scrolling. Reduced motion shows white text without rising images. Keep project captions factual and retain illustration labels. All upload controls here handle images, not video.
 
 ## Production deployment
 

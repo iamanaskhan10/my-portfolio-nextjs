@@ -10,6 +10,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Github } from "lucide-react";
 import { useRouter } from "next/router";
 import CaseStudyGallery from "./CaseStudyGallery";
 import ProjectMetric from "./ProjectMetric";
+import ProjectDemo from "./ProjectDemo";
 import styles from "./CaseStudy.module.css";
 
 export default function CaseStudy({ project, nextProject }) {
@@ -26,14 +27,18 @@ export default function CaseStudy({ project, nextProject }) {
             <div><dt>Project</dt><dd>{project.category}</dd></div>
             <div><dt>Year</dt><dd>{project.period}</dd></div>
           </dl>
+          <div className={styles.heroActions}>
+          {project.showcase?.videoSrc && <PortfolioButton variant="secondary" href="#project-demo">Watch demo <ArrowRight size={17} aria-hidden="true" /></PortfolioButton>}
           {project.sourceAvailable === false ? (
             <PortfolioButton  href="/#contact">Discuss this project <ArrowUpRight size={17} aria-hidden="true" /></PortfolioButton>
           ) : (
             <PortfolioButton  href={project.link} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> View on GitHub <ArrowUpRight size={17} aria-hidden="true" /></PortfolioButton>
           )}
+          </div>
         </div>
       </header>
 
+      <ProjectDemo key={`demo-${project.slug}`} title={project.title} showcase={project.showcase} cover={project.cover} />
       <CaseStudyGallery key={project.slug} images={project.gallery} title={project.title} />
 
       <div className={styles.body}>

@@ -1,0 +1,6 @@
+.demo { margin: 0 0 3rem; scroll-margin-top: 3rem; }
+.demo video { display: block; width: 100%; aspect-ratio: 16 / 9; background: var(--editorial-void); object-fit: contain; }
+.demo video:focus-visible { outline: 2px solid var(--paper); outline-offset: 5px; }
+.demo figcaption { display: grid; gap: 0.4rem; margin-top: 1rem; color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+.demo strong { color: var(--paper); font-weight: 500; }
+.demo p { color: var(--muted); }

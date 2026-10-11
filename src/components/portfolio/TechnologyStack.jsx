@@ -27,11 +27,16 @@ const icons = {
   git: SiGit, github: SiGithub, postman: SiPostman, jmeter: SiApachejmeter,
 };
 
+// Existing technologies used across the portfolio's full-stack and AI projects.
+const coreNames = ["Next.js", "React.js", "Python", "FastAPI", "PostgreSQL", "Docker"];
+const coreGroup = { name: "Core stack", items: coreNames.map(name => technologyGroups.flatMap(group => group.items).find(item => item.name === name)) };
+const supportingGroups = technologyGroups.map(group => ({ ...group, items: group.items.filter(item => !coreNames.includes(item.name)) })).filter(group => group.items.length);
+
 function TechnologyGroup({ group }) {
   const headingId = `technology-${group.name.replace(/\W+/g, "-").toLowerCase()}`;
 
   return (
-    <ScrollReveal as="section" className={styles.group} aria-labelledby={headingId}>
+    <ScrollReveal as="section" className={styles.group} data-core-stack={group === coreGroup ? "true" : undefined} aria-labelledby={headingId}>
       <h3 id={headingId}>{group.name}</h3>
       <ul className={styles.technologies}>
         {group.items.map((technology) => {
@@ -60,7 +65,7 @@ export default function TechnologyStack() {
           <p>{site.technology.intro}</p>
         </ScrollReveal>
         <div className={styles.groups}>
-          {technologyGroups.map((group) => <TechnologyGroup key={group.name} group={group} />)}
+          {[coreGroup, ...supportingGroups].map((group) => <TechnologyGroup key={group.name} group={group} />)}
         </div>
       </div>
     </section>

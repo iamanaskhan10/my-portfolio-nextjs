@@ -42,8 +42,8 @@ export default function PostHeroEditorial() {
           <SectionHeading id="contact-heading">{site.contact.heading}</SectionHeading>
         </ScrollReveal>
         <ScrollReveal className={styles.sectionIntro}>
-          <p>{site.contact.body}</p>
           <a className={styles.contactEmail} href={`mailto:${profile.email}`}>{profile.email}<ArrowUpRight size={25} aria-hidden="true" /></a>
+          <p>{site.contact.body}</p>
           <div className={styles.contactLinks}>
             <PortfolioButton size="small" href={profile.github} target="_blank" rel="noopener noreferrer"><Github size={17} aria-hidden="true" /> GitHub</PortfolioButton>
             <PortfolioButton size="small" href={profile.linkedin} target="_blank" rel="noopener noreferrer"><Linkedin size={17} aria-hidden="true" /> LinkedIn</PortfolioButton>

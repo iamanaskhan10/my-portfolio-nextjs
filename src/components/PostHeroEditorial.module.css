@@ -35,8 +35,8 @@
 .contact { background: var(--ink); color: var(--paper); padding-bottom: clamp(7rem, 10vw, 10rem); }
 .contactHeading { grid-column: 1 / -1; padding-bottom: clamp(2rem, 4vw, 4rem); border-bottom: 1px solid var(--line-strong); }
 .contactHeading h2 { max-width: 19ch; margin: 0; color: var(--paper); font-family: "Manrope Hero", sans-serif; font-size: clamp(3rem, 6.5vw, 6rem); font-weight: 500; line-height: 1.07; letter-spacing: -0.04em; text-wrap: balance; }
-.contact .sectionIntro > p { margin-top: 0; max-width: 38ch; }
-.contactEmail { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 44px; width: fit-content; max-width: 100%; margin-top: 2rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--signal-shadow); color: var(--paper); font-family: "Manrope Hero", sans-serif; font-size: clamp(1rem, 1.6vw, 1.5rem); text-decoration: none; overflow-wrap: anywhere; }
+.contact .sectionIntro > p { margin-top: 1.5rem; max-width: 38ch; }
+.contactEmail { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 44px; width: fit-content; max-width: 100%; margin-top: 0; padding-bottom: 0.8rem; border-bottom: 1px solid var(--line-strong); color: var(--paper); font-family: "Manrope Hero", sans-serif; font-size: clamp(1.15rem, 1.85vw, 1.75rem); text-decoration: none; overflow-wrap: anywhere; }
 .contactEmail svg { flex: none; color: var(--paper); transition: transform 180ms ease-out; }
 .contactEmail:hover { color: var(--muted); }
 .contactEmail:hover svg { transform: translate(2px, -2px); }

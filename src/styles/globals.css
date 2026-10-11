@@ -22,7 +22,7 @@
   --ink: #11120f;
   --ink-raised: #191a16;
   --paper: var(--hero-cream);
-  --muted: #b9b69f;
+  --muted: #c4c0aa;
   --line: rgba(212, 207, 184, 0.16);
   --line-strong: rgba(212, 207, 184, 0.32);
   --signal: var(--hero-cream);
@@ -711,6 +711,9 @@ html[data-project-transition] :is([data-work-follower], [data-work-cursor]) { vi
 :root .portfolio-button--large { min-height: 6rem; padding: 1.8rem 3rem; font-size: 1rem; }
 :root .portfolio-button svg { flex: none; }
 :root .portfolio-button--inverse { --button-surface: var(--hero-charcoal); --button-content: var(--hero-cream); }
+:root .portfolio-button--secondary { background: transparent; border-color: var(--line-strong); color: var(--hero-cream); }
+:root .portfolio-button--secondary::before { background: var(--hero-cream); }
+:root .portfolio-button--secondary:hover:not(:disabled), :root .portfolio-button--secondary:focus-visible { background: transparent; color: var(--hero-charcoal); border-color: var(--hero-cream); }
 @media (prefers-reduced-motion: reduce) {
   :root .portfolio-button, :root .portfolio-button::before { transition: none; }
 }

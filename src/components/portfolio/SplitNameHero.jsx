@@ -116,8 +116,9 @@ export default function SplitNameHero() {
       </div>
       <div className={styles.bottomline}>
           <div className={styles.resume}>
-            <PortfolioButton size="small" href={profile.resume} download>{site.hero.downloadLabel}<ArrowDownToLine size={15} aria-hidden="true" /></PortfolioButton>
-            <PortfolioButton size="small" href={profile.resume} target="_blank" rel="noopener noreferrer">{site.hero.viewLabel}<ArrowUpRight size={15} aria-hidden="true" /></PortfolioButton>
+            <PortfolioButton size="small" href="#selected-projects">View work<ArrowDown size={16} aria-hidden="true" /></PortfolioButton>
+            <PortfolioButton size="small" variant="secondary" href={profile.resume} download>{site.hero.downloadLabel}<ArrowDownToLine size={15} aria-hidden="true" /></PortfolioButton>
+            <a href={profile.resume} target="_blank" rel="noopener noreferrer">{site.hero.viewLabel}<ArrowUpRight size={15} aria-hidden="true" /></a>
           </div>
           <a className={styles.scroll} href="#about">Scroll<ArrowDown size={19} aria-hidden="true" /></a>
       </div>
