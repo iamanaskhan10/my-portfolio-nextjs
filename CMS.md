@@ -22,7 +22,7 @@ Publish and check the mouse hover preview at wide and narrow browser widths, the
 
 ## Project demo video
 
-In **Projects ? Project demo video**, configure an optional clip for the actual case-study page. A configured video appears above the image gallery and adds **Watch demo** alongside the source or discussion action. The homepage work list continues to use a still cover.
+In **Projects → Project demo video**, configure an optional clip for the actual case-study page. A configured video appears above the image gallery and adds **Watch demo** alongside the source or discussion action. The homepage work list continues to use a still cover.
 
 1. Add a real user-provided local `.mp4` or `.webm` clip to `public/videos`, for example `public/videos/project-demo.mp4`, and include it in deployed site files. The image uploader does not upload videos.
 2. Set **Video path** to `/videos/project-demo.mp4` (omit `public`). Use a local path beginning with `/`, without spaces, query strings, or an external URL.
@@ -33,7 +33,7 @@ These fields retain the existing `project.showcase.videoSrc`, `posterSrc`, and `
 
 ## Selected work introduction images
 
-Open **Site copy ? Selected work images** to control rising images independently of covers and demos. The sequence accepts zero, one, or many images without a fixed image-count cap.
+Open **Site copy → Selected work images** to control rising images independently of covers and demos. The sequence accepts zero, one, or many images without a fixed image-count cap.
 
 1. Use **Upload image** here to upload PNG, JPEG, WebP, or GIF media, or select an existing upload or published project's gallery image. Uploading adds to the media library; it does not automatically add to the sequence.
 2. Use **Add rising image** to add an entry, then choose its image from the selector. A direct upload need not belong to a project gallery.
