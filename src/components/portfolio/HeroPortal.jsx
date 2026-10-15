@@ -59,9 +59,11 @@ export default function HeroPortal({ children, sceneRef }) {
 
     let disposed = false;
     let distance = 0;
+    let entryShare = 0;
     let measuredWidth = 0;
     let measuredHeight = 0;
     let viewHeight = 0;
+    let paintHeight = 0;
     let trigger;
     let autoplay;
     let introReady = false;
@@ -114,6 +116,14 @@ export default function HeroPortal({ children, sceneRef }) {
       curtainPathRef.current.setAttribute("d", `M0,-4H1000V${curtain.edge}Q500,${curtain.edge + curtain.curve} 0,${curtain.edge}Z`);
     };
     const compact = () => root.clientWidth < 768 || window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    // Give the first touch gesture a visible response without speeding up the
+    // later panels or the approved star exit. Desktop keeps its original pace.
+    const progressAtTime = (time) => !compact() ? (time - REVEAL) / (duration - REVEAL)
+      : time <= TURN_START ? (time - REVEAL) / (TURN_START - REVEAL) * entryShare
+        : entryShare + (time - TURN_START) / (duration - TURN_START) * (1 - entryShare);
+    const timeAtProgress = (progress) => !compact() ? REVEAL + progress * (duration - REVEAL)
+      : progress <= entryShare ? REVEAL + progress / entryShare * (TURN_START - REVEAL)
+        : TURN_START + (progress - entryShare) / (1 - entryShare) * (duration - TURN_START);
     const faceWidth = () => Math.min(viewHeight * 0.4, measuredWidth * 0.62, 420);
     const faceHeight = () => faceWidth() * 1.38;
     const moveRigY = gsap.quickSetter(rig, "y", "px");
@@ -172,24 +182,42 @@ export default function HeroPortal({ children, sceneRef }) {
       });
       faceButtons.forEach((button, buttonIndex) => button.setAttribute("aria-pressed", String(buttonIndex === index)));
     };
+    // The scene's choreography stays fixed during Safari toolbar movement,
+    // but its background and exit canvas must fill the newly visible area.
+    const measurePaint = () => {
+      const next = compact() ? window.visualViewport?.height || window.innerHeight : viewHeight;
+      if (!next || next === paintHeight) return;
+      paintHeight = next;
+      root.style.setProperty("--portal-paint-height", `${paintHeight}px`);
+      particleRenderer?.resize(measuredWidth, paintHeight, viewHeight);
+      particleRenderer?.render(particles.progress);
+    };
     const measure = () => {
-      const height = heroContent.offsetHeight;
       const width = root.clientWidth;
-      const viewport = Math.min(height, window.innerHeight);
-      if (height === measuredHeight && width === measuredWidth && (compact() || viewport === viewHeight)) return;
+      // Safari's address bar changes innerHeight during a swipe. Keep the
+      // initial visible viewport until width/orientation changes, including
+      // the hero's CSS height, so a toolbar resize cannot move the goalposts.
+      const viewport = compact() && measuredWidth === width && viewHeight
+        ? viewHeight : window.visualViewport?.height || window.innerHeight;
+      root.style.setProperty("--hero-viewport-height", `${viewport}px`);
+      const height = heroContent.offsetHeight;
+      if (height === measuredHeight && width === measuredWidth && (compact() || viewport === viewHeight)) { measurePaint(); return; }
       measuredHeight = height;
       measuredWidth = width;
-      viewHeight = viewport;
+      viewHeight = Math.min(height, viewport);
+      measurePaint();
       // Viewport-based travel keeps short windows from requiring several
       // screens of wheel input just to fold a taller hero.
-      distance = Math.round(viewHeight * (compact() ? 1.55 : 1.8) * (duration - REVEAL));
+      const entryDistance = viewHeight * 0.62;
+      distance = Math.round(compact() ? entryDistance + viewHeight * 1.55 * (duration - TURN_START) : viewHeight * 1.8 * (duration - REVEAL));
+      entryShare = entryDistance / distance;
       root.style.setProperty("--portal-height", `${height}px`);
       root.style.setProperty("--portal-distance", `${distance}px`);
       root.style.setProperty("--portal-view-height", `${viewHeight}px`);
       root.style.setProperty("--portal-width", `${width}px`);
       root.style.setProperty("--display-size", `${faceWidth()}px`);
       root.style.setProperty("--display-panel-height", `${faceHeight()}px`);
-      particleRenderer?.resize(width, viewHeight);
+      particleRenderer?.resize(width, paintHeight, viewHeight);
       trigger?.refresh();
       if (!introReady) renderCurtain();
       renderShape(true);
@@ -214,7 +242,7 @@ export default function HeroPortal({ children, sceneRef }) {
     particleRenderer = createParticlePortal(particleCanvasRef.current, {
       signal: tokens.getPropertyValue("--signal").trim(), highlight: tokens.getPropertyValue("--signal-highlight").trim(), ink: tokens.getPropertyValue("--editorial-void").trim(), compact: compact(),
     });
-    particleRenderer?.resize(measuredWidth, viewHeight);
+    particleRenderer?.resize(measuredWidth, paintHeight, viewHeight);
     gsap.set([wordBandRef.current, displayControlsRef.current], { autoAlpha: 0 });
     gsap.set(displayHeading, { autoAlpha: 0 });
     gsap.set(faces.slice(1), { opacity: 1 });
@@ -287,14 +315,14 @@ export default function HeroPortal({ children, sceneRef }) {
       }
       if (immediate) finishEntrance();
     };
-    const playhead = { time: REVEAL };
-    const scrollAnimation = gsap.fromTo(playhead, { time: REVEAL }, {
-      time: duration, duration: 1, ease: "none", paused: true,
-      onUpdate: () => { if (introReady) timeline.time(Math.max(REVEAL, playhead.time)); },
+    const playhead = { progress: 0 };
+    const scrollAnimation = gsap.fromTo(playhead, { progress: 0 }, {
+      progress: 1, duration: 1, ease: "none", paused: true,
+      onUpdate: () => { if (introReady) timeline.time(timeAtProgress(playhead.progress)); },
     });
     trigger = ScrollTrigger.create({
       id: "hero-portal", trigger: root, start: "top top", end: () => `+=${distance}`,
-      animation: scrollAnimation, scrub: 0.65,
+      animation: scrollAnimation, scrub: compact() ? 0.18 : 0.65,
       onUpdate: (self) => {
         if (!introReady && self.scroll() > self.start + 12) finishIntro(true);
         if (introReady) {
@@ -304,14 +332,14 @@ export default function HeroPortal({ children, sceneRef }) {
       onRefresh: () => {
         // Stay on the scrubbed playhead: jumping to raw scroll progress here
         // would snap ahead, then back on the next scrub update.
-        if (introReady) timeline.time(Math.max(REVEAL, playhead.time));
+        if (introReady) timeline.time(timeAtProgress(playhead.progress));
         renderShape(true);
       },
       onToggle: ({ isActive }) => { rig.style.willChange = isActive ? "transform" : "auto"; },
     });
     if (introPlayedRef.current || window.scrollY > trigger.start + 12) {
       finishIntro(true);
-      timeline.time(REVEAL + trigger.progress * (duration - REVEAL));
+      timeline.time(timeAtProgress(trigger.progress));
     } else {
       // The one-time opening has its own clock. Scroll scrubbing and refresh
       // can never rewind the curtain or the name after it has left.
@@ -347,10 +375,10 @@ export default function HeroPortal({ children, sceneRef }) {
     const showFace = (index) => {
       finishIntro(true);
       const stop = TURN_START + index * 0.5;
-      window.scrollTo({ top: trigger.start + distance * (stop - REVEAL) / (duration - REVEAL), behavior: "instant" });
+      window.scrollTo({ top: trigger.start + distance * progressAtTime(stop), behavior: "instant" });
       trigger.update();
       trigger.getTween()?.progress(1);
-      scrollAnimation.progress((stop - REVEAL) / (duration - REVEAL));
+      scrollAnimation.progress(progressAtTime(stop));
     };
     const chooseFace = (event) => {
       const button = event.target.closest("button[data-face-button]");
@@ -373,6 +401,7 @@ export default function HeroPortal({ children, sceneRef }) {
     const observer = new ResizeObserver(measure);
     observer.observe(heroContent);
     window.addEventListener("resize", measure);
+    window.visualViewport?.addEventListener("resize", measurePaint);
     const images = [...rig.querySelectorAll("img")];
     Promise.allSettled([document.fonts.ready, ...images.map((image) => image.decode())])
       .then(() => { if (!disposed) measure(); });
@@ -387,6 +416,7 @@ export default function HeroPortal({ children, sceneRef }) {
       cancelAnimationFrame(focusFrame);
       observer.disconnect();
       window.removeEventListener("resize", measure);
+      window.visualViewport?.removeEventListener("resize", measurePaint);
       skipButton.removeEventListener("click", skip);
       plane.removeEventListener("focusin", revealFocusedContent);
       displayControls.removeEventListener("click", chooseFace);
@@ -405,8 +435,10 @@ export default function HeroPortal({ children, sceneRef }) {
       identityPanelRef.current.setAttribute("aria-hidden", "true");
       curtainPathRef.current.setAttribute("d", "M0,-4H1000V1002H0Z");
       root.style.removeProperty("--portal-height");
+      root.style.removeProperty("--hero-viewport-height");
       root.style.removeProperty("--portal-distance");
       root.style.removeProperty("--portal-view-height");
+      root.style.removeProperty("--portal-paint-height");
       root.style.removeProperty("--portal-width");
       root.style.removeProperty("--display-size");
       root.style.removeProperty("--display-panel-height");

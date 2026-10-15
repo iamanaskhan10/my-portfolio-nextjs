@@ -24,7 +24,7 @@ function WorkCover({ project, floating = false }) {
   </div>;
 }
 
-export default function ProjectWorkList({ projects, archiveLabel }) {
+export default function ProjectWorkList({ projects, archiveLabel, id = "selected-projects", label = "Recent work", showArchiveLink = true, variant = "default" }) {
   const router = useRouter();
   const [active, setActive] = useState(0);
   const [visible, setVisible] = useState(false);
@@ -32,6 +32,7 @@ export default function ProjectWorkList({ projects, archiveLabel }) {
   const workRef = useRef(null);
   const pointerRef = useRef(null);
   const reducedMotion = useMotionPreference();
+  const Heading = variant === "archive" ? "h2" : "h3";
   const x = useMotionValue(0), y = useMotionValue(0);
   const smoothX = useSpring(x, { stiffness: 240, damping: 28 });
   const smoothY = useSpring(y, { stiffness: 240, damping: 28 });
@@ -100,8 +101,8 @@ export default function ProjectWorkList({ projects, archiveLabel }) {
     setActive(index); setVisible(true);
   };
 
-  return <div ref={workRef} id="selected-projects" className={styles.work} data-work-list>
-    <p className={styles.label}>Recent work</p>
+  return <div ref={workRef} id={id} className={styles.work} data-work-list data-variant={variant}>
+    {label && <p className={styles.label}>{label}</p>}
     {projects.length ? <ul className={styles.rows} onPointerLeave={() => setVisible(false)}>
       {projects.map((project, index) => <li key={project.slug}>
         <Link href={`/projects/${project.slug}`} className={styles.row} data-work-row data-work-index={index} onPointerEnter={(event) => track(event, index)} onPointerMove={(event) => track(event, index)} onClick={(event) => {
@@ -109,12 +110,12 @@ export default function ProjectWorkList({ projects, archiveLabel }) {
           setVisible(false);
         }}>
           <div className={styles.mobileCover}><WorkCover project={project} /></div>
-          <h3>{project.title}</h3>
+          <Heading>{project.title}</Heading>
           <div className={styles.details}><span>{project.category}</span><span className={styles.period}>{project.period}</span></div>
         </Link>
       </li>)}
     </ul> : <p className={styles.empty}>Projects will appear here when published.</p>}
-    <div className={styles.more}><PortfolioButton href="/projects" size="large"><span>{archiveLabel || "More work"}</span><sup>{projects.length}</sup></PortfolioButton></div>
+    {showArchiveLink && <div className={styles.more}><PortfolioButton href="/projects" size="large"><span>{archiveLabel || "More work"}</span><sup>{projects.length}</sup></PortfolioButton></div>}
     {mounted && createPortal(<><motion.div className={styles.follower} style={{ x: reducedMotion ? x : smoothX, y: reducedMotion ? y : smoothY }} aria-hidden="true" data-work-follower data-visible={visible}>
       <div className={styles.preview}>
         <div className={styles.reel} style={{ transform: `translateY(-${active * 100}%)` }}>

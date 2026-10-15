@@ -243,13 +243,21 @@
   isolation: isolate;
 }
 
+/* The sticky scene occupies the visible screen, even when text reflow makes
+   the source hero taller. It must not add a second scroll before the box. */
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  .scene[data-portal-active="true"] { height: calc(var(--portal-paint-height) + var(--portal-distance)); }
+  .scene[data-portal-active="true"] .stage { height: var(--portal-paint-height); }
+  .scene[data-portal-active="true"] .displayControls { bottom: max(6rem, calc(env(safe-area-inset-bottom) + 5.25rem)); }
+}
+
 .scene[data-portal-active="true"] .curtain {
   position: absolute;
   z-index: 2;
   inset: 0;
   display: block;
   width: 100%;
-  height: var(--portal-view-height);
+  height: var(--portal-paint-height);
   pointer-events: none;
 }
 
@@ -301,11 +309,11 @@
   display: block;
   inset: 0;
   width: 100%;
-  height: var(--portal-view-height);
+  height: var(--portal-paint-height);
   pointer-events: none;
 }
 .particleCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.galleryTransition svg { position: absolute; top: calc(50% + 10px - 22px); left: calc(50% - 22px); width: 44px; height: 44px; fill: var(--paper); }
+.galleryTransition svg { position: absolute; top: calc(var(--portal-view-height) / 2 + 10px - 22px); left: calc(50% - 22px); width: 44px; height: 44px; fill: var(--paper); }
 .scene[data-portal-active="true"] .orbit {
   position: absolute;
   z-index: 2;
@@ -368,6 +376,9 @@
 
 /* The final star reveals the real Selected work section beneath this stage. */
 .scene[data-portal-active="true"] { z-index: 2; margin-bottom: calc(0px - var(--portal-height)); }
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  .scene[data-portal-active="true"] { margin-bottom: calc(0px - var(--portal-paint-height)); }
+}
 .scene[data-work-handoff="true"] { background: transparent; pointer-events: none; }
 .scene[data-work-handoff="true"] .stage { pointer-events: none; }
 .scene[data-work-handoff="true"] .displayHeading { visibility: hidden; }

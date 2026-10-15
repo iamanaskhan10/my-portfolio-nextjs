@@ -11,11 +11,12 @@ export function createParticlePortal(canvas, { signal, highlight, ink, compact }
     const ripple = 1 + Math.sin(angle * 6) * 0.035 + Math.cos(y * 17) * 0.045;
     return { x: Math.cos(angle) * radius * ripple, y: y * ripple, z: Math.sin(angle) * radius * ripple, bright: index % 5 === 0 };
   });
-  let width = 0, height = 0;
+  let width = 0, height = 0, sceneHeight = 0;
   return {
-    resize(nextWidth, nextHeight) {
+    resize(nextWidth, nextHeight, geometryHeight = nextHeight) {
       width = nextWidth;
       height = nextHeight;
+      sceneHeight = geometryHeight;
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
@@ -24,9 +25,9 @@ export function createParticlePortal(canvas, { signal, highlight, ink, compact }
     render(progress) {
       context.clearRect(0, 0, width, height);
       if (progress <= 0) return;
-      const cx = width / 2, cy = height / 2 + 10;
+      const cx = width / 2, cy = sceneHeight / 2 + 10;
       // Keep the approved black star's silhouette and expansion unchanged.
-      const cover = (Math.sqrt(width / 2) + Math.sqrt(height / 2 + 10)) ** 2 * 1.08;
+      const cover = (Math.sqrt(width / 2) + Math.sqrt(Math.max(cy, height - cy))) ** 2 * 1.08;
       const growth = Math.min(1, progress / 0.58);
       const radius = 17 * (cover / 17) ** (growth ** 1.2);
       context.beginPath();
@@ -45,7 +46,7 @@ export function createParticlePortal(canvas, { signal, highlight, ink, compact }
       // The earlier Fibonacci particle cloud spreads inside the panel first.
       // After the portal covers the screen, its depth accelerates toward us.
       const fade = Math.min(1, progress / 0.12) * Math.min(1, (1 - progress) / 0.16);
-      const cloudRadius = Math.min(height * 0.4, width * 0.62, 420) * 0.46;
+      const cloudRadius = Math.min(sceneHeight * 0.4, width * 0.62, 420) * 0.46;
       const departure = Math.max(0, (progress - 0.56) / 0.44);
       const zoom = 0.35 + 0.85 * Math.min(1, progress / 0.56) + 7 * departure ** 2.2;
       const angle = progress * 0.8, cosine = Math.cos(angle), sine = Math.sin(angle);
